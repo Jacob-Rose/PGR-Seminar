@@ -8,9 +8,9 @@ using UnityEngine;
  */
 public struct PlayerPosInfo //sent from server to 
 {
-    Vector3 pos;
-    float zRot;
-    float currentSpeed;
+    public Vector3 pos;
+    public float zRot;
+    public float currentSpeed;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -23,7 +23,7 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
 }
 public struct PlayerInteractInfo
 {
-    PlayerMove move;
+    public PlayerMove move;
 }
 
 //probably two seperate player scripts, ClientPlayer and NetworkPlayer
@@ -48,5 +48,6 @@ public class Player : MonoBehaviour
     void Update()
     {
         //check if client player turns
+        
     }
 }
