@@ -3,22 +3,30 @@ using System.Collections.Generic;
 using System.Net;
 using Unity.Collections;
 using Unity.Networking.Transport;
+using Unity.Networking.Transport.Utilities;
 using UnityEngine;
 
 public class ServerBehavior : MonoBehaviour
 {
     /* NOTE: I GOT NO CLUE HOW NETWORKING WORKS, SO MOST CODE IS BASED OF
      * https://github.com/Unity-Technologies/multiplayer/blob/master/com.unity.transport/Documentation~/workflow-client-server.md
+     * god bless this dude too for having up to date docs
+     * https://gist.github.com/duynguye/7b6b0828a89ab4e4b7da769f86adc1fe
      */
     public UdpNetworkDriver m_Driver;
     private NativeList<NetworkConnection> m_Connections;
-    private NetworkPipeline m_NetworkPipeline;
+    private NetworkPipeline m_Pipeline;
+    private NetworkEndPoint m_Endpoint;
     // Start is called before the first frame update
     void Start()
     {
-        m_Driver = new UdpNetworkDriver(new INetworkParameter[0]);
-        m_NetworkPipeline = m_Driver.CreatePipeline(typeof(ReliableSequencedPipelineStage), typeof(SimulatorPipelineStage));
-        if (m_Driver.Bind(new NetworkEndPoint()) != 0)
+        m_Driver = new UdpNetworkDriver(new SimulatorUtility.Parameters { MaxPacketSize = 256, MaxPacketCount = 30, PacketDelayMs = 100 });
+        m_Pipeline = m_Driver.CreatePipeline(typeof(UnreliableSequencedPipelineStage), typeof(SimulatorPipelineStage));
+
+        m_Endpoint = new NetworkEndPoint();
+        m_Endpoint = NetworkEndPoint.Parse("0.0.0.0", 9000);
+
+        if (m_Driver.Bind(m_Endpoint) != 0)
         {
             Debug.Log("Failed to bind to port 9000");
         }
@@ -26,6 +34,8 @@ public class ServerBehavior : MonoBehaviour
         {
             m_Driver.Listen();
         }
+
+        m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
     }
 
     public void OnDestroy()
@@ -76,7 +86,7 @@ public class ServerBehavior : MonoBehaviour
                     using (var writer = new DataStreamWriter(4, Allocator.Temp))
                     {
                         writer.Write(number);
-                        m_Driver.Send(m_NetworkPipeline, m_Connections[i], writer);
+                        m_Driver.Send(m_Pipeline, m_Connections[i], writer);
                     }
                 }
             }
