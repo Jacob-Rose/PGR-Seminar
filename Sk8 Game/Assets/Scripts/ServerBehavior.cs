@@ -14,12 +14,13 @@ public class ServerBehavior : MonoBehaviour
      * https://gist.github.com/duynguye/7b6b0828a89ab4e4b7da769f86adc1fe
      */
     public UdpNetworkDriver m_Driver;
-    private NativeList<NetworkConnection> m_Connections;
-    private NetworkPipeline m_Pipeline;
-    private NetworkEndPoint m_Endpoint;
+    public NativeList<NetworkConnection> m_Connections;
+    public NetworkPipeline m_Pipeline;
+    public NetworkEndPoint m_Endpoint;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        DontDestroyOnLoad(this.gameObject);
         m_Driver = new UdpNetworkDriver(new SimulatorUtility.Parameters { MaxPacketSize = 256, MaxPacketCount = 30, PacketDelayMs = 100 });
         m_Pipeline = m_Driver.CreatePipeline(typeof(UnreliableSequencedPipelineStage), typeof(SimulatorPipelineStage));
 
@@ -34,7 +35,6 @@ public class ServerBehavior : MonoBehaviour
         {
             m_Driver.Listen();
         }
-
         m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
     }
 
