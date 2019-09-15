@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Bounds
+  - StopSign
+  - Colliders
+  - Collided
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Ground
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Ground
+    uniqueID: 2229890135
+    locked: 0
+  - name: OverRoad
+    uniqueID: 3910998271
+    locked: 0
+  - name: Car
+    uniqueID: 2196258569
+    locked: 0
+  - name: OverCar
+    uniqueID: 3169521251
+    locked: 0
+  - name: Building
+    uniqueID: 4178297989
+    locked: 0
+  - name: OverBuilding
+    uniqueID: 3425923127
+    locked: 0
