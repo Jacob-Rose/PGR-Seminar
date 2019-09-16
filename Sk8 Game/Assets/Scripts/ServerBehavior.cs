@@ -15,8 +15,10 @@ public class ServerBehavior : MonoBehaviour
      */
     public UdpNetworkDriver m_Driver;
     public NativeList<NetworkConnection> m_Connections;
+    public List<NetworkedPlayer> m_Players;
     public NetworkPipeline m_Pipeline;
     public NetworkEndPoint m_Endpoint;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -62,8 +64,7 @@ public class ServerBehavior : MonoBehaviour
         NetworkConnection c;
         while ((c = m_Driver.Accept()) != default(NetworkConnection))
         {
-            m_Connections.Add(c);
-            Debug.Log("Accepted a connection");
+            HandlePlayerConnected(c);
         }
         //now driver is up to date, do fun stuff now
         DataStreamReader stream;
@@ -91,5 +92,15 @@ public class ServerBehavior : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void HandleDataMessage()
+    {
+
+    }
+    public void HandlePlayerConnected(NetworkConnection c)
+    {
+        m_Connections.Add(c);
+        Debug.Log("Accepted a connection");
     }
 }
