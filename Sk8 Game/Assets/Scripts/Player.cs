@@ -48,6 +48,6 @@ public class Player : MonoBehaviour
     void Update()
     {
         //check if client player turns
-        
+        //take all the data, make a struct, pass to server
     }
 }
