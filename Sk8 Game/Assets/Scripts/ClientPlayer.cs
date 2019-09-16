@@ -10,12 +10,6 @@ public class ClientPlayer : Player
     PlayerInteractInfo playerInteract;
     PlayerPosInfo posInfo;
 
-    private Vector3 playerPos;
-    private float playerSpeed;
-    private float playerZRot;
-
-    private PlayerMove moveType;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -27,47 +21,49 @@ public class ClientPlayer : Player
     void Update()
     {
         //upon data recieved, send a bool to the server
-        playerInteract.move = moveType;
-        posInfo.pos = playerPos;
-        posInfo.currentSpeed = playerSpeed;
-        posInfo.zRot = playerZRot;
-        if (moveType == PlayerMove.ATTACK)
+        
+        
+        //get keypress, send to server
+
+
+
+        /*if (playerInteract.move == PlayerMove.ATTACK)
         {
             //AttackEvent(playerPos, )//still need a way to get another player position
         }
-        if (moveType == PlayerMove.OLLIE)
+        if (playerInteract.move == PlayerMove.OLLIE)
         {
-            TrickEvent(playerPos, "Ollie"); //trick name is hard coded for now
+            TrickEvent(); //trick name is hard coded for now
         }
-        if (moveType == PlayerMove.TURNLEFT)
+        if (playerInteract.move == PlayerMove.TURNLEFT)
         {
-            MoveLeftEvent(playerPos);
+            MoveLeftEvent();
         }
-        if (moveType == PlayerMove.TURNRIGHT)
+        if (playerInteract.move == PlayerMove.TURNRIGHT)
         {
-            MoveRightEvent(playerPos);
-        }
+            MoveRightEvent();
+        }*/
 
     }
-    void MoveLeftEvent(Vector3 pos) //not sure if values passed in are needed
+    /*void MoveLeftEvent() //not sure if values passed in are needed
     {
-        playerPos = pos;
-        playerPos -= new Vector3(0f, 2f, 0f); //value can be passed from server if needed
+        
+        posInfo.pos -= new Vector3(0f, 2f, 0f); //value can be passed from server if needed
     }
 
-    void MoveRightEvent(Vector3 pos)
+    void MoveRightEvent()
     {
-        playerPos = pos;
-        playerPos += new Vector3(0f, 2f, 0f);
+        
+        posInfo.pos += new Vector3(0f, 2f, 0f);
     }
 
-    void TrickEvent(Vector3 pos, string trickName)
+    void TrickEvent()
     {
         //todo
     }
 
-    void AttackEvent(Vector3 playerPos, Vector3 player2Pos, float range)
+    void AttackEvent()
     {
         //todo
-    }
+    }*/
 }

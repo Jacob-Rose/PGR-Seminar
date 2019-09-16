@@ -4,46 +4,17 @@ using UnityEngine;
 
 public class NetworkedPlayer : Player
 {
-    PlayerInteractInfo serverPlayerInteract;
-    PlayerPosInfo serverPlayerPosInfo;
-
-    private Vector3 playerPos;
-    private float playerSpeed;
-    private float playerZRot;
-
-    private PlayerMove moveType;
 
     // Start is called before the first frame update
     void Start()
     {
-        serverPlayerInteract = new PlayerInteractInfo();
-        serverPlayerPosInfo = new PlayerPosInfo();
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        serverPlayerInteract.move = moveType;
-        serverPlayerPosInfo.pos = playerPos;
-        serverPlayerPosInfo.currentSpeed = playerSpeed;
-        serverPlayerPosInfo.zRot = playerZRot;
-        if (moveType == PlayerMove.ATTACK)
-        {
-            //AttackEvent(playerPos, )//still need a way to get another player position
-        }
-        if (moveType == PlayerMove.OLLIE)
-        {
-            TrickEvent(playerPos, "Ollie"); //trick name is hard coded for now
-        }
-        if (moveType == PlayerMove.TURNLEFT)
-        {
-            MoveLeftEvent(playerPos, playerSpeed);
-        }
-        if (moveType == PlayerMove.TURNRIGHT)
-        {
-            MoveRightEvent(playerPos, playerSpeed);
-        }
+        
         //send the data to the client
 
     }
