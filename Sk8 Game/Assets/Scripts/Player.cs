@@ -8,7 +8,7 @@ using UnityEngine;
  */
 public struct PlayerPosInfo //sent from server to 
 {
-    public Vector3 pos;
+    public Vector3 position;
     public float zRot;
     public float currentSpeed;
 }
@@ -29,7 +29,14 @@ public struct PlayerInteractInfo
 //probably two seperate player scripts, ClientPlayer and NetworkPlayer
 public class Player : MonoBehaviour
 {
-    
+    [SerializeField]
+    private float zRotAmount;
+
+    [SerializeField]
+    private float speedDecreaseAmount;
+
+    PlayerPosInfo posInfo;
+
     //ADD VARIABLES IF NEEDED FOR ACCELERATION
     float MaxSpeed { get
         {
@@ -48,7 +55,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //check if client player turns
-        //take all the data, make a struct, pass to server
+        //update positions based on the input of the player
+        posInfo.position = transform.rotation.z * posInfo.zRot * Vector3.forward;
+
     }
 }

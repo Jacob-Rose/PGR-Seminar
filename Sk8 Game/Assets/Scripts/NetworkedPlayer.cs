@@ -13,8 +13,7 @@ public class NetworkedPlayer : Player
     // Update is called once per frame
     void Update()
     {
-        
-        //send the data to the client
+        //update posInfo struct
 
     }
 }

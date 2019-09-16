@@ -7,63 +7,41 @@ using UnityEngine;
  */
 public class ClientPlayer : Player
 {
-    PlayerInteractInfo playerInteract;
-    PlayerPosInfo posInfo;
+
+    private float leftTime;
+    private float rightTime;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-        playerInteract = new PlayerInteractInfo();
-        posInfo = new PlayerPosInfo();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        //upon data recieved, send a bool to the server
-        
-        
         //get keypress, send to server
+        //update posInfo based on input
 
-
-
-        /*if (playerInteract.move == PlayerMove.ATTACK)
+        if (Input.GetKeyDown("LeftArrow"))
         {
-            //AttackEvent(playerPos, )//still need a way to get another player position
+            leftTime = Time.time;
         }
-        if (playerInteract.move == PlayerMove.OLLIE)
+        if (Input.GetKeyDown("RightArrow"))
         {
-            TrickEvent(); //trick name is hard coded for now
+            rightTime = Time.time;
         }
-        if (playerInteract.move == PlayerMove.TURNLEFT)
+        if (Input.GetKeyUp("LeftArrow"))
         {
-            MoveLeftEvent();
+
         }
-        if (playerInteract.move == PlayerMove.TURNRIGHT)
+        if (Input.GetKeyUp("RightArrow"))
         {
-            MoveRightEvent();
-        }*/
 
+        }
+        //send new info to the server after player update function is called
     }
-    /*void MoveLeftEvent() //not sure if values passed in are needed
-    {
-        
-        posInfo.pos -= new Vector3(0f, 2f, 0f); //value can be passed from server if needed
-    }
-
-    void MoveRightEvent()
-    {
-        
-        posInfo.pos += new Vector3(0f, 2f, 0f);
-    }
-
-    void TrickEvent()
-    {
-        //todo
-    }
-
-    void AttackEvent()
-    {
-        //todo
-    }*/
+    
 }
