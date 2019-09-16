@@ -50,8 +50,6 @@ public class NetworkedPlayer : Player
 
     void MoveLeftEvent(Vector3 pos, float speed) //not sure if values passed in are needed
     {
-        playerPos = pos;
-        playerSpeed = speed;
         playerPos -= new Vector3(0f, 2f, 0f);
         playerSpeed -= 0.75f;
     }

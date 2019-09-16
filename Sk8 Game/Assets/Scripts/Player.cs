@@ -29,6 +29,7 @@ public struct PlayerInteractInfo
 //probably two seperate player scripts, ClientPlayer and NetworkPlayer
 public class Player : MonoBehaviour
 {
+    
     //ADD VARIABLES IF NEEDED FOR ACCELERATION
     float MaxSpeed { get
         {
