@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class NetworkedPlayer : Player
 {
+    public override void Update()
+    {
+        base.Update();
+    }
+
     void updatePlayerInfo(PlayerInfo info)
     {
         posInfo.currentSpeed = info.currentSpeed;

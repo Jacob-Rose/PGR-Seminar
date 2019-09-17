@@ -4,6 +4,7 @@ using System.Net;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
+
 using UnityEngine;
 
 public class ServerBehavior : MonoBehaviour
@@ -19,11 +20,13 @@ public class ServerBehavior : MonoBehaviour
     public NetworkPipeline m_Pipeline;
     public NetworkEndPoint m_Endpoint;
 
+    public System.Data.SqlTypes.SqlDecimal netSafeDecimal;
+
     // Start is called before the first frame update
     void Awake()
     {
         DontDestroyOnLoad(this.gameObject);
-        m_Driver = new UdpNetworkDriver(new SimulatorUtility.Parameters { MaxPacketSize = 256, MaxPacketCount = 30, PacketDelayMs = 100 });
+        m_Driver = new UdpNetworkDriver(new SimulatorUtility.Parameters { MaxPacketSize = 256, MaxPacketCount = 30, PacketDelayMs = 50 });
         m_Pipeline = m_Driver.CreatePipeline(typeof(UnreliableSequencedPipelineStage), typeof(SimulatorPipelineStage));
 
         m_Endpoint = new NetworkEndPoint();

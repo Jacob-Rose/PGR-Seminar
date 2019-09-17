@@ -31,6 +31,16 @@ public struct PlayerInteractInfo
 //probably two seperate player scripts, ClientPlayer and NetworkPlayer
 public class Player : MonoBehaviour
 {
+
+    [SerializeField]
+    protected float m_Speed; //THIS IS FOR TESTING ONLY, WILL BE REPLACED LATER 
+    //set how much a rotation changes the player
+    [SerializeField]
+    protected float zRotAmount;
+
+    [SerializeField]
+    protected float speedDecreaseAmount;
+
     [SerializeField]
     protected float speedMod; //used for max speed calculation
 
@@ -57,7 +67,7 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
-    void Update()
+    public virtual void Update()
     {
 
 

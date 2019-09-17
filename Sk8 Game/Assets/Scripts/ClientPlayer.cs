@@ -10,15 +10,6 @@ public class ClientPlayer : Player
     private bool isRotating; //Testing only
     private Rigidbody2D m_Rigidbody; //testing only
 
-    [SerializeField]
-    private float m_Speed; //THIS IS FOR TESTING ONLY, WILL BE REPLACED LATER 
-    //set how much a rotation changes the player
-    [SerializeField]
-    private float zRotAmount;
-
-    [SerializeField]
-    private float speedDecreaseAmount;
-
     PlayerInfo clientPosInfo;
 
     // Start is called before the first frame update
