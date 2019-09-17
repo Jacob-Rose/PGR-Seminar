@@ -7,11 +7,14 @@ using UnityEngine;
  */
 public class ClientPlayer : Player
 {
+    //set how much a rotation changes the player
+    [SerializeField]
+    private float zRotAmount;
 
-    private float leftTime;
-    private float rightTime;
+    [SerializeField]
+    private float speedDecreaseAmount;
 
-
+    PlayerPosInfo clientPosInfo;
 
     // Start is called before the first frame update
     void Start()
@@ -25,23 +28,29 @@ public class ClientPlayer : Player
         //get keypress, send to server
         //update posInfo based on input
 
+        //instead of calculating how long key is held, it just adds a constant amount each time. This can change, just still working on timers.
         if (Input.GetKeyDown("LeftArrow"))
         {
-            leftTime = Time.time;
+            clientPosInfo.zRot -= zRotAmount;
+            clientPosInfo.currentSpeed -= speedDecreaseAmount;
         }
         if (Input.GetKeyDown("RightArrow"))
         {
-            rightTime = Time.time;
+            clientPosInfo.zRot += zRotAmount;
+            clientPosInfo.currentSpeed -= speedDecreaseAmount;
         }
         if (Input.GetKeyUp("LeftArrow"))
         {
-
+            clientPosInfo.zRot = 0.0f;
         }
         if (Input.GetKeyUp("RightArrow"))
         {
-
+            clientPosInfo.zRot = 0.0f;
         }
         //send new info to the server after player update function is called
+        base.Update();
+
+
     }
     
 }
