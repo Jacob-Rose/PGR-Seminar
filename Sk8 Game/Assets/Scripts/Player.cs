@@ -63,10 +63,10 @@ public class Player : MonoBehaviour
     {
         //update positions based on the input of the player
         posInfo.position = transform.rotation.z * posInfo.zRot * Vector3.forward;
-        //currentSpeed = passedInSpeed //this is from the server, I think
+        
 
         //update the speed of the player
-        if (mCurrentSpeed <= MaxSpeed)
+        if (mCurrentSpeed <= MaxSpeed && posInfo.zRot == 0) //speed only increases if the player is not turning, functionality for tricks to come
         {
             //mCurrentSpeed += speedIncrease * accelMod * comboCount
         }

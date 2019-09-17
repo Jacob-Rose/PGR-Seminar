@@ -24,7 +24,8 @@ public class NetworkedPlayer : Player
         NetworkPos.Info.zRot = passedZRot;
         NetworkPosInfo.position = passedRot;
         This will be done for each player
+        
+        base.Update(); //after all information is updated, use the player update
         */
-        base.Update();
     }
 }
