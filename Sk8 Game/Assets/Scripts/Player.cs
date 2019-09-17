@@ -57,17 +57,20 @@ public class Player : MonoBehaviour
 
     // Update is called once per frame
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
-    public virtual void Update()
+    void Update()
     {
-        //update positions based on the input of the player
-        posInfo.position = transform.rotation.z * posInfo.zRot * Vector3.forward;
-        
 
+
+        //update positions based on the input of the player
+        //m_Rigidbody.velocity = transform.up * posInfo.currentSpeed; Rigidbody will end up as a part of the player once base.Update() is working
+        //transform.Rotate(new Vector3(0,0,posInfo.zRot).normalized) * Time.deltaTime * posInfo.currentSpeed, Space.World); Still need to test this some more.
         //update the speed of the player
         if (posInfo.currentSpeed <= MaxSpeed && posInfo.zRot == 0) //speed only increases if the player is not turning, functionality for tricks to come
         {
             //mCurrentSpeed += speedIncrease * accelMod * comboCount
         }
+
+        posInfo.position = transform.position;
 
     }
 }
