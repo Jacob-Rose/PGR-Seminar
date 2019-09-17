@@ -6,11 +6,12 @@ using UnityEngine;
  * Contains All The Shared Data and functions between ClientPlayer and NetworkedPlayer
  * Specific functions can be added to ClientPlayer and NetworkedPlayer classes as well.
  */
-public struct PlayerPosInfo //sent from server to 
+public struct PlayerInfo //sent from server to 
 {
     public Vector3 position;
     public float zRot;
     public float currentSpeed;
+    public int currentScore;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -31,26 +32,23 @@ public struct PlayerInteractInfo
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float speedMod; //used for max speed calculation
+    protected float speedMod; //used for max speed calculation
 
     [SerializeField]
-    private float accelMod; //modifier for the acceleration when the player speed rises in Update
+    protected float accelMod; //modifier for the acceleration when the player speed rises in Update
 
     [SerializeField]
-    private float speedIncrease; //Amount speed goes up by each time update is called, accelMod directly influences the value, allow the speedIncrease to amp up as time goes on
+    protected float speedIncrease; //Amount speed goes up by each time update is called, accelMod directly influences the value, allow the speedIncrease to amp up as time goes on
 
-    PlayerPosInfo posInfo;
+    protected PlayerInfo posInfo;
 
     //ADD VARIABLES IF NEEDED FOR ACCELERATION
-    float MaxSpeed { get
+    protected float MaxSpeed { get
         {
             return 0.0f; //todo
             //maxSpeed += mCurrentScore * speedMod; //speedMod can be set to a value we think is acceptable in the editor
         }
     }
-    float mCurrentSpeed = 0.0f;
-    int mCurrentScore = 0; //used to calculate max speed
-    float mTurnDeg; //turn degree from the up axis, so negative is left, positive is right
     // Start is called before the first frame update
     void Start()
     {
@@ -66,7 +64,7 @@ public class Player : MonoBehaviour
         
 
         //update the speed of the player
-        if (mCurrentSpeed <= MaxSpeed && posInfo.zRot == 0) //speed only increases if the player is not turning, functionality for tricks to come
+        if (posInfo.currentSpeed <= MaxSpeed && posInfo.zRot == 0) //speed only increases if the player is not turning, functionality for tricks to come
         {
             //mCurrentSpeed += speedIncrease * accelMod * comboCount
         }

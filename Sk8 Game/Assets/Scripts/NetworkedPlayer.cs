@@ -4,28 +4,10 @@ using UnityEngine;
 
 public class NetworkedPlayer : Player
 {
-
-
-
-    PlayerPosInfo NetworkedPosInfo;
-    // Start is called before the first frame update
-    void Start()
+    void updatePlayerInfo(PlayerInfo info)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        /*update posInfo struct
-        data needs to be recieved from the server first
-        planned code will be as follows
-        NetworkedPosInfo.currentSpeed = passedSpeed;
-        NetworkPos.Info.zRot = passedZRot;
-        NetworkPosInfo.position = passedRot;
-        This will be done for each player
-        
-        base.Update(); //after all information is updated, use the player update
-        */
+        posInfo.currentSpeed = info.currentSpeed;
+        posInfo.zRot = info.zRot;
+        posInfo.position = info.position;
     }
 }

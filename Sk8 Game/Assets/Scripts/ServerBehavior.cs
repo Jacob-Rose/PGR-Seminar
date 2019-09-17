@@ -81,8 +81,6 @@ public class ServerBehavior : MonoBehaviour
                 {
                     var readerCtx = default(DataStreamReader.Context);
                     uint number = stream.ReadUInt(ref readerCtx);
-                    Debug.Log("Got " + number + " from the Client adding + 2 to it.");
-                    number += 2;
 
                     using (var writer = new DataStreamWriter(4, Allocator.Temp))
                     {
@@ -94,7 +92,7 @@ public class ServerBehavior : MonoBehaviour
         }
     }
 
-    public void HandleDataMessage()
+    public void HandleDataMessage(ref DataStreamReader stream)
     {
 
     }

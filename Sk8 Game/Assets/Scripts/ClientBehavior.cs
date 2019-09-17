@@ -12,6 +12,7 @@ public class ClientBehavior : MonoBehaviour
     public NetworkConnection m_Connection;
     public NetworkPipeline m_Pipeline;
     public NetworkEndPoint m_Endpoint;
+    public PlayerManager m_Players;
     public bool Done;
 
     public void Awake()
