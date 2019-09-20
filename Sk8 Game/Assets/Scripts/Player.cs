@@ -12,6 +12,7 @@ public struct PlayerInfo //sent from server to
     public float zRot;
     public float currentSpeed;
     public int currentScore;
+    public PlayerMove move;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -19,21 +20,26 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
     TURNLEFT,
     TURNRIGHT,
     ATTACK,
-    OLLIE
+    OLLIE,
+    NONE
     //add more, clean up options
 }
-public struct PlayerInteractInfo
+/*public struct PlayerInteractInfo
 {
     public PlayerMove move;
     //public int comboCount //used for acceleration, still need to work on this
 }
+*/
 
 //probably two seperate player scripts, ClientPlayer and NetworkPlayer
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    GameObject player;
 
     [SerializeField]
-    protected float m_Speed; //THIS IS FOR TESTING ONLY, WILL BE REPLACED LATER 
+    protected float startSpeed;
+
     //set how much a rotation changes the player
     [SerializeField]
     protected float zRotAmount;
@@ -52,35 +58,56 @@ public class Player : MonoBehaviour
 
     protected PlayerInfo posInfo;
 
+    protected Rigidbody2D m_Rigidbody;
+
+    protected SpriteRenderer m_SpriteRenderer;
+
     //ADD VARIABLES IF NEEDED FOR ACCELERATION
-    protected float MaxSpeed { get
-        {
-            return 0.0f; //todo
-            //maxSpeed += mCurrentScore * speedMod; //speedMod can be set to a value we think is acceptable in the editor
-        }
-    }
+    protected float MaxSpeed;
+
     // Start is called before the first frame update
-    void Start()
+    public virtual void Start()
     {
-        
+        m_Rigidbody = player.GetComponent<Rigidbody2D>();
+        m_SpriteRenderer = player.GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
-    public virtual void Update()
+    public virtual void FixedUpdate()
     {
 
-
+        if (posInfo.move == PlayerMove.TURNLEFT)
+        {
+            transform.Rotate(new Vector3(0, 0, -1)* Time.deltaTime * posInfo.currentSpeed * 3.0f, Space.World);
+        }
+        if (posInfo.move == PlayerMove.TURNRIGHT)
+        {
+            transform.Rotate(new Vector3(0, 0, 1) * Time.deltaTime * posInfo.currentSpeed * 3.0f, Space.World);
+        }
+        if (posInfo.move == PlayerMove.OLLIE)
+        {
+            m_SpriteRenderer.color = Color.red;
+        }
         //update positions based on the input of the player
         //m_Rigidbody.velocity = transform.up * posInfo.currentSpeed; Rigidbody will end up as a part of the player once base.Update() is working
         //transform.Rotate(new Vector3(0,0,posInfo.zRot).normalized) * Time.deltaTime * posInfo.currentSpeed, Space.World); Still need to test this some more.
         //update the speed of the player
-        if (posInfo.currentSpeed <= MaxSpeed && posInfo.zRot == 0) //speed only increases if the player is not turning, functionality for tricks to come
+        if (posInfo.move == PlayerMove.NONE)
         {
-            //mCurrentSpeed += speedIncrease * accelMod * comboCount
+            transform.rotation = Quaternion.identity;
+            posInfo.zRot = 0.0f;
+            posInfo.currentSpeed += speedIncrease * accelMod;
+            m_SpriteRenderer.color = Color.white;
         }
 
+        m_Rigidbody.velocity = transform.up * posInfo.currentSpeed;
         posInfo.position = transform.position;
 
+    }
+    public float getMaxSpeed()
+    {
+        MaxSpeed = (posInfo.currentScore * speedMod) + startSpeed;
+        return MaxSpeed;
     }
 }

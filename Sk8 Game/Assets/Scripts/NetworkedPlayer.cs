@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class NetworkedPlayer : Player
 {
-    public override void Update()
+    public override void FixedUpdate()
     {
-        base.Update();
+        base.FixedUpdate();
     }
-
     void updatePlayerInfo(PlayerInfo info)
     {
         posInfo.currentSpeed = info.currentSpeed;
         posInfo.zRot = info.zRot;
         posInfo.position = info.position;
+        posInfo.move = info.move;
     }
 }

@@ -7,21 +7,17 @@ using UnityEngine;
  */
 public class ClientPlayer : Player
 {
-    private bool isRotating; //Testing only
-    private Rigidbody2D m_Rigidbody; //testing only
-
-    PlayerInfo clientPosInfo;
 
     // Start is called before the first frame update
-    void Start()
+    public override void Start()
     {
-        m_Rigidbody = GetComponent<Rigidbody2D>();
-        m_Speed = 5.0f;
-        isRotating = false;
+
+        posInfo.currentSpeed = getMaxSpeed();
+        base.Start();
     }
 
     // Update is called once per frame
-    void Update()
+    public override void FixedUpdate()
     {
         //get keypress, send to server
         //update posInfo based on input
@@ -29,47 +25,26 @@ public class ClientPlayer : Player
         //instead of calculating how long key is held, it just adds a constant amount each time. This can change, just still working on timers.
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            clientPosInfo.zRot -= zRotAmount;
-            clientPosInfo.currentSpeed -= speedDecreaseAmount;
-            transform.Rotate(new Vector3(0, 0, -1) * Time.deltaTime * m_Speed * 3.0f, Space.World); //HARD CODED FOR TEST
-            isRotating = true;
+            posInfo.move = PlayerMove.TURNLEFT;
+            posInfo.zRot -= zRotAmount;
+            posInfo.currentSpeed -= speedDecreaseAmount;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        else if (Input.GetKey(KeyCode.RightArrow))
         {
-            clientPosInfo.zRot += zRotAmount;
-            clientPosInfo.currentSpeed -= speedDecreaseAmount;
-            transform.Rotate(new Vector3(0, 0, 1) * Time.deltaTime * m_Speed * 3.0f, Space.World); //HARD CODED FOR TEST
-            isRotating = true;
+            posInfo.move = PlayerMove.TURNRIGHT;
+            posInfo.zRot += zRotAmount;
+            posInfo.currentSpeed -= speedDecreaseAmount;
         }
-        if (isRotating == false) //If the player isn't hitting an arrow key, reset them to have no rotation, but keep the postion correct
+        else if (Input.GetKey(KeyCode.Space))
         {
-            transform.rotation = Quaternion.identity;
-            clientPosInfo.zRot = 0.0f;
-        }
-        m_Rigidbody.velocity = transform.up * m_Speed; //HARD CODED FOR TEST
-        isRotating = false;
-
-        /* Commenting out for the test, will fix later, ideally in a day or two
-        if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            clientPosInfo.zRot = 0.0f;
-        }
-        if (Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            clientPosInfo.zRot = 0.0f;
-        }
-        transform.Rotate(0, 0, clientPosInfo.zRot);
-        if (clientPosInfo.zRot >= 0.0f && clientPosInfo.zRot <= 2.0f)
-        {
-            transform.position += new Vector3(0.0f, 0.2f, 0.0f);
+            posInfo.move = PlayerMove.OLLIE;
+            posInfo.currentSpeed -= speedDecreaseAmount;
         }
         else
         {
-            transform.position += new Vector3(0.0f, 0.2f, 0.0f) * clientPosInfo.zRot;
+            posInfo.move = PlayerMove.NONE;
         }
-        */
-        //send new info to the server after player update function is called
-        //base.Update();
+        base.FixedUpdate();
 
 
     }
