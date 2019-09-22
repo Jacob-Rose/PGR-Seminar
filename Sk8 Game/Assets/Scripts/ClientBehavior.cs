@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
+using Valve.Sockets;
 using UnityEngine;
 
 public enum ClientNetworkMessages
@@ -19,6 +20,8 @@ public enum ClientNetworkMessages
 
 public class ClientBehavior : MonoBehaviour
 {
+    //public NetworkingSockets m_ClientSocket;
+    //public Address m_Address;
     public UdpNetworkDriver m_Driver;
     public NetworkConnection m_Connection;
     public NetworkPipeline m_Pipeline;
@@ -28,7 +31,14 @@ public class ClientBehavior : MonoBehaviour
 
     public void Awake()
     {
+        //Valve.Sockets.Library.Initialize(); //both client and host player both have clientbehavior
         DontDestroyOnLoad(this.gameObject);
+    }
+
+    public void OnDestroy()
+    {
+        m_Driver.Dispose();
+        //Valve.Sockets.Library.Deinitialize();
     }
     public void Start()
     {
@@ -46,10 +56,7 @@ public class ClientBehavior : MonoBehaviour
         m_Connection = m_Driver.Connect(m_Endpoint);
     }
 
-    public void OnDestroy()
-    {
-        m_Driver.Dispose();
-    }
+    
 
     // Update is called once per frame
     public void Update()
