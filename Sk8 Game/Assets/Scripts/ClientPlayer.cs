@@ -12,7 +12,7 @@ public class ClientPlayer : Player
     public override void Start()
     {
 
-        posInfo.currentSpeed = getMaxSpeed();
+        playerInfo.currentSpeed = getMaxSpeed();
         base.Start();
     }
 
@@ -25,28 +25,26 @@ public class ClientPlayer : Player
         //instead of calculating how long key is held, it just adds a constant amount each time. This can change, just still working on timers.
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            posInfo.move = PlayerMove.TURNLEFT;
-            posInfo.zRot -= zRotAmount;
-            posInfo.currentSpeed -= speedDecreaseAmount;
+            playerInfo.move = PlayerMove.TURNLEFT;
+            playerInfo.zRot -= zRotAmount;
+            playerInfo.currentSpeed -= speedDecreaseAmount;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            posInfo.move = PlayerMove.TURNRIGHT;
-            posInfo.zRot += zRotAmount;
-            posInfo.currentSpeed -= speedDecreaseAmount;
+            playerInfo.move = PlayerMove.TURNRIGHT;
+            playerInfo.zRot += zRotAmount;
+            playerInfo.currentSpeed -= speedDecreaseAmount;
         }
         else if (Input.GetKey(KeyCode.Space))
         {
-            posInfo.move = PlayerMove.OLLIE;
-            posInfo.currentSpeed -= speedDecreaseAmount;
+            playerInfo.move = PlayerMove.OLLIE;
+            playerInfo.currentSpeed -= speedDecreaseAmount;
         }
         else
         {
-            posInfo.move = PlayerMove.NONE;
+            playerInfo.move = PlayerMove.NONE;
         }
         base.FixedUpdate();
-
-
     }
     
 }

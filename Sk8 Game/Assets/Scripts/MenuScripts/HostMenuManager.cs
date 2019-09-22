@@ -10,6 +10,9 @@ public class HostMenuManager : MonoBehaviour
     public ServerBehavior m_Server;
 
     public TMPro.TextMeshProUGUI ipText;
+
+    public TMPro.TextMeshProUGUI player1Text;
+
     // Start is called before the first frame update
     void Start()
     {

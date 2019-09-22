@@ -1,9 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
 using UnityEngine;
+
+public enum ClientNetworkMessages
+{
+    SetupInfo, //the first signal after connection to sync data
+    StartGame,
+    PlayerInfo,
+    PlayerJoined,
+    PlayerLeft,
+    TileCreated, //tile destruction and recycling done without server intervention
+}
 
 
 public class ClientBehavior : MonoBehaviour
@@ -12,8 +23,8 @@ public class ClientBehavior : MonoBehaviour
     public NetworkConnection m_Connection;
     public NetworkPipeline m_Pipeline;
     public NetworkEndPoint m_Endpoint;
-    public PlayerManager m_Players;
-    public bool Done;
+    public PlayerManager m_PlayerManager;
+    public GameManager m_Gamemanager;
 
     public void Awake()
     {
@@ -24,6 +35,7 @@ public class ClientBehavior : MonoBehaviour
         m_Driver = new UdpNetworkDriver(new SimulatorUtility.Parameters { MaxPacketSize = 256, MaxPacketCount = 30, PacketDelayMs = 100 });
         m_Pipeline = m_Driver.CreatePipeline(typeof(UnreliableSequencedPipelineStage), typeof(SimulatorPipelineStage));
         m_Connection = default;
+        m_PlayerManager.AddClientPlayer(); //add self
     }
 
     public void ConnectToIP(string ip)
@@ -46,11 +58,6 @@ public class ClientBehavior : MonoBehaviour
 
         if (!m_Connection.IsCreated)
         {
-            if (!Done)
-            {
-                Debug.Log("Something went wrong during connection");
-            }
-
             return;
         }
 
@@ -63,22 +70,33 @@ public class ClientBehavior : MonoBehaviour
             {
                 Debug.Log("We are now connected to the server.");
 
-                var value = 1;
-
-                using (var writer = new DataStreamWriter(4, Allocator.Temp))
-                {
-                    writer.Write(value);
-                    m_Connection.Send(m_Driver, writer);
-                }
+                //todo add username info sent
             }
             else if (cmd == NetworkEvent.Type.Data)
             {
                 var readerCtx = default(DataStreamReader.Context);
-                uint value = stream.ReadUInt(ref readerCtx);
-
-                Debug.Log("Got the value = " + value + " back from the server.");
-
-                Done = true;
+                int dataType = stream.ReadInt(ref readerCtx);
+                if(dataType == (int)ClientNetworkMessages.SetupInfo)
+                {
+                    int playerCount = stream.ReadInt(ref readerCtx);
+                    for(int i =0; i < playerCount; i++)
+                    {
+                        PlayerInfo info = ServerBehavior.ReadPlayerInfo(ref stream);
+                        m_PlayerManager.AddNetworkedPlayer(info);
+                    }
+                }
+                else if(dataType == (int)ClientNetworkMessages.PlayerInfo)
+                {
+                    PlayerInfo newInfo = ServerBehavior.ReadPlayerInfo(ref stream);
+                    m_PlayerManager.HandlePlayerUpdate(newInfo);
+                }
+                else if(dataType == (int)ClientNetworkMessages.StartGame)
+                {
+                    byte[] time = stream.ReadBytesAsArray(ref readerCtx, 4);
+                    long tickTime = BitConverter.ToInt64(time, 0);
+                    DateTime timeToStart = new DateTime(tickTime);
+                    Invoke("StartGame", (timeToStart - DateTime.Now).Seconds);
+                }
                 m_Connection.Disconnect(m_Driver);
                 m_Connection = default;
             }
@@ -88,5 +106,10 @@ public class ClientBehavior : MonoBehaviour
                 m_Connection = default;
             }
         }
+    }
+
+    public void StartGame()
+    {
+        //todo
     }
 }

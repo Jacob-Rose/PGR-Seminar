@@ -8,11 +8,12 @@ using UnityEngine;
  */
 public struct PlayerInfo //sent from server to 
 {
-    public Vector3 position;
+    public Vector2 position;
     public float zRot;
     public float currentSpeed;
     public int currentScore;
     public PlayerMove move;
+    public int id;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -31,12 +32,9 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
 }
 */
 
-//probably two seperate player scripts, ClientPlayer and NetworkPlayer
 public class Player : MonoBehaviour
 {
-    [SerializeField]
-    GameObject player;
-
+    protected bool gameStarted = false;
     [SerializeField]
     protected float startSpeed;
 
@@ -56,7 +54,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     protected float speedIncrease; //Amount speed goes up by each time update is called, accelMod directly influences the value, allow the speedIncrease to amp up as time goes on
 
-    protected PlayerInfo posInfo;
+    protected PlayerInfo playerInfo;
 
     protected Rigidbody2D m_Rigidbody;
 
@@ -68,24 +66,30 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
-        m_Rigidbody = player.GetComponent<Rigidbody2D>();
-        m_SpriteRenderer = player.GetComponent<SpriteRenderer>();
+        m_Rigidbody = GetComponent<Rigidbody2D>();
+        m_SpriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public PlayerInfo GetPlayerInfo()
+    {
+        return playerInfo;
     }
 
     // Update is called once per frame
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
     public virtual void FixedUpdate()
     {
-
-        if (posInfo.move == PlayerMove.TURNLEFT)
+        if (!gameStarted)
+            return;
+        if (playerInfo.move == PlayerMove.TURNLEFT)
         {
-            transform.Rotate(new Vector3(0, 0, -1)* Time.deltaTime * posInfo.currentSpeed * 3.0f, Space.World);
+            transform.Rotate(new Vector3(0, 0, -1)* Time.deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
         }
-        if (posInfo.move == PlayerMove.TURNRIGHT)
+        if (playerInfo.move == PlayerMove.TURNRIGHT)
         {
-            transform.Rotate(new Vector3(0, 0, 1) * Time.deltaTime * posInfo.currentSpeed * 3.0f, Space.World);
+            transform.Rotate(new Vector3(0, 0, 1) * Time.deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
         }
-        if (posInfo.move == PlayerMove.OLLIE)
+        if (playerInfo.move == PlayerMove.OLLIE)
         {
             m_SpriteRenderer.color = Color.red;
         }
@@ -93,21 +97,20 @@ public class Player : MonoBehaviour
         //m_Rigidbody.velocity = transform.up * posInfo.currentSpeed; Rigidbody will end up as a part of the player once base.Update() is working
         //transform.Rotate(new Vector3(0,0,posInfo.zRot).normalized) * Time.deltaTime * posInfo.currentSpeed, Space.World); Still need to test this some more.
         //update the speed of the player
-        if (posInfo.move == PlayerMove.NONE)
+        if (playerInfo.move == PlayerMove.NONE)
         {
             transform.rotation = Quaternion.identity;
-            posInfo.zRot = 0.0f;
-            posInfo.currentSpeed += speedIncrease * accelMod;
+            playerInfo.zRot = 0.0f;
+            playerInfo.currentSpeed += speedIncrease * accelMod;
             m_SpriteRenderer.color = Color.white;
         }
 
-        m_Rigidbody.velocity = transform.up * posInfo.currentSpeed;
-        posInfo.position = transform.position;
-
+        m_Rigidbody.velocity = transform.up * playerInfo.currentSpeed;
+        playerInfo.position = transform.position;
     }
     public float getMaxSpeed()
     {
-        MaxSpeed = (posInfo.currentScore * speedMod) + startSpeed;
+        MaxSpeed = (playerInfo.currentScore * speedMod) + startSpeed;
         return MaxSpeed;
     }
 }

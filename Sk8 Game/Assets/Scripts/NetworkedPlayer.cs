@@ -8,11 +8,8 @@ public class NetworkedPlayer : Player
     {
         base.FixedUpdate();
     }
-    void updatePlayerInfo(PlayerInfo info)
+    public void updatePlayerInfo(PlayerInfo info)
     {
-        posInfo.currentSpeed = info.currentSpeed;
-        posInfo.zRot = info.zRot;
-        posInfo.position = info.position;
-        posInfo.move = info.move;
+        playerInfo = info;
     }
 }
