@@ -9,6 +9,8 @@ public class PlayerManager
     public List<Player> m_Players;
     public ClientPlayer cPlayerRef;
     public NetworkedPlayer nPlayerRef;
+
+    private ClientPlayer mClientPlayer;
     public void AddNetworkedPlayer(PlayerInfo info)
     {
         NetworkedPlayer player = UnityEngine.Object.Instantiate(nPlayerRef.gameObject).GetComponent<NetworkedPlayer>();
@@ -16,10 +18,15 @@ public class PlayerManager
         player.updatePlayerInfo(info);
     }
 
+    ClientPlayer getClientPlayer()
+    {
+        return mClientPlayer;
+    }
     public void AddClientPlayer()
     {
         ClientPlayer player = UnityEngine.Object.Instantiate(cPlayerRef.gameObject).GetComponent<ClientPlayer>();
         m_Players.Add(player);
+        mClientPlayer = player;
     }
 
     public void HandlePlayerUpdate(PlayerInfo info)
