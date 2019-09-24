@@ -11,9 +11,9 @@ public enum ClientNetworkMessages
 {
     SetupInfo, //the first signal after connection to sync data
     StartGame,
-    PlayerInfo,
-    PlayerJoined,
-    PlayerLeft,
+    PlayerUpdateInfo,
+    PlayerConnected,
+    PlayerDisconnected,
     TileCreated, //tile destruction and recycling done without server intervention
 }
 
@@ -92,7 +92,17 @@ public class ClientBehavior : MonoBehaviour
                         m_PlayerManager.AddNetworkedPlayer(info);
                     }
                 }
-                else if(dataType == (int)ClientNetworkMessages.PlayerInfo)
+                else if(dataType == (int)ClientNetworkMessages.PlayerConnected)
+                {
+                    PlayerInfo newInfo = ServerBehavior.ReadPlayerInfo(ref stream);
+                    m_PlayerManager.AddNetworkedPlayer(newInfo);
+                }
+                else if(dataType == (int)ClientNetworkMessages.PlayerDisconnected)
+                {
+                    PlayerInfo newInfo = ServerBehavior.ReadPlayerInfo(ref stream);
+                    //add remove support
+                }
+                else if(dataType == (int)ClientNetworkMessages.PlayerUpdateInfo)
                 {
                     PlayerInfo newInfo = ServerBehavior.ReadPlayerInfo(ref stream);
                     m_PlayerManager.HandlePlayerUpdate(newInfo);

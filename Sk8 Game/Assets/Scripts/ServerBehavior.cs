@@ -176,9 +176,26 @@ public class ServerBehavior : MonoBehaviour
         Debug.Log("Accepted a connection");
     }
 
+    public void SendPlayerConnectedMessage(ServerPlayer player)
+    {
+        DataStreamWriter writer = new DataStreamWriter();
+        writer.Write((int)ClientNetworkMessages.PlayerConnected);
+        PlayerInfoToNetStream(player.info, ref writer);
+        m_Driver.Send(m_Pipeline, player.connection, writer);
+    }
+
+    public void SendPlayerDisconnectedMessage(ServerPlayer player)
+    {
+        DataStreamWriter writer = new DataStreamWriter();
+        writer.Write((int)ClientNetworkMessages.PlayerDisconnected);
+        PlayerInfoToNetStream(player.info, ref writer);
+        m_Driver.Send(m_Pipeline, player.connection, writer);
+    }
+
     public void SendStartupInfo(ServerPlayer player)
     {
         DataStreamWriter writer = new DataStreamWriter();
+        writer.Write((int)ClientNetworkMessages.SetupInfo);
         getStartupInfoStream(ref writer);
         m_Driver.Send(m_Pipeline, player.connection, writer);
     }
