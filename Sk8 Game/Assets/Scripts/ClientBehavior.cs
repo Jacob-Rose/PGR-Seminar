@@ -26,8 +26,8 @@ public class ClientBehavior : MonoBehaviour
     public NetworkConnection m_Connection;
     public NetworkPipeline m_Pipeline;
     public NetworkEndPoint m_Endpoint;
+
     public PlayerManager m_PlayerManager;
-    public GameManager m_Gamemanager;
 
     public void Awake()
     {
@@ -113,6 +113,9 @@ public class ClientBehavior : MonoBehaviour
                 m_Connection = default;
             }
         }
+        DataStreamWriter writer = new DataStreamWriter();
+        ServerBehavior.PlayerInfoToNetStream(m_PlayerManager.getClientPlayer().GetPlayerInfo(), ref writer);
+        m_Driver.Send(m_Pipeline, m_Connection, writer);
     }
 
     public void StartGame()

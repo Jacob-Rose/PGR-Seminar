@@ -4,28 +4,35 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class PlayerManager
+public class PlayerManager : MonoBehaviour
 {
     public List<Player> m_Players;
     public ClientPlayer cPlayerRef;
     public NetworkedPlayer nPlayerRef;
 
     private ClientPlayer mClientPlayer;
+
+    public void Start()
+    {
+        DontDestroyOnLoad(this);
+    }
     public void AddNetworkedPlayer(PlayerInfo info)
     {
-        NetworkedPlayer player = UnityEngine.Object.Instantiate(nPlayerRef.gameObject).GetComponent<NetworkedPlayer>();
+        NetworkedPlayer player = Instantiate(nPlayerRef.gameObject).GetComponent<NetworkedPlayer>();
+        player.transform.position = new Vector3(m_Players.Count * 4.0f, 0.0f);
         m_Players.Add(player);
         player.updatePlayerInfo(info);
     }
 
-    ClientPlayer getClientPlayer()
+    public ClientPlayer getClientPlayer()
     {
         return mClientPlayer;
     }
     public void AddClientPlayer()
     {
-        ClientPlayer player = UnityEngine.Object.Instantiate(cPlayerRef.gameObject).GetComponent<ClientPlayer>();
+        ClientPlayer player = Instantiate(cPlayerRef.gameObject).GetComponent<ClientPlayer>();
         m_Players.Add(player);
+        player.transform.position = new Vector3(m_Players.Count * 4.0f, 0.0f);
         mClientPlayer = player;
     }
 

@@ -34,7 +34,6 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
 
 public class Player : MonoBehaviour
 {
-    protected bool gameStarted = false;
     [SerializeField]
     protected float startSpeed;
 
@@ -79,7 +78,7 @@ public class Player : MonoBehaviour
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
     public virtual void FixedUpdate()
     {
-        if (!gameStarted)
+        if (!GameManager.instance.gameStarted)
             return;
         if (playerInfo.move == PlayerMove.TURNLEFT)
         {
