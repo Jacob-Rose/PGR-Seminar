@@ -172,7 +172,7 @@ public class ServerBehavior : MonoBehaviour
     {
         ServerPlayer player = new ServerPlayer(c);
         m_Players.Add(player);
-        
+        SendPlayerConnectedMessage(player);
         Debug.Log("Accepted a connection");
     }
 
