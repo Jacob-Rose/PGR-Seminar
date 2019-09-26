@@ -121,9 +121,10 @@ public class ClientBehavior : MonoBehaviour
                 m_Connection = default;
             }
         }
-        DataStreamWriter writer = new DataStreamWriter();
+        DataStreamWriter writer = new DataStreamWriter(64, Allocator.TempJob);
         ServerBehavior.PlayerInfoToNetStream(m_PlayerManager.getClientPlayer().GetPlayerInfo(), ref writer);
         m_Driver.Send(m_Pipeline, m_Connection, writer);
+        writer.Dispose();
     }
 
     public void StartGame()

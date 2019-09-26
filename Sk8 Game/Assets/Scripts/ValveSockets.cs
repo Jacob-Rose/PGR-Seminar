@@ -20,7 +20,7 @@
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
  */
-
+//#define VALVESOCKETS_SPAN
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -29,11 +29,14 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
+
+
 namespace Valve.Sockets
 {
     using ListenSocket = UInt32;
     using Connection = UInt32;
     using Microseconds = Int64;
+
 
     [Flags]
     public enum SendType

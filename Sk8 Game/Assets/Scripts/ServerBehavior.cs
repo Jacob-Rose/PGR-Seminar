@@ -102,7 +102,7 @@ public class ServerBehavior : MonoBehaviour
                     {
                         PlayerInfo newInfo = ReadPlayerInfo(ref stream);
                         m_Players[i] = new ServerPlayer(m_Players[i].connection, newInfo);
-                        DataStreamWriter writer = new DataStreamWriter();
+                        DataStreamWriter writer = new DataStreamWriter(64, Allocator.TempJob);
                         PlayerInfoToNetStream(newInfo, ref writer);
                         for (int j = 0; j < m_Players.Length; j++)
                         {
@@ -111,6 +111,7 @@ public class ServerBehavior : MonoBehaviour
 
                             m_Driver.Send(m_Pipeline, m_Players[j].connection, writer);
                         }
+                        writer.Dispose();
                     }
                 }
             }
