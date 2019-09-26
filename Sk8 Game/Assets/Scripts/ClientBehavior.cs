@@ -20,8 +20,6 @@ public enum ClientNetworkMessages
 
 public class ClientBehavior : MonoBehaviour
 {
-    //public NetworkingSockets m_ClientSocket;
-    //public Address m_Address;
     public UdpNetworkDriver m_Driver;
     public NetworkConnection m_Connection;
     public NetworkPipeline m_Pipeline;
@@ -131,5 +129,6 @@ public class ClientBehavior : MonoBehaviour
     public void StartGame()
     {
         //todo
+        GameManager.instance.gameStarted = true;
     }
 }

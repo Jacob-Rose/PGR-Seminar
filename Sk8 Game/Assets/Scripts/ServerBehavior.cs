@@ -39,16 +39,10 @@ public struct ServerPlayer
 
 public class ServerBehavior : MonoBehaviour
 {
-    /* NOTE: I GOT NO CLUE HOW NETWORKING WORKS, SO MOST CODE IS BASED OF
-     * https://github.com/Unity-Technologies/multiplayer/blob/master/com.unity.transport/Documentation~/workflow-client-server.md
-     * god bless this dude too for having up to date docs
-     * https://gist.github.com/duynguye/7b6b0828a89ab4e4b7da769f86adc1fe
-     */
     public UdpNetworkDriver m_Driver;
     public NativeList<ServerPlayer> m_Players;
     public NetworkPipeline m_Pipeline;
     public NetworkEndPoint m_Endpoint;
-    public bool gameStarted = false;
 
 
     // Start is called before the first frame update
@@ -172,6 +166,7 @@ public class ServerBehavior : MonoBehaviour
     {
         ServerPlayer player = new ServerPlayer(c);
         m_Players.Add(player);
+        SendStartupInfo(player);
         SendPlayerConnectedMessage(player);
         Debug.Log("Accepted a connection");
     }
@@ -211,7 +206,7 @@ public class ServerBehavior : MonoBehaviour
 
     public void setGameStartSignal()
     {
-        if(!gameStarted)
+        if(!GameManager.instance.gameStarted)
         {
             DateTime timeToStart = DateTime.Now; //global time
             timeToStart.AddSeconds(3.0f);//add three seconds to start
