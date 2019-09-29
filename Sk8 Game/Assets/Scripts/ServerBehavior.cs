@@ -174,26 +174,29 @@ public class ServerBehavior : MonoBehaviour
 
     public void SendPlayerConnectedMessage(ServerPlayer player)
     {
-        DataStreamWriter writer = new DataStreamWriter();
+        DataStreamWriter writer = new DataStreamWriter(64, Allocator.TempJob);
         writer.Write((int)ClientNetworkMessages.PlayerConnected);
         PlayerInfoToNetStream(player.info, ref writer);
         m_Driver.Send(m_Pipeline, player.connection, writer);
+        writer.Dispose();
     }
 
     public void SendPlayerDisconnectedMessage(ServerPlayer player)
     {
-        DataStreamWriter writer = new DataStreamWriter();
+        DataStreamWriter writer = new DataStreamWriter(64, Allocator.TempJob);
         writer.Write((int)ClientNetworkMessages.PlayerDisconnected);
         PlayerInfoToNetStream(player.info, ref writer);
         m_Driver.Send(m_Pipeline, player.connection, writer);
+        writer.Dispose();
     }
 
     public void SendStartupInfo(ServerPlayer player)
     {
-        DataStreamWriter writer = new DataStreamWriter();
+        DataStreamWriter writer = new DataStreamWriter(64, Allocator.TempJob);
         writer.Write((int)ClientNetworkMessages.SetupInfo);
         getStartupInfoStream(ref writer);
         m_Driver.Send(m_Pipeline, player.connection, writer);
+        writer.Dispose();
     }
 
     public void getStartupInfoStream(ref DataStreamWriter writer)
@@ -211,9 +214,14 @@ public class ServerBehavior : MonoBehaviour
         {
             DateTime timeToStart = DateTime.Now; //global time
             timeToStart.AddSeconds(3.0f);//add three seconds to start
-            DataStreamWriter writer = new DataStreamWriter();
+            DataStreamWriter writer = new DataStreamWriter(64, Allocator.TempJob);
             writer.Write((int)ClientNetworkMessages.StartGame);
             writer.Write(timeToStart.Ticks);
+            for(int i =0; i < m_Players.Length; i++)
+            {
+                m_Driver.Send(m_Pipeline, m_Players[i].connection, writer);
+            }
+            writer.Dispose();
         }
     }
 }

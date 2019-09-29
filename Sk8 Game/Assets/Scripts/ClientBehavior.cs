@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Utilities;
-using Valve.Sockets;
 using UnityEngine;
 
 public enum ClientNetworkMessages
@@ -44,6 +43,10 @@ public class ClientBehavior : MonoBehaviour
         m_Pipeline = m_Driver.CreatePipeline(typeof(UnreliableSequencedPipelineStage), typeof(SimulatorPipelineStage));
         m_Connection = default;
         m_PlayerManager.AddClientPlayer(); //add self
+        if(GameObject.FindObjectOfType<ServerBehavior>() != null)
+        {
+            ConnectToIP("localhost");
+        }
     }
 
     public void ConnectToIP(string ip)

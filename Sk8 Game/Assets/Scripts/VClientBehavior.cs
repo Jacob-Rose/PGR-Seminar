@@ -2,24 +2,33 @@
 using System.Collections.Generic;
 using Valve.Sockets;
 using UnityEngine;
+using AOT;
+using System.Text;
 
-/*
 public class VClientBehavior : MonoBehaviour
 {
     NetworkingSockets m_Client = new NetworkingSockets();
+    StatusCallback m_Status;
     Address m_Address = new Address();
-    public ushort port = 9000;
-    uint m_Connection;
+    public const ushort port = 9000;
+    uint m_Connection = uint.MaxValue;
+
+    private const int maxMessages = 20;
+    private NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+
+    byte[] messageDataBuffer = new byte[256];
+
+    static VClientBehavior m_Instance;
 
     void Awake()
     {
-        
-        m_Address.SetAddress("::1", port);
+        InitializeValveSockets();
+        m_Instance = this;
     }
 
-    void OnDestroy()
+    void OnApplicationQuit()
     {
-        //DeinitializeValveSockets();
+        DeinitializeValveSockets();
     }
     // Start is called before the first frame update
     void Start()
@@ -27,58 +36,69 @@ public class VClientBehavior : MonoBehaviour
         
     }
 
+    [MonoPInvokeCallback(typeof(StatusCallback))]
+    static void OnClientStatusUpdate(StatusInfo info, System.IntPtr context)
+    {
+        switch (info.connectionInfo.state)
+        {
+            case ConnectionState.None:
+                break;
+
+            case ConnectionState.Connected:
+                Debug.Log("Client connected to server - ID: " + m_Instance.m_Connection);
+                break;
+
+            case ConnectionState.ClosedByPeer:
+                m_Instance.m_Client.CloseConnection(m_Instance.m_Connection);
+                Debug.Log("Client disconnected from server");
+                break;
+
+            case ConnectionState.ProblemDetectedLocally:
+                m_Instance.m_Client.CloseConnection(m_Instance.m_Connection);
+                Debug.Log("Client unable to connect");
+                break;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        
-        StatusCallback status = (info, context) => {
-            switch (info.connectionInfo.state)
-            {
-                case ConnectionState.None:
-                    break;
-
-                case ConnectionState.Connected:
-                    Debug.Log("Client connected to server - ID: " + m_Connection);
-                    break;
-
-                case ConnectionState.ClosedByPeer:
-                    m_Client.CloseConnection(m_Connection);
-                    Debug.Log("Client disconnected from server");
-                    break;
-
-                case ConnectionState.ProblemDetectedLocally:
-                    m_Client.CloseConnection(m_Connection);
-                    Debug.Log("Client unable to connect");
-                    break;
-            }
-        };
-        const int maxMessages = 20;
-
-        NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
-
-        m_Client.DispatchCallback(status);
-
-
-        int netMessagesCount = m_Client.ReceiveMessagesOnConnection(m_Connection, netMessages, maxMessages);
-
-        if (netMessagesCount > 0)
+        if(m_Connection == uint.MaxValue)
         {
-            for (int i = 0; i < netMessagesCount; i++)
+            m_Client.DispatchCallback(m_Status);
+
+            int netMessagesCount = m_Client.ReceiveMessagesOnConnection(m_Connection, netMessages, maxMessages);
+            if (netMessagesCount > 0)
             {
-                ref NetworkingMessage netMessage = ref netMessages[i];
+                for (int i = 0; i < netMessagesCount; i++)
+                {
+                    ref NetworkingMessage netMessage = ref netMessages[i];
 
-                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+                    Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+                    netMessage.CopyTo(messageDataBuffer);
+                    netMessage.Destroy();
 
-                netMessage.Destroy();
+                    HandleMessageBuffer();
+                }
             }
         }
-        
+    }
+
+    public void HandleMessageBuffer()
+    {
+
     }
 
     public void ConnectToIP(string ip)
     {
         m_Address.SetAddress(ip, port);
         m_Connection = m_Client.Connect(ref m_Address);
+    }
+
+    public void init()
+    {
+        m_Client = new NetworkingSockets();
+        m_Status = OnClientStatusUpdate;
     }
 
     public static void InitializeValveSockets()
@@ -91,4 +111,3 @@ public class VClientBehavior : MonoBehaviour
         Valve.Sockets.Library.Deinitialize();
     }
 }
-*/
