@@ -4,6 +4,10 @@ using Valve.Sockets;
 using UnityEngine;
 using AOT;
 using System.Text;
+using System;
+
+
+
 
 public class VClientBehavior : MonoBehaviour
 {
@@ -33,7 +37,7 @@ public class VClientBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        m_Status = OnClientStatusUpdate;
     }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
@@ -78,27 +82,43 @@ public class VClientBehavior : MonoBehaviour
                     netMessage.CopyTo(messageDataBuffer);
                     netMessage.Destroy();
 
-                    HandleMessageBuffer();
+                    Message m = ConvertMessageBuffer();
                 }
             }
         }
     }
 
-    public void HandleMessageBuffer()
+    public Message ConvertMessageBuffer()
     {
-
+        if(BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(messageDataBuffer);
+        }
+        byte[] eventTypeBytes = new byte[2];
+        Buffer.BlockCopy(messageDataBuffer, 0, eventTypeBytes, 0, 2);
+        
+        ushort sho = BitConverter.ToUInt16(eventTypeBytes, 0);
+        EventTypes eventType = (EventTypes)sho;
+        Message msg;
+        switch(eventType)
+        {
+            case EventTypes.StartGame:
+                msg = new GameStartMessage(messageDataBuffer);
+                break;
+            case EventTypes.PlayerUpdateInfo:
+                msg = new 
+                break;
+        }
+        return msg;
     }
+
+    
+    
 
     public void ConnectToIP(string ip)
     {
         m_Address.SetAddress(ip, port);
         m_Connection = m_Client.Connect(ref m_Address);
-    }
-
-    public void init()
-    {
-        m_Client = new NetworkingSockets();
-        m_Status = OnClientStatusUpdate;
     }
 
     public static void InitializeValveSockets()

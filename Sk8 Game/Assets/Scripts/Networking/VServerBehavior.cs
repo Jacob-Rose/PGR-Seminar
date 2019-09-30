@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using Valve.Sockets;
 using UnityEngine;
 using AOT;
+using System;
 
 /*Some Server Info and How To Use
  * https://unitylist.com/p/ljy/Unity-Valve-Game-Networking-Sockets-chat-example
  */
-
 public class VServerBehavior : MonoBehaviour
 {
     private NetworkingSockets m_Server = new NetworkingSockets();
     private Address m_Address = new Address();
     private StatusCallback m_Status;
-    private uint m_Connection;
+    private ConnectionManager m_Connection;
     private uint m_ListenSocket;
     public ushort m_Port = 9000;
 
@@ -52,11 +52,12 @@ public class VServerBehavior : MonoBehaviour
 
             case ConnectionState.Connected:
                 Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
-                m_Instance.m_Connection = info.connection;
+                m_Instance.m_Connection.addConnection(info.connection);
                 break;
 
             case ConnectionState.ClosedByPeer:
                 m_Instance.m_Server.CloseConnection(info.connection);
+                m_Instance.m_Connection.removeConnection(info.connection);
                 Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                 break;
         }
@@ -78,19 +79,32 @@ public class VServerBehavior : MonoBehaviour
                 for (int i = 0; i < netMessagesCount; i++)
                 {
                     ref NetworkingMessage netMessage = ref netMessages[i];
-
                     Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
                     netMessage.CopyTo(messageDataBuffer);
+                    uint connection = netMessage.connection; //who sent it
                     netMessage.Destroy();
+                    Message m = DecipherMessageBuffer();
 
-                    HandleMessageBuffer();
+                    HandleMessageBuffer(connection);
                 }
             }
         }
     }
 
-    void HandleMessageBuffer()
+    Message DecipherMessageBuffer()
     {
+        //DateTime timeToStart = DateTime.Now; //global time
+        //timeToStart.AddSeconds(3.0f);//add three seconds to start
+        //timeToStart.ToUniversalTime().Ticks;
+    }
 
+    void HandleMessageBuffer(uint connection)
+    {
+        //m_Server.SendMessageToConnection()
+    }
+
+    void StartGame()
+    {
+        
     }
 }
