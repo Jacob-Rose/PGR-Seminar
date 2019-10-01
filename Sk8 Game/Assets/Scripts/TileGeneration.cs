@@ -10,9 +10,10 @@ public class TileGeneration : MonoBehaviour
 
     public Transform viewerTransform;
 
-    float stage = 1;
+    public static int stage = 1;
 
     //existing template for holding various sprites
+    public Sprite[] scenerySprites; //each array in the array holds sprites for certain stage
     public int scenerySpriteCount;
     public Sprite[] sholderSprites;
     public int sholderSpriteCount;
@@ -60,7 +61,7 @@ public class TileGeneration : MonoBehaviour
     // I am assuming that eventTracker.stage is used to see how many obstacles to input based on the level the user is playing in
     GameObject createChunk(int x, int y)
     {
-        /*
+        
         GameObject tile;
         if (x == 0)
         {
@@ -98,8 +99,8 @@ public class TileGeneration : MonoBehaviour
             tile.GetComponent<SpriteRenderer>().sprite = scenerySprites[(stage * scenerySpriteCount) + spriteIndex];
         }
         return tile;
-        */
-        return new GameObject();
+        
+        //return new GameObject();
     }
 
     //this is what spawns the next chunk containing all information into the next spot
