@@ -8,11 +8,17 @@ using UnityEngine;
  */
 public struct PlayerInfo //sent from server to 
 {
+    [SerializeField]
     public Vector2 position;
+    [SerializeField]
     public float zRot;
+    [SerializeField]
     public float currentSpeed;
+    [SerializeField]
     public int currentScore;
+    [SerializeField]
     public PlayerMove move;
+    [SerializeField]
     public int id;
 }
 
@@ -32,7 +38,7 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
 }
 */
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, Listener
 {
     [SerializeField]
     protected float startSpeed;
@@ -53,7 +59,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     protected float speedIncrease; //Amount speed goes up by each time update is called, accelMod directly influences the value, allow the speedIncrease to amp up as time goes on
 
-    protected PlayerInfo playerInfo;
+    [SerializeField]
+    public PlayerInfo playerInfo;
 
     protected Rigidbody2D m_Rigidbody;
 
@@ -78,8 +85,8 @@ public class Player : MonoBehaviour
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
     public virtual void FixedUpdate()
     {
-        if (!GameManager.instance.gameStarted)
-            return;
+        //if (!Toolbox.Instance.HasGameStarted)
+            //return;
         if (playerInfo.move == PlayerMove.TURNLEFT)
         {
             transform.Rotate(new Vector3(0, 0, -1)* Time.deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
@@ -111,5 +118,10 @@ public class Player : MonoBehaviour
     {
         MaxSpeed = (playerInfo.currentScore * speedMod) + startSpeed;
         return MaxSpeed;
+    }
+
+    public void OnListenerCall()
+    {
+        
     }
 }

@@ -133,6 +133,6 @@ public class ClientBehavior : MonoBehaviour
     public void StartGame()
     {
         //todo
-        GameManager.instance.gameStarted = true;
+        //GameManager.instance.gameStarted = true;
     }
 }
