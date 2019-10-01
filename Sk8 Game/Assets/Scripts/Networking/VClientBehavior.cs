@@ -106,8 +106,10 @@ public class VClientBehavior : MonoBehaviour
                 msg = new GameStartMessage(messageDataBuffer);
                 break;
             case EventTypes.PlayerUpdateInfo:
-                msg = new 
+                msg = new PlayerUpdateMessage(messageDataBuffer); 
                 break;
+            default:
+                throw new Exception("oops");
         }
         return msg;
     }

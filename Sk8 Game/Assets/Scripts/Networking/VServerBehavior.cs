@@ -83,7 +83,7 @@ public class VServerBehavior : MonoBehaviour
                     netMessage.CopyTo(messageDataBuffer);
                     uint connection = netMessage.connection; //who sent it
                     netMessage.Destroy();
-                    Message m = DecipherMessageBuffer();
+                    Message m = ConvertMessageBuffer();
 
                     HandleMessageBuffer(connection);
                 }
@@ -91,11 +91,30 @@ public class VServerBehavior : MonoBehaviour
         }
     }
 
-    Message DecipherMessageBuffer()
+    public Message ConvertMessageBuffer()
     {
-        //DateTime timeToStart = DateTime.Now; //global time
-        //timeToStart.AddSeconds(3.0f);//add three seconds to start
-        //timeToStart.ToUniversalTime().Ticks;
+        if (BitConverter.IsLittleEndian)
+        {
+            Array.Reverse(messageDataBuffer);
+        }
+        byte[] eventTypeBytes = new byte[2];
+        Buffer.BlockCopy(messageDataBuffer, 0, eventTypeBytes, 0, 2);
+
+        ushort sho = BitConverter.ToUInt16(eventTypeBytes, 0);
+        EventTypes eventType = (EventTypes)sho;
+        Message msg;
+        switch (eventType)
+        {
+            case EventTypes.StartGame:
+                msg = new GameStartMessage(messageDataBuffer);
+                break;
+            case EventTypes.PlayerUpdateInfo:
+                msg = new PlayerUpdateMessage(messageDataBuffer);
+                break;
+            default:
+                throw new Exception("oops");
+        }
+        return msg;
     }
 
     void HandleMessageBuffer(uint connection)
