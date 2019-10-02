@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ObstacleGeneration : MonoBehaviour
 {
-    public TileGeneration roadGenerator;
+   /* public TileGeneration roadGenerator;
     public Obstacle[] obstacles;
 
     public float minimumObstacleDistance;
@@ -96,7 +96,7 @@ public class ObstacleGeneration : MonoBehaviour
             if (obstacle.fadeAnim)
             {
                 obs.AddComponent<ObstacleCollisionEffect>();
-            }*/
+            }
         }
     }
 
@@ -136,5 +136,5 @@ public class ObstacleGeneration : MonoBehaviour
         }
 
         //handles obstacles on sholder
-    }
+    }*/
 }

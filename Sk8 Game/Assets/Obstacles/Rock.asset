@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ce52d9a506f5e4b89987ff8649e4ff, type: 3}
   m_Name: Rock
   m_EditorClassIdentifier: 
-  obstacleTemplate: {fileID: 0}
-  spawnChance: 0
+  obstacleTemplate: {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0,
+    type: 3}
+  spawnChance: 3
   shadowCast: 0
   fadeAnim: 0
-  chunkTypes: 
+  chunkTypes: 00000000
   stages: 
-  xSpawnRange: {x: 0, y: 0}
-  ySpawnRange: {x: 0, y: 0}
+  xSpawnRange: {x: -4, y: 4}
+  ySpawnRange: {x: -4, y: 4}

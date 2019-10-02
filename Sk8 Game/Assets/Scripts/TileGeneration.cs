@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TileGeneration : MonoBehaviour
 {
+    /*
     //recieve data from Camera tracking system about which player is the lead player
     //set that player to be viewer transform
     // ^ this must updated
