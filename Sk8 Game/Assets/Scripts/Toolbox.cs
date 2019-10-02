@@ -8,7 +8,7 @@ public class Toolbox
 {
     private bool m_GameStarted = false;
     private List<Listener> m_Listeners;
-    private List<Player> m_Players;
+    public List<Player> m_Players;
 
     private static Toolbox instance = null;
 
@@ -32,6 +32,11 @@ public class Toolbox
     public void addListener(Listener l)
     {
         m_Listeners.Add(l);
+    }
+
+    public void addPlayer(Player p)
+    {
+        m_Players.Add(p);
     }
 
     private void callListeners()

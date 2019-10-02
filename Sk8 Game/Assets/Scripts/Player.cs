@@ -74,6 +74,7 @@ public class Player : MonoBehaviour, Listener
     {
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        Toolbox.Instance.addPlayer(this);
     }
 
     public PlayerInfo GetPlayerInfo()
