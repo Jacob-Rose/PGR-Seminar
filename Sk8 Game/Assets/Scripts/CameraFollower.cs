@@ -16,7 +16,7 @@ public class CameraFollower : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if(targets.Count == 0)
         {
@@ -29,7 +29,8 @@ public class CameraFollower : MonoBehaviour
     void Move()
     {
         Vector3 newPos = getCenterPoint();
-        transform.position = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
+        Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
+        transform.position = new Vector3(toSet.x, toSet.y, -10);
     }
 
     void Zoom()

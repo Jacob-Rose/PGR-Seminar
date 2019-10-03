@@ -8,7 +8,7 @@ public class Toolbox
 {
     private bool m_GameStarted = false;
     private List<Listener> m_Listeners;
-    public List<Player> m_Players;
+    public List<Player> m_Players = new List<Player>();
 
     private static Toolbox instance = null;
 

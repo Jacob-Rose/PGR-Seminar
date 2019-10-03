@@ -28153,6 +28153,11 @@ PrefabInstance:
       propertyPath: m_Constraints
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318099, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: zRotAmount
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa13dd97acbf5754aacd321f875cbfe7, type: 3}
 --- !u!4 &1251489148 stripped
@@ -43686,7 +43691,7 @@ Camera:
   field of view: 60
   orthographic: 1
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: -10
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -43728,7 +43733,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targets: []
-  smoothTime: 0.5
+  smoothTime: 0.2
 --- !u!1001 &1962215939
 PrefabInstance:
   m_ObjectHideFlags: 0

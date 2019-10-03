@@ -43,10 +43,6 @@ public class Player : MonoBehaviour, Listener
     [SerializeField]
     protected float startSpeed;
 
-    //set how much a rotation changes the player
-    [SerializeField]
-    protected float zRotAmount;
-
     [SerializeField]
     protected float speedDecreaseAmount;
 
@@ -54,10 +50,7 @@ public class Player : MonoBehaviour, Listener
     protected float speedMod; //used for max speed calculation
 
     [SerializeField]
-    protected float accelMod; //modifier for the acceleration when the player speed rises in Update
-
-    [SerializeField]
-    protected float speedIncrease; //Amount speed goes up by each time update is called, accelMod directly influences the value, allow the speedIncrease to amp up as time goes on
+    protected float acceleration; //modifier for the acceleration when the player speed rises in Update
 
     [SerializeField]
     public PlayerInfo playerInfo;
@@ -66,8 +59,13 @@ public class Player : MonoBehaviour, Listener
 
     protected SpriteRenderer m_SpriteRenderer;
 
-    //ADD VARIABLES IF NEEDED FOR ACCELERATION
-    protected float MaxSpeed;
+    protected float MaxSpeed
+    {
+        get
+        {
+            return (playerInfo.currentScore * speedMod) + startSpeed;
+        }
+    }
 
     // Start is called before the first frame update
     public virtual void Start()
@@ -84,17 +82,24 @@ public class Player : MonoBehaviour, Listener
 
     // Update is called once per frame
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
-    public virtual void FixedUpdate()
+    public virtual void Update()
     {
         //if (!Toolbox.Instance.HasGameStarted)
-            //return;
+        //return;
+        MovePlayer(Time.deltaTime);
+
+    }
+
+    public void MovePlayer(float deltaTime)
+    {
+        
         if (playerInfo.move == PlayerMove.TURNLEFT)
         {
-            transform.Rotate(new Vector3(0, 0, -1)* Time.deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
+            transform.Rotate(new Vector3(0, 0, -1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
         }
         if (playerInfo.move == PlayerMove.TURNRIGHT)
         {
-            transform.Rotate(new Vector3(0, 0, 1) * Time.deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
+            transform.Rotate(new Vector3(0, 0, 1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
         }
         if (playerInfo.move == PlayerMove.OLLIE)
         {
@@ -106,19 +111,13 @@ public class Player : MonoBehaviour, Listener
         //update the speed of the player
         if (playerInfo.move == PlayerMove.NONE)
         {
-            transform.rotation = Quaternion.identity;
-            playerInfo.zRot = 0.0f;
-            playerInfo.currentSpeed += speedIncrease * accelMod;
+            transform.rotation = Quaternion.Euler(0, 0, playerInfo.zRot);
+            playerInfo.currentSpeed += acceleration;
             m_SpriteRenderer.color = Color.white;
         }
 
         m_Rigidbody.velocity = transform.up * playerInfo.currentSpeed;
         playerInfo.position = transform.position;
-    }
-    public float getMaxSpeed()
-    {
-        MaxSpeed = (playerInfo.currentScore * speedMod) + startSpeed;
-        return MaxSpeed;
     }
 
     public void OnListenerCall()

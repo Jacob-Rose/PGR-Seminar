@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class NetworkedPlayer : Player
 {
-    public override void FixedUpdate()
+    public override void Update()
     {
-        base.FixedUpdate();
+        base.Update();
     }
     public void updatePlayerInfo(PlayerInfo info)
     {
