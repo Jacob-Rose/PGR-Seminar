@@ -22,7 +22,7 @@ public class ObstGen : MonoBehaviour
 
     public Vector2 CreateObstaclePoint()
     {
-        Vector2 spawnPosition = new Vector2(viewerTransform.position.x, viewerTransform.position.y + 10);
+        Vector2 spawnPosition = new Vector2(0, viewerTransform.position.y + 10);
         Vector2 randomVal = new Vector2(Random.Range(-4.0f, 4.0f), Random.Range(-4.0f, 4.0f));
         spawnPosition += randomVal;
         return spawnPosition;
