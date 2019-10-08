@@ -95,11 +95,11 @@ public class Player : MonoBehaviour, Listener
         
         if (playerInfo.move == PlayerMove.TURNLEFT)
         {
-            transform.Rotate(new Vector3(0, 0, -1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
+            transform.Rotate(new Vector3(0, 0, 1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
         }
         if (playerInfo.move == PlayerMove.TURNRIGHT)
         {
-            transform.Rotate(new Vector3(0, 0, 1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
+            transform.Rotate(new Vector3(0, 0, -1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
         }
         if (playerInfo.move == PlayerMove.OLLIE)
         {

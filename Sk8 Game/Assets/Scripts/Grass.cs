@@ -22,5 +22,9 @@ public class Grass : MonoBehaviour
         {
             Debug.Log("lower player speed");
         }
+        if (collision.GetComponent<ClientPlayer>())
+        {
+            collision.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= 0.9f;
+        }
     }
 }

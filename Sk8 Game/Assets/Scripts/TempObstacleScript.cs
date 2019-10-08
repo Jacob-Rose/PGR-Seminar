@@ -22,5 +22,9 @@ public class TempObstacleScript : MonoBehaviour
         {
             Debug.Log("animate crash, drastically lower speed");
         }
+        if(collision.GetComponent<ClientPlayer>())
+        {
+            collision.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= 0.7f;
+        }
     }
 }

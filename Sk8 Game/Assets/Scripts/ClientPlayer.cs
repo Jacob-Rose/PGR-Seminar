@@ -33,13 +33,13 @@ public class ClientPlayer : Player
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             playerInfo.move = PlayerMove.TURNLEFT;
-            playerInfo.zRot -= zRotAmount * deltaTime;
+            playerInfo.zRot += zRotAmount * deltaTime;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             playerInfo.move = PlayerMove.TURNRIGHT;
-            playerInfo.zRot += zRotAmount * deltaTime;
+            playerInfo.zRot -= zRotAmount * deltaTime;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
         }
         else if (Input.GetKey(KeyCode.Space))
