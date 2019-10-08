@@ -92,15 +92,6 @@ public class Player : MonoBehaviour, Listener
 
     public void MovePlayer(float deltaTime)
     {
-        
-        if (playerInfo.move == PlayerMove.TURNLEFT)
-        {
-            transform.Rotate(new Vector3(0, 0, 1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
-        }
-        if (playerInfo.move == PlayerMove.TURNRIGHT)
-        {
-            transform.Rotate(new Vector3(0, 0, -1) * deltaTime * playerInfo.currentSpeed * 3.0f, Space.World);
-        }
         if (playerInfo.move == PlayerMove.OLLIE)
         {
             m_SpriteRenderer.color = Color.red;
@@ -111,15 +102,13 @@ public class Player : MonoBehaviour, Listener
         //update the speed of the player
         if (playerInfo.move == PlayerMove.NONE)
         {
-            transform.rotation = Quaternion.Euler(0, 0, playerInfo.zRot);
             playerInfo.currentSpeed += acceleration;
             m_SpriteRenderer.color = Color.white;
         }
 
         m_Rigidbody.velocity = transform.up * playerInfo.currentSpeed;
         playerInfo.position = transform.position;
-        transform.rotation = Quaternion.Euler(0.0f,0.0f, transform.rotation.eulerAngles.z % 360.0f);
-        //playerInfo.zRot = transform.rotation.eulerAngles.z;
+        transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
     }
 
     public void OnListenerCall()

@@ -19826,7 +19826,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_SortingOrder
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fd5a185887b17546a8d2e309c8e6aa9, type: 3}
@@ -28395,6 +28395,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3723998843633908172, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -3723998843633908172, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
+      value: 0.73228264
+      objectReference: {fileID: 0}
+    - target: {fileID: -3723998843633908172, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3723998843633908172, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[1].value
+      value: 0.18897724
+      objectReference: {fileID: 0}
     - target: {fileID: 7980100548666318098, guid: aa13dd97acbf5754aacd321f875cbfe7,
         type: 3}
       propertyPath: m_Name
@@ -28463,7 +28483,7 @@ PrefabInstance:
     - target: {fileID: 7980100548666318097, guid: aa13dd97acbf5754aacd321f875cbfe7,
         type: 3}
       propertyPath: m_SortingOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7980100548666318096, guid: aa13dd97acbf5754aacd321f875cbfe7,
         type: 3}
@@ -28479,6 +28499,11 @@ PrefabInstance:
         type: 3}
       propertyPath: zRotAmount
       value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318099, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: acceleration
+      value: 0.001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: aa13dd97acbf5754aacd321f875cbfe7, type: 3}

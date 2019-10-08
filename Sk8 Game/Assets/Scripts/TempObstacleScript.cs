@@ -24,7 +24,7 @@ public class TempObstacleScript : MonoBehaviour
         }
         if(collision.GetComponent<ClientPlayer>())
         {
-            collision.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= 0.7f;
+            collision.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= 0.85f;
         }
     }
 }

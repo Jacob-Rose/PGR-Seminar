@@ -31,8 +31,8 @@ public class CameraFollower : MonoBehaviour
     void Move()
     {
         Vector3 newPos = getCenterPoint();
-        Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
-        transform.position = new Vector3(toSet.x, toSet.y, -10);
+        //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
+        transform.position = new Vector3(0.0f, newPos.y, -10.0f);
     }
 
     void Zoom()
