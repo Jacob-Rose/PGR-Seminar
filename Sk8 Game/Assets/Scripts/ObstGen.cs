@@ -52,5 +52,6 @@ public class ObstGen : MonoBehaviour
     {
         //viewerTransform will be set to the lead player
         //increment stage based on checkpoints
+        CreateObstaclePoint();
     }
 }
