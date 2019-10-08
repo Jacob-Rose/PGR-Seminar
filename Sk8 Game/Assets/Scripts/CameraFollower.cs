@@ -5,8 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraFollower : MonoBehaviour
 {
-    public List<Player> targets;
+    private List<Player> targets; //set in start to use toolbox
     public float smoothTime = 0.1f;
+    public float zoomOffset = 0.0f; //additional or less zoom to add from start
+    public float zoomMultiplier = 1.0f; //how much to zoom out or in
 
     private Vector3 velocity;
     // Start is called before the first frame update
@@ -16,7 +18,7 @@ public class CameraFollower : MonoBehaviour
     }
 
     // Update is called once per frame
-    void LateUpdate()
+    void Update()
     {
         if(targets.Count == 0)
         {
@@ -35,9 +37,9 @@ public class CameraFollower : MonoBehaviour
 
     void Zoom()
     {
-        if(targets.Count > 1)
+        if(targets.Count > 0)
         {
-            GetComponent<Camera>().fieldOfView = GetGreatestDistance();
+            GetComponent<Camera>().orthographicSize = (GetGreatestDistance() * zoomMultiplier) + zoomOffset;
         }
         
     }
