@@ -118,6 +118,8 @@ public class Player : MonoBehaviour, Listener
 
         m_Rigidbody.velocity = transform.up * playerInfo.currentSpeed;
         playerInfo.position = transform.position;
+        transform.rotation = Quaternion.Euler(0.0f,0.0f, transform.rotation.eulerAngles.z % 360.0f);
+        //playerInfo.zRot = transform.rotation.eulerAngles.z;
     }
 
     public void OnListenerCall()

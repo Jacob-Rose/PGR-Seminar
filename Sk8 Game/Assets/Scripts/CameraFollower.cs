@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraFollower : MonoBehaviour
 {
     public List<Player> targets;
-    public float smoothTime = 0.5f;
+    public float smoothTime = 0.1f;
 
     private Vector3 velocity;
     // Start is called before the first frame update
