@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ConnectionManager 
 {
-    private List<ConnectionInfo> m_Connections;
+    private List<ConnectionInfo> m_Connections = new List<ConnectionInfo>();
 
     public void addConnection(uint connection)
     {

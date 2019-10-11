@@ -18,6 +18,35 @@ public abstract class Message
     //first two bytes is for event type
     public ushort eventType;
     public abstract byte[] toBuffer();
+
+    public static Message decipherMessage(byte[] msgBytes)
+    {
+        if (BitConverter.IsLittleEndian)
+        {
+            //Array.Reverse(msgBytes);
+        }
+        Message msg;
+        byte[] eventTypeBytes = new byte[2];
+        Buffer.BlockCopy(msgBytes, 0, eventTypeBytes, 0, 2);
+
+        ushort sho = BitConverter.ToUInt16(eventTypeBytes, 0);
+        EventTypes eventType = (EventTypes)sho;
+        switch (eventType)
+        {
+            case EventTypes.StartGame:
+                msg = new GameStartMessage(msgBytes);
+                break;
+            case EventTypes.PlayerUpdateInfo:
+                msg = new PlayerUpdateMessage(msgBytes);
+                break;
+            case EventTypes.PlayerConnected:
+                msg = new PlayerConnectedMessage(msgBytes);
+                break;
+            default:
+                throw new Exception("oops");
+        }
+        return msg;
+    }
 }
 
 public class GameStartMessage : Message
@@ -28,7 +57,7 @@ public class GameStartMessage : Message
         
         //byte[] tickB = new byte[8];
         //Buffer.BlockCopy(buffer, 1, tickB, 0, 8);
-        long ticks = BitConverter.ToInt64(buffer, 2);
+        long ticks = BitConverter.ToInt64(buffer, 2); //first two used for eventType
         timeToStart = new DateTime(ticks);
 
     }
@@ -48,10 +77,29 @@ public class PlayerUpdateMessage : Message
 {
     public PlayerUpdateMessage(byte[] bytes)
     {
+        PlayerInfo info = new PlayerInfo();
+        byte[] score = new byte[4];
 
     }
 
     public PlayerUpdateMessage() { }
+    public override byte[] toBuffer()
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class PlayerConnectedMessage : Message
+{
+    public uint playerID;
+    public PlayerConnectedMessage(byte[] bytes)
+    {
+        int byteCount = 2;//event type took two bytes
+        playerID = BitConverter.ToUInt32(bytes, byteCount);
+        byteCount += 4;
+    }
+
+    public PlayerConnectedMessage() { }
     public override byte[] toBuffer()
     {
         throw new NotImplementedException();

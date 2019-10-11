@@ -13,7 +13,7 @@ public class VServerBehavior : MonoBehaviour
     private NetworkingSockets m_Server = new NetworkingSockets();
     private Address m_Address = new Address();
     private StatusCallback m_Status;
-    private ConnectionManager m_Connection;
+    private ConnectionManager m_Connection = new ConnectionManager();
     private uint m_ListenSocket;
     public ushort m_Port = 9000;
 
@@ -93,27 +93,10 @@ public class VServerBehavior : MonoBehaviour
 
     public Message ConvertMessageBuffer()
     {
-        if (BitConverter.IsLittleEndian)
-        {
-            Array.Reverse(messageDataBuffer);
-        }
-        byte[] eventTypeBytes = new byte[2];
-        Buffer.BlockCopy(messageDataBuffer, 0, eventTypeBytes, 0, 2);
-
-        ushort sho = BitConverter.ToUInt16(eventTypeBytes, 0);
-        EventTypes eventType = (EventTypes)sho;
-        Message msg;
-        switch (eventType)
-        {
-            case EventTypes.StartGame:
-                msg = new GameStartMessage(messageDataBuffer);
-                break;
-            case EventTypes.PlayerUpdateInfo:
-                msg = new PlayerUpdateMessage(messageDataBuffer);
-                break;
-            default:
-                throw new Exception("oops");
-        }
+        
+        
+        Message msg = Message.decipherMessage(messageDataBuffer);
+        
         return msg;
     }
 

@@ -49,17 +49,17 @@ public class VClientBehavior : MonoBehaviour
                 break;
 
             case ConnectionState.Connected:
-                Debug.Log("Client connected to server - ID: " + m_Instance.m_Connection);
+                Debug.Log("I, the Client, connected to server - ID: " + m_Instance.m_Connection);
                 break;
 
             case ConnectionState.ClosedByPeer:
                 m_Instance.m_Client.CloseConnection(m_Instance.m_Connection);
-                Debug.Log("Client disconnected from server");
+                Debug.Log("I, the Client, disconnected from server");
                 break;
 
             case ConnectionState.ProblemDetectedLocally:
                 m_Instance.m_Client.CloseConnection(m_Instance.m_Connection);
-                Debug.Log("Client unable to connect");
+                Debug.Log("I, the Client, unable to connect");
                 break;
         }
     }
@@ -82,37 +82,12 @@ public class VClientBehavior : MonoBehaviour
                     netMessage.CopyTo(messageDataBuffer);
                     netMessage.Destroy();
 
-                    Message m = ConvertMessageBuffer();
+                    Message m = Message.decipherMessage(messageDataBuffer);
                 }
             }
         }
     }
 
-    public Message ConvertMessageBuffer()
-    {
-        if(BitConverter.IsLittleEndian)
-        {
-            Array.Reverse(messageDataBuffer);
-        }
-        byte[] eventTypeBytes = new byte[2];
-        Buffer.BlockCopy(messageDataBuffer, 0, eventTypeBytes, 0, 2);
-        
-        ushort sho = BitConverter.ToUInt16(eventTypeBytes, 0);
-        EventTypes eventType = (EventTypes)sho;
-        Message msg;
-        switch(eventType)
-        {
-            case EventTypes.StartGame:
-                msg = new GameStartMessage(messageDataBuffer);
-                break;
-            case EventTypes.PlayerUpdateInfo:
-                msg = new PlayerUpdateMessage(messageDataBuffer); 
-                break;
-            default:
-                throw new Exception("oops");
-        }
-        return msg;
-    }
 
     
     
