@@ -83,7 +83,7 @@ public class VServerBehavior : MonoBehaviour
                     netMessage.CopyTo(messageDataBuffer);
                     uint connection = netMessage.connection; //who sent it
                     netMessage.Destroy();
-                    Message m = ConvertMessageBuffer();
+                    Message m = Message.decipherMessage(messageDataBuffer);
 
                     HandleMessageBuffer(connection);
                 }
@@ -91,22 +91,8 @@ public class VServerBehavior : MonoBehaviour
         }
     }
 
-    public Message ConvertMessageBuffer()
-    {
-        
-        
-        Message msg = Message.decipherMessage(messageDataBuffer);
-        
-        return msg;
-    }
-
     void HandleMessageBuffer(uint connection)
     {
         //m_Server.SendMessageToConnection()
-    }
-
-    void StartGame()
-    {
-        
     }
 }

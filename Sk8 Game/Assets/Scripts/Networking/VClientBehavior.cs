@@ -88,6 +88,19 @@ public class VClientBehavior : MonoBehaviour
         }
     }
 
+    public void HandleMessage(Message msg)
+    {
+        if(msg is GameStartMessage)
+        {
+            Invoke("StartGame", (float)(((GameStartMessage)msg).timeToStart - DateTime.Now).TotalSeconds);
+        }
+    }
+
+    public void StartGame()
+    {
+        Toolbox.Instance.StartGame();
+    }
+
 
     
     
