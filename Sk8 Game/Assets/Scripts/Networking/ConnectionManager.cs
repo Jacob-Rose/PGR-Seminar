@@ -6,9 +6,13 @@ public class ConnectionManager
 {
     private List<ConnectionInfo> m_Connections = new List<ConnectionInfo>();
 
-    public void addConnection(uint connection)
+    public NetworkedPlayer NetworkedPlayerPrefab;
+
+    public ConnectionInfo addConnection(uint connection)
     {
-        m_Connections.Add(new ConnectionInfo(connection));
+        ConnectionInfo info = new ConnectionInfo(connection);
+        m_Connections.Add(info);
+        return info;
     }
 
     public void removeConnection(uint connection)
@@ -23,9 +27,26 @@ public class ConnectionManager
         }
     }
 
+    public ConnectionInfo getConnection(int index)
+    {
+        return m_Connections[index];
+    }
+
     public int getConnectionCount()
     {
         return m_Connections.Count;
+    }
+
+    public uint getConnectionFromPlayerID(int playerID)
+    {
+        for(int i = 0; i < m_Connections.Count; i++)
+        {
+            if(m_Connections[i].player.playerID == playerID)
+            {
+                return m_Connections[i].connection;
+            }
+        }
+        throw new System.Exception("Connection not found from playerID");
     }
 }
 
@@ -34,7 +55,8 @@ public class ConnectionInfo
     public ConnectionInfo(uint connection)
     {
         this.connection = connection;
+        this.player = Object.Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>();
     }
     public uint connection;
-    public ServerPlayer player;
+    public NetworkedPlayer player;
 }

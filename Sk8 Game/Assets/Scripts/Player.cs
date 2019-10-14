@@ -84,8 +84,8 @@ public class Player : MonoBehaviour, Listener
     //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
     public virtual void Update()
     {
-        //if (!Toolbox.Instance.HasGameStarted)
-        //return;
+        if (!Toolbox.Instance.HasGameStarted)
+            return;
         MovePlayer(Time.deltaTime);
 
     }

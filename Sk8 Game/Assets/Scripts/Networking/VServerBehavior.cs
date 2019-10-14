@@ -22,7 +22,12 @@ public class VServerBehavior : MonoBehaviour
 
     byte[] messageDataBuffer = new byte[256];
 
-    static VServerBehavior m_Instance;
+    public static VServerBehavior m_Instance;
+
+    public string getIPString()
+    {
+        return m_Address.GetIP();
+    }
 
     public void Awake()
     {
@@ -52,6 +57,7 @@ public class VServerBehavior : MonoBehaviour
 
             case ConnectionState.Connected:
                 Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
+                //todo check if this is the current player
                 m_Instance.m_Connection.addConnection(info.connection);
                 break;
 
@@ -89,6 +95,24 @@ public class VServerBehavior : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void SendPlayerConnectedMessage(int playerID)
+    {
+        PlayerConnectedMessage msg = new PlayerConnectedMessage(playerID);
+        for(int i =0; i < m_Connection.getConnectionCount(); i++)
+        {
+            if(m_Connection.getConnection(i).player.playerID != playerID)
+            {
+                m_Server.SendMessageToConnection(m_Connection.getConnection(i).connection, msg.toBuffer());
+            }
+            
+        }
+    }
+
+    public void SendStartGameMessage()
+    {
+
     }
 
     void HandleMessageBuffer(uint connection)

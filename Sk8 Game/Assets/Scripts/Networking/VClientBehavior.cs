@@ -83,6 +83,7 @@ public class VClientBehavior : MonoBehaviour
                     netMessage.Destroy();
 
                     Message m = Message.decipherMessage(messageDataBuffer);
+                    HandleMessage(m);
                 }
             }
         }
@@ -93,6 +94,11 @@ public class VClientBehavior : MonoBehaviour
         if(msg is GameStartMessage)
         {
             Invoke("StartGame", (float)(((GameStartMessage)msg).timeToStart - DateTime.Now).TotalSeconds);
+        }
+        else if(msg is PlayerConnectedMessage)
+        {
+            PlayerConnectedMessage cMsg = msg as PlayerConnectedMessage;
+            Toolbox.Instance.addPlayer(new NetworkedPlayer(cMsg.playerID));
         }
     }
 
