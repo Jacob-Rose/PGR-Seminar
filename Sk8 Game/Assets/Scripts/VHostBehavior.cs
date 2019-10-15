@@ -67,16 +67,6 @@ public class VHostBehavior : Networked
         }
     }
 
-    public void Start()
-    {
-
-    }
-
-    public void SpawnClientPlayer()
-    {
-        Instantiate(Resources.Load("Prefabs/ClientPlayer"));
-    }
-
     public void SendStartGameMessage()
     {
         DateTime timeToStart = DateTime.Now + TimeSpan.FromSeconds(4.0f);

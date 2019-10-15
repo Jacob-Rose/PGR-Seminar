@@ -7,7 +7,7 @@ using Valve.Sockets;
 public class VOnlinePlayer : Networked
 {
     private StatusCallback m_Status;
-    protected ConnectionInfo m_Connection = new ConnectionInfo(uint.MaxValue);
+    protected ConnectionInfo m_Connection = new ConnectionInfo(uint.MaxValue, null);
 
     public static VOnlinePlayer m_Instance;
 
@@ -21,7 +21,7 @@ public class VOnlinePlayer : Networked
 
             case ConnectionState.Connected:
                 Debug.Log("I, the Client, connected to server - ID: " + info.connection);
-                m_Instance.m_Connection = new ConnectionInfo(info.connection); //the server equals one person
+                m_Instance.m_Connection = new ConnectionInfo(info.connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>()); //the server equals one person
                 break;
 
             case ConnectionState.ClosedByPeer:
@@ -37,18 +37,20 @@ public class VOnlinePlayer : Networked
     }
     protected override void HandleNetworkMessage(Message msg)
     {
-        throw new System.NotImplementedException();
+        if(msg is GameStartMessage)
+        {
+
+        }
+        else if(msg is PlayerConnectedMessage)
+        {
+            PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
+        }
     }
 
-    // Update is called once per frame
-    public override void Update()
-    {
-        
-    }
     public void ConnectToIP(string ip)
     {
         m_Address.SetAddress(ip, m_Port);
-        m_Connection = new ConnectionInfo(m_Server.Connect(ref m_Address));
+        m_Server.Connect(ref m_Address);
     }
 
     

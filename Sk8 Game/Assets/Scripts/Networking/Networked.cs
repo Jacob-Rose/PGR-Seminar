@@ -21,6 +21,26 @@ public abstract class Networked : MonoBehaviour
 
     protected abstract void HandleNetworkMessage(Message msg);
 
+    public virtual void Awake()
+    {
+        InitializeValveSockets();
+    }
+
+    public virtual void OnDestroy()
+    {
+        DeinitializeValveSockets();
+    }
+
+    public virtual void Start()
+    {
+        SpawnClientPlayer();
+    }
+
+    public void SpawnClientPlayer()
+    {
+        m_ClientPlayer = ((GameObject)Instantiate(Resources.Load("Prefabs/ClientPlayer"))).GetComponent<ClientPlayer>();
+    }
+
     public virtual void Update()
     {
         if (m_Server != null)
@@ -44,13 +64,18 @@ public abstract class Networked : MonoBehaviour
         }
     }
 
+    public void StartGame()
+    {
+        Toolbox.Instance.StartGame();
+    }
+
     public static void InitializeValveSockets()
     {
-        Valve.Sockets.Library.Initialize();
+        Library.Initialize();
     }
 
     public static void DeinitializeValveSockets()
     {
-        Valve.Sockets.Library.Deinitialize();
+        Library.Deinitialize();
     }
 }

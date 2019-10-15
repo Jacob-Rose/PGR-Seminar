@@ -10,7 +10,7 @@ public class ConnectionManager
 
     public ConnectionInfo addConnection(uint connection)
     {
-        ConnectionInfo info = new ConnectionInfo(connection);
+        ConnectionInfo info = new ConnectionInfo(connection, Object.Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>());
         m_Connections.Add(info);
         return info;
     }
@@ -52,10 +52,10 @@ public class ConnectionManager
 
 public class ConnectionInfo
 {
-    public ConnectionInfo(uint connection)
+    public ConnectionInfo(uint connection, NetworkedPlayer player)
     {
         this.connection = connection;
-        this.player = Object.Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>();
+        this.player = player;
     }
     public uint connection;
     public NetworkedPlayer player;

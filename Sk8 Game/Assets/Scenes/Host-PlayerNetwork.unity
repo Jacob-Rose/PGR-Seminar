@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Port: 9000
-  m_ClientPlayer: {fileID: 0}
+  m_ClientPlayer: {fileID: 1089860874}
 --- !u!4 &278503751
 Transform:
   m_ObjectHideFlags: 0
@@ -248,6 +248,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1089860874 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5769516655359432253, guid: 5f8a4a0e6e7d5434f8e47f283121b7df,
+    type: 3}
+  m_PrefabInstance: {fileID: 323632442238646888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae8971289d4f0b47b3a19f07ce320b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &323632442238646888
 PrefabInstance:
   m_ObjectHideFlags: 0
