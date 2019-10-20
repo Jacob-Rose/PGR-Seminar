@@ -10,6 +10,11 @@ public class VOnlinePlayer : Networked
     protected ConnectionInfo m_Connection = new ConnectionInfo(uint.MaxValue, null);
 
     public static VOnlinePlayer m_Instance;
+    public override void Start()
+    {
+        m_Instance = this;
+        base.Start();
+    }
 
     [MonoPInvokeCallback(typeof(StatusCallback))]
     static void OnClientStatusUpdate(StatusInfo info, System.IntPtr context)

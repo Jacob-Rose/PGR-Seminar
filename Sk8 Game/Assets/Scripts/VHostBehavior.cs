@@ -12,6 +12,12 @@ public class VHostBehavior : Networked
 
     public static VHostBehavior m_Instance;
 
+    public override void Start()
+    {
+        m_Instance = this;
+        base.Start();
+    }
+
     [MonoPInvokeCallback(typeof(StatusCallback))]
     static void OnServerStatusUpdate(StatusInfo info, System.IntPtr context)
     {
