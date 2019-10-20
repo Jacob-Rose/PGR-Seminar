@@ -1,6 +1,7 @@
 ﻿using AOT;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEngine;
 using Valve.Sockets;
 //yang of VHostBehavior
@@ -54,8 +55,17 @@ public class VOnlinePlayer : Networked
 
     public void ConnectToIP(string ip)
     {
-        m_Address.SetAddress(ip, m_Port);
-        m_Server.Connect(ref m_Address);
+        IPAddress address;
+        if(IPAddress.TryParse(ip, out address ))
+        {
+            m_Address.SetAddress(ip, m_Port);
+            m_Server.Connect(ref m_Address);
+        }
+        else
+        {
+            Debug.Log("Ip not valid");
+        }
+        
     }
 
     
