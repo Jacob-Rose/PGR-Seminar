@@ -7,6 +7,8 @@ public class ObstGen : MonoBehaviour
     public Obstacle[] obstacles;
     public Transform viewerTransform;
     public int stage = 0;
+ 
+
     /*
      * Get position of player in the lead,spawn from this position + 10 to the y value
      * generate the obstacle in a random range, with bounds being 4 away in both directions from the spawn position
@@ -20,9 +22,14 @@ public class ObstGen : MonoBehaviour
 
     }
 
-    public Vector2 CreateObstaclePoint()
+    /*public Vector2 CreateEndPoint()
     {
-        Vector2 spawnPosition = new Vector2(0, viewerTransform.position.y + 10);
+
+    }*/
+
+    public Vector2 CreateObstaclePoint(Vector2 viewrTrans)
+    {
+        Vector2 spawnPosition = new Vector2(0, viewrTrans.y + 10);
         Vector2 randomVal = new Vector2(Random.Range(-4.0f, 4.0f), Random.Range(-4.0f, 4.0f));
         spawnPosition += randomVal;
         return spawnPosition;
@@ -52,6 +59,6 @@ public class ObstGen : MonoBehaviour
     {
         //viewerTransform will be set to the lead player
         //increment stage based on checkpoints
-        CreateObstaclePoint();
+        CreateObstaclePoint(viewerTransform.position);
     }
 }
