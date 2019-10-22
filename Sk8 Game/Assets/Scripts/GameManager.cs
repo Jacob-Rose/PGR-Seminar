@@ -5,8 +5,8 @@ using UnityEngine;
 
 class GameManager : MonoBehaviour
 {
-    public void Update()
+    public void Start()
     {
-
+        Toolbox.Instance.StartGame();
     }
 }

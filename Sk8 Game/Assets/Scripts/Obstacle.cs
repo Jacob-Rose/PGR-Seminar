@@ -9,6 +9,7 @@ public class Obstacle : ScriptableObject
 
 	public GameObject obstacleTemplate;
 	public int spawnChance;
+    public Vector2 spawnPoint;
 	/*public bool shadowCast;
 	public bool fadeAnim;
 	public ChunkType[] chunkTypes;

@@ -12,7 +12,10 @@ public class ObstGen : MonoBehaviour
     //kinda useless, tracks current stage
     public int stage = 0;
  
-
+    public struct ObstInfo
+    {
+        public Vector2 spawnedPos;
+    }
     /*
      * Get position of player in the lead,spawn from this position + 10 to the y value
      * generate the obstacle in a random range, with bounds being 4 away in both directions from the spawn position
@@ -67,5 +70,6 @@ public class ObstGen : MonoBehaviour
         //viewerTransform will be set to the lead player
         //increment stage based on checkpoints
         CreateObstaclePoint(viewerTransform.position);
+        //ObstInfo.spawnedPos = CreateObstaclePoint(viewerTransform.position);
     }
 }

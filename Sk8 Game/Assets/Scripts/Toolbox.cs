@@ -25,7 +25,7 @@ public class Toolbox
     public void StartGame()
     {
         //add any other things we need
-        callListeners();
+        //callListeners();
         m_GameStarted = true;
     }
 
