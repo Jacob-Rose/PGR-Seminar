@@ -17,32 +17,30 @@ public class VOnlinePlayer : Networked
     public override void Start()
     {
         m_Instance = this;
-        base.Start();
-    }
-
-    [MonoPInvokeCallback(typeof(StatusCallback))]
-    static void OnClientStatusUpdate(StatusInfo info, System.IntPtr context)
-    {
-        switch (info.connectionInfo.state)
+        m_Status = (info, context) =>
         {
-            case ConnectionState.None:
-                break;
+            switch (info.connectionInfo.state)
+            {
+                case ConnectionState.None:
+                    break;
 
-            case ConnectionState.Connected:
-                Debug.Log("I, the Client, connected to server - ID: " + info.connection);
-                m_Instance.m_Connection = new ConnectionInfo(info.connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>()); //the server equals one person
-                break;
+                case ConnectionState.Connected:
+                    Debug.Log("I, the Client, connected to server - ID: " + info.connection);
+                    m_Instance.m_Connection = new ConnectionInfo(info.connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>()); //the server equals one person
+                    break;
 
-            case ConnectionState.ClosedByPeer:
-                m_Instance.m_Server.CloseConnection(m_Instance.m_Connection.connection);
-                Debug.Log("I, the Client, disconnected from server");
-                break;
+                case ConnectionState.ClosedByPeer:
+                    m_Instance.m_Server.CloseConnection(m_Instance.m_Connection.connection);
+                    Debug.Log("I, the Client, disconnected from server");
+                    break;
 
-            case ConnectionState.ProblemDetectedLocally:
-                m_Instance.m_Server.CloseConnection(m_Instance.m_Connection.connection);
-                Debug.Log("I, the Client, unable to connect");
-                break;
-        }
+                case ConnectionState.ProblemDetectedLocally:
+                    m_Instance.m_Server.CloseConnection(m_Instance.m_Connection.connection);
+                    Debug.Log("I, the Client, unable to connect");
+                    break;
+            }
+        };
+        base.Start();
     }
     protected override void HandleNetworkMessage(Message msg)
     {

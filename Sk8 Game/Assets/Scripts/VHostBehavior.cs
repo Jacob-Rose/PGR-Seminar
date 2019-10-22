@@ -15,6 +15,26 @@ public class VHostBehavior : Networked
     public override void Start()
     {
         m_Instance = this;
+        m_Status = (info, context) => {
+            switch (info.connectionInfo.state)
+            {
+                case ConnectionState.None:
+                    break;
+
+                case ConnectionState.Connecting:
+                    m_Server.AcceptConnection(info.connection);
+                    break;
+
+                case ConnectionState.Connected:
+                    Console.WriteLine("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
+                    break;
+
+                case ConnectionState.ClosedByPeer:
+                    m_Server.CloseConnection(info.connection);
+                    Console.WriteLine("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
+                    break;
+            }
+        };
         base.Start();
     }
 
