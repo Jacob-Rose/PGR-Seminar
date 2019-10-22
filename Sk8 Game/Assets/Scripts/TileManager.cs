@@ -9,18 +9,21 @@ public class TileManager : MonoBehaviour
     public GameObject endTest;
     public GameObject road;
     public GameObject testObstacle;
-    public int roadSize = 100;
-    public int stageLevelAmount = 3;
+    //[SerializeField]
+    public int roadSize = 300;
+    //[SerializeField]
+    public int stageLevelAmount = 1;
     // Start is called before the first frame update
     void Start()
     {
         //InvokeRepeating("GetObstStatsSpawn", 2.0f, 2.0f);
+        PopulateRoads();
     }
 
     // Update is called once per frame
     void Update()
     {
-        PopulateRoads();
+        
     }
     void GetObstStatsSpawn(Vector2 spawnPosition, GameObject obstacle)
     {
@@ -34,7 +37,7 @@ public class TileManager : MonoBehaviour
         for (int i = 0; i < roadSize; i++)
         {
             Instantiate(road, spawnPos, Quaternion.identity);
-            GetObstStatsSpawn(spawnPos, testObstacle);
+            //GetObstStatsSpawn(spawnPos, testObstacle);
 
             if (i == roadSize)
             {
@@ -42,11 +45,11 @@ public class TileManager : MonoBehaviour
                 Instantiate(endTest, spawnPos, Quaternion.identity);
 
             }
-            /*for (int j = 0; j < stageLevelAmount; j++)
+            for (int j = 0; j < stageLevelAmount; j++)
             {
                 GetObstStatsSpawn(spawnPos, testObstacle);
-            }*/
-            spawnPos.y += 10;
+            }
+            spawnPos.y += 9;
             
         }
     }
