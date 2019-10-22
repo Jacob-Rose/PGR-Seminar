@@ -78,6 +78,7 @@ public class VHostBehavior : Networked
         DateTime timeToStart = DateTime.Now + TimeSpan.FromSeconds(4.0f);
         GameStartMessage msg = new GameStartMessage(timeToStart.Ticks);
         SendMessageToAllPlayers(msg);
+        Invoke("StartGame", (float)(timeToStart - DateTime.Now).TotalSeconds);
     }
 
     public void SendMessageToAllPlayers(Message msg)

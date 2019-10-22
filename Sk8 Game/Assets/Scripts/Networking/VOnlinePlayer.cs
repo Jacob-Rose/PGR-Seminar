@@ -1,4 +1,5 @@
 ﻿using AOT;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -45,28 +46,78 @@ public class VOnlinePlayer : Networked
     {
         if(msg is GameStartMessage)
         {
-
+            GameStartMessage nMsg = msg as GameStartMessage;
+            Invoke("StartGame", (float)(nMsg.timeToStart - DateTime.Now).TotalSeconds);
         }
         else if(msg is PlayerConnectedMessage)
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
+            GameObject newPlayer = Resources.Load("Prefabs/NetworkedPlayer") as GameObject;
+            Toolbox.Instance.addPlayer(newPlayer.GetComponent<NetworkedPlayer>());
+        }
+        else if(msg is PlayerDisconnectedMessage)
+        {
+            PlayerDisconnectedMessage nMsg = msg as PlayerDisconnectedMessage;
+            Player player = Toolbox.Instance.removePlayer(nMsg.playerID);
+            Destroy(player.gameObject);
         }
     }
 
     public void ConnectToIP(string ip)
     {
         IPAddress address;
-        if(IPAddress.TryParse(ip, out address ))
+        if(TryParseIP(ip, out address ))
         {
             m_Address.SetAddress(ip, m_Port);
             m_Server.Connect(ref m_Address);
         }
         else
         {
-            Debug.Log("Ip not valid");
+            Debug.LogError("Ip not valid");
         }
         
     }
 
-    
+    public bool TryParseIP(string ip, out IPAddress iPAddress)
+    {
+        try
+        {
+            long ipLong = 0;
+            int currentIndex = 0;
+            int[] ipVals = new int[4];
+            for (int i = 0; i < 4; i++)
+            {
+                string numIp = ip.Substring(currentIndex, ip.IndexOf('.') - currentIndex);
+                currentIndex = ip.IndexOf('.') + 1;
+                int num;
+                if (int.TryParse(numIp, out num))
+                {
+                    ipVals[i] = num;
+                }
+                else
+                {
+                    iPAddress = null;
+                    return false;
+                }
+
+            }
+            ipLong = ipToInt(ipVals[0], ipVals[1], ipVals[2], ipVals[3]);
+            iPAddress = new IPAddress(ipLong);
+            return true;
+        }
+        catch(Exception e)
+        {
+            iPAddress = null;
+            return false;
+        }
+        
+    }
+
+    int ipToInt(int first, int second,
+    int third, int fourth)
+    {
+        return (first << 24) | (second << 16) | (third << 8) | (fourth);
+    }
+
+
 }

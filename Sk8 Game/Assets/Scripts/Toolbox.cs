@@ -39,6 +39,20 @@ public class Toolbox
         m_Players.Add(p);
     }
 
+    public Player removePlayer(int id)
+    {
+        for(int i =0; i < m_Players.Count;i++)
+        {
+            if(m_Players[i].playerInfo.id == id)
+            {
+                Player p = m_Players[i];
+                m_Players.RemoveAt(i);
+                return p;
+            }
+        }
+        return null;
+    }
+
     private void callListeners()
     {
         for(int i =0; i < m_Listeners.Count; i++)
