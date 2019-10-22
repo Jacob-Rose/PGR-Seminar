@@ -22,6 +22,7 @@ public class ConnectionMenu : MonoBehaviour
 
     void ConnectToIP()
     {
-        VOnlinePlayer.m_Instance.ConnectToIP(ipText.text);
+        string ip = ipText.text;
+        VOnlinePlayer.m_Instance.ConnectToIP(ip.Trim(new char[] { (char)8203 }));
     }
 }

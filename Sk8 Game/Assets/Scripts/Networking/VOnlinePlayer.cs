@@ -6,6 +6,8 @@ using System.Net;
 using UnityEngine;
 using Valve.Sockets;
 //yang of VHostBehavior
+
+
 public class VOnlinePlayer : Networked
 {
     private StatusCallback m_Status;
@@ -66,7 +68,7 @@ public class VOnlinePlayer : Networked
     public void ConnectToIP(string ip)
     {
         IPAddress address;
-        if(TryParseIP(ip, out address ))
+        if(IPAddress.TryParse(ip, out address ))
         {
             m_Address.SetAddress(ip, m_Port);
             m_Server.Connect(ref m_Address);
@@ -82,7 +84,7 @@ public class VOnlinePlayer : Networked
     {
         try
         {
-            long ipLong = 0;
+            ulong ipLong = 0;
             int currentIndex = 0;
             int[] ipVals = new int[4];
             for (int i = 0; i < 4; i++)
@@ -101,8 +103,8 @@ public class VOnlinePlayer : Networked
                 }
 
             }
-            ipLong = ipToInt(ipVals[0], ipVals[1], ipVals[2], ipVals[3]);
-            iPAddress = new IPAddress(ipLong);
+            //ipLong = ipToInt(ipVals[0], ipVals[1], ipVals[2], ipVals[3]);
+            iPAddress = new IPAddress(0);
             return true;
         }
         catch(Exception e)

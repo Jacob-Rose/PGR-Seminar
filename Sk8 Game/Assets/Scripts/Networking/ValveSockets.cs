@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 
+using UnityEngine;
 
 
 namespace Valve.Sockets
@@ -694,10 +695,16 @@ namespace Valve.Sockets
         {
             IPAddress address = default(IPAddress);
 
-            if (IPAddress.TryParse(ip, out address))
+            try
             {
-                if (address.AddressFamily != AddressFamily.InterNetwork)
-                    throw new Exception("Incorrect format of an IPv4 address");
+                if (IPAddress.TryParse(ip, out address))
+                {
+                    if (address.AddressFamily != AddressFamily.InterNetwork)
+                        throw new Exception("Incorrect format of an IPv4 address");
+                }
+            } catch (Exception e)
+            {
+                Debug.Log(e);
             }
 
             byte[] bytes = address.GetAddressBytes();
