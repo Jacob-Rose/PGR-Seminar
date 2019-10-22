@@ -19717,7 +19717,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062703, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_Name
-      value: MarkedRoadB
+      value: StartLine
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -19727,7 +19727,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1501.806
+      value: -1501.24
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -19777,12 +19777,12 @@ PrefabInstance:
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 31.581432
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 3.9619882
+      value: 0.7722
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -19798,27 +19798,32 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: cb54196c19bf50c48a695630a352a6d5,
+      objectReference: {fileID: 21300000, guid: 26238f8a8ea4cb14eaf7d0ab433da592,
         type: 3}
     - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_Color.r
-      value: 0.5849056
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_Color.g
-      value: 0.5786845
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_Color.b
-      value: 0.5435208
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_SortingOrder
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 676402263228062702, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0fd5a185887b17546a8d2e309c8e6aa9, type: 3}
@@ -21707,7 +21712,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062703, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_Name
-      value: MarkedRoadA
+      value: AestheticRoad
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -28540,11 +28545,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318102, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318102, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7980100548666318097, guid: aa13dd97acbf5754aacd321f875cbfe7,
         type: 3}
       propertyPath: m_SortingOrder
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318097, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318097, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318097, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.029037476
+      objectReference: {fileID: 0}
+    - target: {fileID: 7980100548666318097, guid: aa13dd97acbf5754aacd321f875cbfe7,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 2a4c62af9b825924ba649a4a6422584f,
+        type: 3}
     - target: {fileID: 7980100548666318096, guid: aa13dd97acbf5754aacd321f875cbfe7,
         type: 3}
       propertyPath: m_BodyType
@@ -35608,7 +35644,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062703, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_Name
-      value: MarkedRoadC
+      value: AestheticRoad2
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -48109,7 +48145,7 @@ PrefabInstance:
     - target: {fileID: 7043197784675426857, guid: b307ef44237d93a46b3cf2e7770bfb19,
         type: 3}
       propertyPath: m_Name
-      value: Road
+      value: RoadPlaceholder
       objectReference: {fileID: 0}
     - target: {fileID: 7043197784675426857, guid: b307ef44237d93a46b3cf2e7770bfb19,
         type: 3}

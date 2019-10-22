@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class Obstacle : ScriptableObject 
 {
+    //will be populated and used at later date
+
 	public GameObject obstacleTemplate;
 	public int spawnChance;
 	/*public bool shadowCast;

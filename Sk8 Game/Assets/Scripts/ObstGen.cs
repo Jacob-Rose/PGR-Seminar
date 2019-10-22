@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class ObstGen : MonoBehaviour
 {
+    //contains info for obstacles -- not currently in use
     public Obstacle[] obstacles;
+    //will eventually be the lead player's
     public Transform viewerTransform;
+
+    //kinda useless, tracks current stage
     public int stage = 0;
  
 
@@ -16,17 +20,19 @@ public class ObstGen : MonoBehaviour
      * 
      */
 
+        //not currently needed
+    public int GetStagePoint()
+    {
+        return stage;
+    }
     // Start is called before the first frame update
     void Start()
     {
 
     }
 
-    /*public Vector2 CreateEndPoint()
-    {
 
-    }*/
-
+    //generates a random spawn position based on transform to spawn object
     public Vector2 CreateObstaclePoint(Vector2 viewrTrans)
     {
         Vector2 spawnPosition = new Vector2(0, viewrTrans.y + 10);
@@ -35,6 +41,7 @@ public class ObstGen : MonoBehaviour
         return spawnPosition;
     }
 
+    //ignore, outdated script
     public void decideObstacle()
     {
         if(stage == 1)

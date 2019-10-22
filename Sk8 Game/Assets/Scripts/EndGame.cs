@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EndGame : MonoBehaviour
 {
+    //put on EndTest, calls game end when collision
+
     public GameObject scenechanger;
     // Start is called before the first frame update
     void Start()
