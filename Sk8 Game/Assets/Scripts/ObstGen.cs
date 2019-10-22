@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class ObstGen : MonoBehaviour
 {
+    //contains info for obstacles -- not currently in use
     public Obstacle[] obstacles;
+    //will eventually be the lead player's
     public Transform viewerTransform;
+
+    //kinda useless, tracks current stage
     public int stage = 0;
+ 
+
     /*
      * Get position of player in the lead,spawn from this position + 10 to the y value
      * generate the obstacle in a random range, with bounds being 4 away in both directions from the spawn position
@@ -14,20 +20,28 @@ public class ObstGen : MonoBehaviour
      * 
      */
 
+        //not currently needed
+    public int GetStagePoint()
+    {
+        return stage;
+    }
     // Start is called before the first frame update
     void Start()
     {
 
     }
 
-    public Vector2 CreateObstaclePoint()
+
+    //generates a random spawn position based on transform to spawn object
+    public Vector2 CreateObstaclePoint(Vector2 viewrTrans)
     {
-        Vector2 spawnPosition = new Vector2(0, viewerTransform.position.y + 10);
+        Vector2 spawnPosition = new Vector2(0, viewrTrans.y + 10);
         Vector2 randomVal = new Vector2(Random.Range(-4.0f, 4.0f), Random.Range(-4.0f, 4.0f));
         spawnPosition += randomVal;
         return spawnPosition;
     }
 
+    //ignore, outdated script
     public void decideObstacle()
     {
         if(stage == 1)
@@ -52,6 +66,6 @@ public class ObstGen : MonoBehaviour
     {
         //viewerTransform will be set to the lead player
         //increment stage based on checkpoints
-        CreateObstaclePoint();
+        CreateObstaclePoint(viewerTransform.position);
     }
 }
