@@ -7,7 +7,6 @@ using Valve.Sockets;
 
 public class VHostBehavior : Networked
 {
-    private StatusCallback m_Status;
     protected ConnectionManager m_Connections = new ConnectionManager();
 
     public static VHostBehavior m_Instance;
@@ -36,32 +35,6 @@ public class VHostBehavior : Networked
             }
         };
         base.Start();
-    }
-
-    [MonoPInvokeCallback(typeof(StatusCallback))]
-    static void OnServerStatusUpdate(StatusInfo info, System.IntPtr context)
-    {
-        switch (info.connectionInfo.state)
-        {
-            case ConnectionState.None:
-                break;
-
-            case ConnectionState.Connecting:
-                m_Instance.m_Server.AcceptConnection(info.connection);
-                break;
-
-            case ConnectionState.Connected:
-                Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
-                //todo check if this is the current player
-                ConnectionInfo cInfo = m_Instance.m_Connections.addConnection(info.connection);
-                m_Instance.HandleNetworkMessage(new PlayerConnectedMessage(cInfo.player.playerID));
-                break;
-            case ConnectionState.ClosedByPeer:
-                m_Instance.m_Server.CloseConnection(info.connection);
-                m_Instance.m_Connections.removeConnection(info.connection);
-                Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
-                break;
-        }
     }
 
     protected override void HandleNetworkMessage(Message msg)
@@ -107,15 +80,5 @@ public class VHostBehavior : Networked
         {
             m_Server.SendMessageToConnection(m_Connections.getConnection(i).connection, msg.toBuffer());
         }
-    }
-
-    public override void Update()
-    {
-        if(m_Server != null)
-        {
-            m_Server.DispatchCallback(m_Status);
-        }
-        base.Update();
-        
     }
 }

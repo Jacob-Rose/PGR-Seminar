@@ -10,6 +10,7 @@ public abstract class Networked : MonoBehaviour
     protected NetworkingSockets m_Server = new NetworkingSockets();
     protected Address m_Address = new Address();
     protected uint m_ListenSocket;
+    protected StatusCallback m_Status;
     public ushort m_Port = 9000;
 
     private const int maxMessages = 20;
@@ -43,8 +44,9 @@ public abstract class Networked : MonoBehaviour
 
     public virtual void Update()
     {
-        if (m_Server != null)
+        if (m_Server != null && m_Status != null)
         {
+            m_Server.DispatchCallback(m_Status);
             int netMessagesCount = m_Server.ReceiveMessagesOnListenSocket(m_ListenSocket, netMessages, maxMessages);
 
             if (netMessagesCount > 0)

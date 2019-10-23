@@ -10,7 +10,6 @@ using Valve.Sockets;
 
 public class VOnlinePlayer : Networked
 {
-    private StatusCallback m_Status;
     protected ConnectionInfo m_Connection = new ConnectionInfo(uint.MaxValue, null);
 
     public static VOnlinePlayer m_Instance;
@@ -22,11 +21,12 @@ public class VOnlinePlayer : Networked
             switch (info.connectionInfo.state)
             {
                 case ConnectionState.None:
+                    print("no conn");
                     break;
 
                 case ConnectionState.Connected:
                     Debug.Log("I, the Client, connected to server - ID: " + info.connection);
-                    m_Instance.m_Connection = new ConnectionInfo(info.connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkPlayer"))).GetComponent<NetworkedPlayer>()); //the server equals one person
+                    m_Instance.m_Connection = new ConnectionInfo(info.connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkedPlayer"))).GetComponent<NetworkedPlayer>()); //the server equals one person
                     break;
 
                 case ConnectionState.ClosedByPeer:
@@ -69,7 +69,7 @@ public class VOnlinePlayer : Networked
         if(IPAddress.TryParse(ip, out address ))
         {
             m_Address.SetAddress(ip, m_Port);
-            m_Server.Connect(ref m_Address);
+            m_Connection = createNetworkPlayer(m_Server.Connect(ref m_Address));
         }
         else
         {
@@ -78,45 +78,9 @@ public class VOnlinePlayer : Networked
         
     }
 
-    public bool TryParseIP(string ip, out IPAddress iPAddress)
+    public ConnectionInfo createNetworkPlayer(uint connection)
     {
-        try
-        {
-            ulong ipLong = 0;
-            int currentIndex = 0;
-            int[] ipVals = new int[4];
-            for (int i = 0; i < 4; i++)
-            {
-                string numIp = ip.Substring(currentIndex, ip.IndexOf('.') - currentIndex);
-                currentIndex = ip.IndexOf('.') + 1;
-                int num;
-                if (int.TryParse(numIp, out num))
-                {
-                    ipVals[i] = num;
-                }
-                else
-                {
-                    iPAddress = null;
-                    return false;
-                }
-
-            }
-            //ipLong = ipToInt(ipVals[0], ipVals[1], ipVals[2], ipVals[3]);
-            iPAddress = new IPAddress(0);
-            return true;
-        }
-        catch(Exception e)
-        {
-            iPAddress = null;
-            return false;
-        }
-        
-    }
-
-    int ipToInt(int first, int second,
-    int third, int fourth)
-    {
-        return (first << 24) | (second << 16) | (third << 8) | (fourth);
+        return new ConnectionInfo(connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkedPlayer"))).GetComponent<NetworkedPlayer>());
     }
 
 
