@@ -14,6 +14,9 @@ public class VHostBehavior : Networked
     public override void Start()
     {
         m_Instance = this;
+        //m_ListenSocket = m_Server.CreateListenSocket(address);
+        //TODO IMPLEMENT CORRECTLY
+
         m_Status = (info, context) => {
             switch (info.connectionInfo.state)
             {
