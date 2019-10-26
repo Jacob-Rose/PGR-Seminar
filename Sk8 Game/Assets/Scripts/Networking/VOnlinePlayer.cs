@@ -42,6 +42,16 @@ public class VOnlinePlayer : Networked
         };
         base.Start();
     }
+
+    public override void Update()
+    {
+        if (m_Server != null && m_Status != null)
+        {
+            netMessageCount = m_Server.ReceiveMessagesOnConnection(m_Connection.connection, netMessages, maxMessages);
+        }
+        base.Update();
+    }
+
     protected override void HandleNetworkMessage(Message msg)
     {
         if(msg is GameStartMessage)
@@ -66,10 +76,10 @@ public class VOnlinePlayer : Networked
     public void ConnectToIP(string ip)
     {
         IPAddress address;
-        if(IPAddress.TryParse(ip, out address ))
+        if(IPAddress.TryParse(ip, out address))
         {
             m_Address.SetAddress(ip, m_Port);
-            m_Connection = createNetworkPlayer(m_Server.Connect(ref m_Address));
+            m_Server.Connect(ref m_Address);
         }
         else
         {

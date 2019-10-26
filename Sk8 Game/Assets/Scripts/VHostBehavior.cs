@@ -8,14 +8,14 @@ using Valve.Sockets;
 public class VHostBehavior : Networked
 {
     protected ConnectionManager m_Connections = new ConnectionManager();
-
+    protected uint m_ListenSocket;
     public static VHostBehavior m_Instance;
 
     public override void Start()
     {
         m_Instance = this;
-        //m_ListenSocket = m_Server.CreateListenSocket(address);
-        //TODO IMPLEMENT CORRECTLY
+        m_Address.SetAddress("::0", m_Port);
+        m_ListenSocket = m_Server.CreateListenSocket(ref m_Address);
 
         m_Status = (info, context) => {
             switch (info.connectionInfo.state)
@@ -38,6 +38,15 @@ public class VHostBehavior : Networked
             }
         };
         base.Start();
+    }
+
+    public override void Update()
+    {
+        if(m_Server != null && m_Status != null)
+        {
+            netMessageCount = m_Server.ReceiveMessagesOnListenSocket(m_ListenSocket, netMessages, maxMessages);
+        }
+        base.Update();
     }
 
     protected override void HandleNetworkMessage(Message msg)

@@ -9,12 +9,12 @@ public abstract class Networked : MonoBehaviour
 
     protected NetworkingSockets m_Server = new NetworkingSockets();
     protected Address m_Address = new Address();
-    protected uint m_ListenSocket;
     protected StatusCallback m_Status;
     public ushort m_Port = 9000;
 
-    private const int maxMessages = 20;
-    private NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+    protected const int maxMessages = 20;
+    protected int netMessageCount = 0;
+    protected NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 
     byte[] messageDataBuffer = new byte[256];
 
@@ -47,11 +47,10 @@ public abstract class Networked : MonoBehaviour
         if (m_Server != null && m_Status != null)
         {
             m_Server.DispatchCallback(m_Status);
-            int netMessagesCount = m_Server.ReceiveMessagesOnListenSocket(m_ListenSocket, netMessages, maxMessages);
 
-            if (netMessagesCount > 0)
+            if (netMessageCount > 0)
             {
-                for (int i = 0; i < netMessagesCount; i++)
+                for (int i = 0; i < netMessageCount; i++)
                 {
                     ref NetworkingMessage netMessage = ref netMessages[i];
                     Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
