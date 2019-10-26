@@ -47,20 +47,23 @@ public abstract class Networked : MonoBehaviour
         if (m_Server != null && m_Status != null)
         {
             m_Server.DispatchCallback(m_Status);
+        }
+    }
 
-            if (netMessageCount > 0)
+    public void readNetworkMessages()
+    {
+        if (netMessageCount > 0)
+        {
+            for (int i = 0; i < netMessageCount; i++)
             {
-                for (int i = 0; i < netMessageCount; i++)
-                {
-                    ref NetworkingMessage netMessage = ref netMessages[i];
-                    Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
-                    netMessage.CopyTo(messageDataBuffer);
-                    uint connection = netMessage.connection; //who sent it
-                    netMessage.Destroy();
-                    Message m = Message.decipherMessage(messageDataBuffer);
+                ref NetworkingMessage netMessage = ref netMessages[i];
+                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
+                netMessage.CopyTo(messageDataBuffer);
+                uint connection = netMessage.connection; //who sent it
+                netMessage.Destroy();
+                Message m = Message.decipherMessage(messageDataBuffer);
 
-                    HandleNetworkMessage(m);
-                }
+                HandleNetworkMessage(m);
             }
         }
     }

@@ -52,11 +52,12 @@ public class VHostBehavior : Networked
 
     public override void Update()
     {
-        if(m_Server != null && m_Status != null)
+        base.Update();
+        if (m_Server != null && m_Status != null)
         {
             netMessageCount = m_Server.ReceiveMessagesOnListenSocket(m_ListenSocket, netMessages, maxMessages);
         }
-        base.Update();
+        readNetworkMessages();
     }
 
 

@@ -51,11 +51,12 @@ public class VOnlinePlayer : Networked
 
     public override void Update()
     {
+        base.Update();
         if (m_Server != null && m_Status != null)
         {
             netMessageCount = m_Server.ReceiveMessagesOnConnection(m_Connection, netMessages, maxMessages);
-            base.Update();
         }
+        readNetworkMessages();
     }
 
     protected override void HandleNetworkMessage(Message msg)
