@@ -14,7 +14,7 @@ public class CameraFollower : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        targets = Toolbox.Instance.m_Players;
+        targets = GameManager.Instance.GetPlayers();
     }
 
     // Update is called once per frame

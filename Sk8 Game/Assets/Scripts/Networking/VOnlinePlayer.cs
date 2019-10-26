@@ -10,7 +10,7 @@ using Valve.Sockets;
 
 public class VOnlinePlayer : Networked
 {
-    protected ConnectionInfo m_Connection = new ConnectionInfo(uint.MaxValue, null);
+    protected uint m_Connection = uint.MaxValue;
 
     public static VOnlinePlayer m_Instance;
     public override void Start()
@@ -26,16 +26,20 @@ public class VOnlinePlayer : Networked
 
                 case ConnectionState.Connected:
                     Debug.Log("I, the Client, connected to server - ID: " + info.connection);
-                    m_Instance.m_Connection = new ConnectionInfo(info.connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkedPlayer"))).GetComponent<NetworkedPlayer>()); //the server equals one person
+                    m_Connection = info.connection;
+                    GameManager.Instance.AddPlayer(info.connectionInfo.address.GetIP());
                     break;
 
                 case ConnectionState.ClosedByPeer:
-                    m_Instance.m_Server.CloseConnection(m_Instance.m_Connection.connection);
+                    m_Server.CloseConnection(m_Instance.m_Connection);
+                    m_Connection = uint.MaxValue;
+                    GameManager.Instance.RemovePlayer(info.connectionInfo.address.GetIP());
                     Debug.Log("I, the Client, disconnected from server");
                     break;
 
                 case ConnectionState.ProblemDetectedLocally:
-                    m_Instance.m_Server.CloseConnection(m_Instance.m_Connection.connection);
+                    m_Server.CloseConnection(m_Instance.m_Connection);
+                    GameManager.Instance.RemovePlayer(info.connectionInfo.address.GetIP());
                     Debug.Log("I, the Client, unable to connect");
                     break;
             }
@@ -43,13 +47,15 @@ public class VOnlinePlayer : Networked
         base.Start();
     }
 
+    
+
     public override void Update()
     {
         if (m_Server != null && m_Status != null)
         {
-            netMessageCount = m_Server.ReceiveMessagesOnConnection(m_Connection.connection, netMessages, maxMessages);
+            netMessageCount = m_Server.ReceiveMessagesOnConnection(m_Connection, netMessages, maxMessages);
+            base.Update();
         }
-        base.Update();
     }
 
     protected override void HandleNetworkMessage(Message msg)
@@ -57,19 +63,17 @@ public class VOnlinePlayer : Networked
         if(msg is GameStartMessage)
         {
             GameStartMessage nMsg = msg as GameStartMessage;
-            Invoke("StartGame", (float)(nMsg.timeToStart - DateTime.Now).TotalSeconds);
+            GameManager.Instance.StartGameInSeconds((float)(DateTime.Now - nMsg.timeToStart).TotalSeconds);
         }
-        else if(msg is PlayerConnectedMessage)
+        if(msg is PlayerConnectedMessage)
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
-            GameObject newPlayer = Resources.Load("Prefabs/NetworkedPlayer") as GameObject;
-            Toolbox.Instance.addPlayer(newPlayer.GetComponent<NetworkedPlayer>());
+            GameManager.Instance.AddPlayer(nMsg.playerID);
         }
         else if(msg is PlayerDisconnectedMessage)
         {
             PlayerDisconnectedMessage nMsg = msg as PlayerDisconnectedMessage;
-            Player player = Toolbox.Instance.removePlayer(nMsg.playerID);
-            Destroy(player.gameObject);
+            GameManager.Instance.RemovePlayer(nMsg.playerID);
         }
     }
 
@@ -79,7 +83,7 @@ public class VOnlinePlayer : Networked
         if(IPAddress.TryParse(ip, out address))
         {
             m_Address.SetAddress(ip, m_Port);
-            m_Server.Connect(ref m_Address);
+            m_Connection = m_Server.Connect(ref m_Address);
         }
         else
         {
@@ -87,11 +91,4 @@ public class VOnlinePlayer : Networked
         }
         
     }
-
-    public ConnectionInfo createNetworkPlayer(uint connection)
-    {
-        return new ConnectionInfo(connection, Instantiate(((GameObject)Resources.Load("Prefabs/NetworkedPlayer"))).GetComponent<NetworkedPlayer>());
-    }
-
-
 }

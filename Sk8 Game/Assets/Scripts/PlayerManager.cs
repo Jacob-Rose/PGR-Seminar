@@ -38,6 +38,7 @@ public class PlayerManager : MonoBehaviour
 
     public void HandlePlayerUpdate(PlayerInfo info)
     {
+        /*
         for(int i =0; i < m_Players.Count; i++)
         {
             //ignore all other players with continue
@@ -46,6 +47,7 @@ public class PlayerManager : MonoBehaviour
 
             ((NetworkedPlayer)m_Players[i]).updatePlayerInfo(info);
         }
+        */
     }
 
 }

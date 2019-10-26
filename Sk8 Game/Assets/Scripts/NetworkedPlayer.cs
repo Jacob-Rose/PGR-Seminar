@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class NetworkedPlayer : Player
 {
-    public int playerID = int.MaxValue;
+    public string playerID = "";
 
-    public NetworkedPlayer(int id)
+    public NetworkedPlayer(string id)
     {
         playerID = id;
     }

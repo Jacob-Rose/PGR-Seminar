@@ -1,6 +1,9 @@
 ﻿using AOT;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
 using UnityEngine;
 using Valve.Sockets;
 
@@ -18,7 +21,7 @@ public abstract class Networked : MonoBehaviour
 
     byte[] messageDataBuffer = new byte[256];
 
-    public ClientPlayer m_ClientPlayer; //all networked will have a single client player that sends data
+
 
     protected abstract void HandleNetworkMessage(Message msg);
 
@@ -34,13 +37,10 @@ public abstract class Networked : MonoBehaviour
 
     public virtual void Start()
     {
-        SpawnClientPlayer();
+        DontDestroyOnLoad(this);
     }
 
-    public void SpawnClientPlayer()
-    {
-        m_ClientPlayer = ((GameObject)Instantiate(Resources.Load("Prefabs/ClientPlayer"))).GetComponent<ClientPlayer>();
-    }
+    
 
     public virtual void Update()
     {
@@ -65,10 +65,17 @@ public abstract class Networked : MonoBehaviour
         }
     }
 
-    public void StartGame()
+    public static IPAddress GetIP()
     {
-        Toolbox.Instance.StartGame();
+        var myClient = new WebClient();
+        string myExtIP = myClient.DownloadString("http://checkip.dyndns.org");
+        myExtIP = myExtIP.Substring(myExtIP.IndexOf(": ") + 2);
+        myExtIP = myExtIP.Substring(0, myExtIP.IndexOf("<"));
+        char[] charIp = myExtIP.ToCharArray();
+        IPAddress address = IPAddress.Parse(myExtIP);
+        return address;
     }
+
 
     public static void InitializeValveSockets()
     {

@@ -81,32 +81,44 @@ public class GameStartMessage : Message
 
 public class PlayerUpdateMessage : Message
 {
+    public string playerID;
     public PlayerInfo info;
     public PlayerUpdateMessage(byte[] buffer)
     {
         info = new PlayerInfo();
         int currentByteIndex = 0;//event type took two bytes
         eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
-        currentByteIndex += 2; //2
-        info.id = BitConverter.ToInt32(buffer, currentByteIndex);
-        currentByteIndex += 4; //6
+        currentByteIndex += sizeof(ushort); //2
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        playerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            playerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        currentByteIndex += playerID.Length * sizeof(char);
         info.zRot = BitConverter.ToSingle(buffer, currentByteIndex);
-        currentByteIndex += 4; //10
+        currentByteIndex += sizeof(float); //10
         info.position.x = BitConverter.ToSingle(buffer, currentByteIndex);
-        currentByteIndex += 4; //14
+        currentByteIndex += sizeof(float); //14
         info.position.y = BitConverter.ToSingle(buffer, currentByteIndex);
-        currentByteIndex += 4; //18
+        currentByteIndex += sizeof(float); //18
     }
 
-    public PlayerUpdateMessage(PlayerInfo info) {
+    public PlayerUpdateMessage(PlayerInfo info, string playerID) {
         eventType = (ushort)NetworkEvent.PlayerUpdateInfo;
+        this.playerID = playerID;
         this.info = info;
     }
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[18];
+        byte[] buffer = new byte[14 + playerID.Length * sizeof(char)];
         Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(info.id), 0, buffer, 2, 4);
+        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        for (int i = 0; i < playerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+        }
         Buffer.BlockCopy(BitConverter.GetBytes(info.zRot), 0, buffer, 6, 4);
         Buffer.BlockCopy(BitConverter.GetBytes(info.position.x), 0, buffer, 10, 4);
         Buffer.BlockCopy(BitConverter.GetBytes(info.position.y), 0, buffer, 14, 4);
@@ -116,51 +128,71 @@ public class PlayerUpdateMessage : Message
 
 public class PlayerConnectedMessage : Message
 {
-    public int playerID;
+    public string playerID;
     public PlayerConnectedMessage(byte[] buffer)
     {
         int currentByteIndex = 0;
-        eventType = BitConverter.ToUInt16(buffer, (int)currentByteIndex);
-        currentByteIndex += 2;
-        playerID = BitConverter.ToInt32(buffer, (int)currentByteIndex);
-        currentByteIndex += 4;
+        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        playerID = "";
+        for(int i = 0; i < playerIDCount; i++)
+        {
+            playerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        currentByteIndex += playerID.Length * sizeof(char);
     }
 
-    public PlayerConnectedMessage(int playerID) {
+    public PlayerConnectedMessage(string playerID) {
         eventType = (ushort)NetworkEvent.PlayerConnected;
         this.playerID = playerID;
     }
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[6];
+        byte[] buffer = new byte[4 + (playerID.Length * sizeof(char))];
         Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(playerID), 0, buffer, 2, 4);
+        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        for(int i = 0; i < playerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+        }
         return buffer;
     }
 }
 
 public class PlayerDisconnectedMessage : Message
 {
-    public int playerID;
+    public string playerID;
     public PlayerDisconnectedMessage(byte[] buffer)
     {
         int currentByteIndex = 0;
-        eventType = BitConverter.ToUInt16(buffer, (int)currentByteIndex);
-        currentByteIndex += 2;
-        playerID = BitConverter.ToInt32(buffer, (int)currentByteIndex);
-        currentByteIndex += 4;
+        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        playerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            playerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        currentByteIndex += playerID.Length * sizeof(char);
     }
 
-    public PlayerDisconnectedMessage(int playerID)
+    public PlayerDisconnectedMessage(string playerID)
     {
-        eventType = (ushort)NetworkEvent.PlayerConnected;
+        eventType = (ushort)NetworkEvent.PlayerDisconnected;
         this.playerID = playerID;
     }
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[6];
+        byte[] buffer = new byte[4 + (playerID.Length * sizeof(char))];
         Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(playerID), 0, buffer, 2, 4);
+        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        for (int i = 0; i < playerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+        }
         return buffer;
     }
 }

@@ -12,6 +12,7 @@ public class ConnectionMenu : MonoBehaviour
     void Start()
     {
         submitButton.onClick.AddListener(ConnectToIP);
+        ipText.text = Networked.GetIP().ToString();
     }
 
     // Update is called once per frame

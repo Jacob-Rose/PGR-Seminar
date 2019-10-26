@@ -18,8 +18,6 @@ public struct PlayerInfo //sent from server to
     public int currentScore;
     [SerializeField]
     public PlayerMove move;
-    [SerializeField]
-    public int id;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -31,14 +29,8 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
     NONE
     //add more, clean up options
 }
-/*public struct PlayerInteractInfo
-{
-    public PlayerMove move;
-    //public int comboCount //used for acceleration, still need to work on this
-}
-*/
 
-public class Player : MonoBehaviour, Listener
+public class Player : MonoBehaviour
 {
     [SerializeField]
     protected float startSpeed;
@@ -72,7 +64,7 @@ public class Player : MonoBehaviour, Listener
     {
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
-        Toolbox.Instance.addPlayer(this);
+        DontDestroyOnLoad(this);
     }
 
     public PlayerInfo GetPlayerInfo()
@@ -80,11 +72,9 @@ public class Player : MonoBehaviour, Listener
         return playerInfo;
     }
 
-    // Update is called once per frame
-    //Needed to be public in order to get the base.Update(); to work. Not sure if there's another way. https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/base
     public virtual void Update()
     {
-        if (!Toolbox.Instance.HasGameStarted)
+        if (!GameManager.Instance.HasGameStarted)
             return;
         MovePlayer(Time.deltaTime);
 
@@ -109,10 +99,5 @@ public class Player : MonoBehaviour, Listener
         m_Rigidbody.velocity = transform.up * playerInfo.currentSpeed;
         playerInfo.position = transform.position;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
-    }
-
-    public void OnListenerCall()
-    {
-        
     }
 }
