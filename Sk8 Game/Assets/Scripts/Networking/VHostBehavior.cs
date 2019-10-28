@@ -24,6 +24,10 @@ public class VHostBehavior : Networked
 
     public override void Start()
     {
+
+        PlayerUpdateMessage test = new PlayerUpdateMessage(new PlayerInfo(), "herr");
+        PlayerUpdateMessage Reader = new PlayerUpdateMessage(test.toBuffer());
+
         m_Instance = this;
         m_Address.SetAddress("::0", m_Port);
         m_ListenSocket = m_Server.CreateListenSocket(ref m_Address);
@@ -101,6 +105,7 @@ public class VHostBehavior : Networked
         if (msg is PlayerUpdateMessage)
         {
             PlayerUpdateMessage nMsg = msg as PlayerUpdateMessage;
+
             GameManager.Instance.UpdatePlayerInformation(nMsg.info, nMsg.playerID);
         }
 

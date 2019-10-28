@@ -97,7 +97,6 @@ public class PlayerUpdateMessage : Message
             playerID += BitConverter.ToChar(buffer, currentByteIndex);
             currentByteIndex += sizeof(char);
         }
-        currentByteIndex += playerID.Length * sizeof(char);
         info.zRot = BitConverter.ToSingle(buffer, currentByteIndex);
         currentByteIndex += sizeof(float); //10
         info.position.x = BitConverter.ToSingle(buffer, currentByteIndex);
@@ -113,16 +112,30 @@ public class PlayerUpdateMessage : Message
     }
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[14 + playerID.Length * sizeof(char)];
-        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        byte[] buffer = new byte[16 + (playerID.Length * sizeof(char))];
+        byte[] otherToAdd;
+        int currentIndex = 0;
+        otherToAdd = BitConverter.GetBytes(eventType);
+        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(ushort));
+        currentIndex += sizeof(ushort);
+        otherToAdd = BitConverter.GetBytes(((ushort)playerID.Length));
+        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(ushort));
+        currentIndex += sizeof(ushort);
         for (int i = 0; i < playerID.Length; i++)
         {
-            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+            otherToAdd = BitConverter.GetBytes(playerID.ToCharArray()[i]);
+            Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(char));
+            currentIndex += sizeof(char);
         }
-        Buffer.BlockCopy(BitConverter.GetBytes(info.zRot), 0, buffer, 6, 4);
-        Buffer.BlockCopy(BitConverter.GetBytes(info.position.x), 0, buffer, 10, 4);
-        Buffer.BlockCopy(BitConverter.GetBytes(info.position.y), 0, buffer, 14, 4);
+        otherToAdd = BitConverter.GetBytes(info.zRot);
+        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(float));
+        currentIndex += sizeof(float);
+        otherToAdd = BitConverter.GetBytes(info.position.x);
+        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(float));
+        currentIndex += sizeof(float);
+        otherToAdd = BitConverter.GetBytes(info.position.y);
+        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(float));
+        currentIndex += sizeof(float);
         return buffer;
     }
 }
