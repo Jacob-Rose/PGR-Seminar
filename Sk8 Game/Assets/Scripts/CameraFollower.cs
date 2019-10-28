@@ -20,12 +20,14 @@ public class CameraFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(targets.Count == 0)
+        targets = GameManager.Instance.GetPlayers();
+        if (targets.Count == 0)
         {
             return;
         }
-        Move();
-        Zoom();
+        Vector3 newPos = getCenterPoint();
+        //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
+        transform.position = new Vector3(0.0f, newPos.y, -10.0f);
     }
 
     void Move()
@@ -61,7 +63,7 @@ public class CameraFollower : MonoBehaviour
             return targets[0].transform.position;
         }
         Bounds b = new Bounds(targets[0].transform.position, Vector3.zero);
-        for(int i =1; i< targets.Count; i++)
+        for(int i =0; i< targets.Count; i++)
         {
             b.Encapsulate(targets[i].transform.position);
         }

@@ -21,25 +21,24 @@ public class VOnlinePlayer : Networked
             switch (info.connectionInfo.state)
             {
                 case ConnectionState.None:
-                    print("no conn");
+                    print("no connection exist, reset?");
                     break;
 
                 case ConnectionState.Connected:
                     Debug.Log("I, the Client, connected to server - ID: " + info.connection);
                     m_Connection = info.connection;
-                    GameManager.Instance.AddPlayer(info.connectionInfo.address.GetIP());
+                    m_Server.SendMessageToConnection(m_Connection, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
                     break;
 
                 case ConnectionState.ClosedByPeer:
-                    m_Server.CloseConnection(m_Instance.m_Connection);
+                    m_Server.CloseConnection(m_Connection);
                     m_Connection = uint.MaxValue;
-                    GameManager.Instance.RemovePlayer(info.connectionInfo.address.GetIP());
                     Debug.Log("I, the Client, disconnected from server");
                     break;
 
                 case ConnectionState.ProblemDetectedLocally:
-                    m_Server.CloseConnection(m_Instance.m_Connection);
-                    GameManager.Instance.RemovePlayer(info.connectionInfo.address.GetIP());
+                    m_Server.CloseConnection(m_Connection);
+                    m_Connection = uint.MaxValue;
                     Debug.Log("I, the Client, unable to connect");
                     break;
             }
@@ -47,16 +46,22 @@ public class VOnlinePlayer : Networked
         base.Start();
     }
 
-    
+    public override void OnDestroy()
+    {
+        m_Server.CloseConnection(m_Connection);
+        base.OnDestroy();
+    }
 
     public override void Update()
     {
-        base.Update();
         if (m_Server != null && m_Status != null)
         {
+            m_Server.DispatchCallback(m_Status);
             netMessageCount = m_Server.ReceiveMessagesOnConnection(m_Connection, netMessages, maxMessages);
         }
         readNetworkMessages();
+        ClientPlayer player = FindObjectOfType<ClientPlayer>();
+        m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.playerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
     }
 
     protected override void HandleNetworkMessage(Message msg)
@@ -64,7 +69,7 @@ public class VOnlinePlayer : Networked
         if(msg is GameStartMessage)
         {
             GameStartMessage nMsg = msg as GameStartMessage;
-            GameManager.Instance.StartGameInSeconds((float)(DateTime.Now - nMsg.timeToStart).TotalSeconds);
+            GameManager.Instance.StartGameInSeconds((float)(nMsg.timeToStart - DateTime.Now).TotalSeconds);
         }
         if(msg is PlayerConnectedMessage)
         {
@@ -75,6 +80,11 @@ public class VOnlinePlayer : Networked
         {
             PlayerDisconnectedMessage nMsg = msg as PlayerDisconnectedMessage;
             GameManager.Instance.RemovePlayer(nMsg.playerID);
+        }
+        else if(msg is PlayerUpdateMessage)
+        {
+            PlayerUpdateMessage nMsg = msg as PlayerUpdateMessage;
+            GameManager.Instance.UpdatePlayerInformation(nMsg.info, nMsg.playerID);
         }
     }
 

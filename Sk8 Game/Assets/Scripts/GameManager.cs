@@ -15,12 +15,13 @@ class GameManager : MonoBehaviour
 
     public static GameManager Instance { get { return instance; } }
 
-    private List<Player> m_Players = new List<Player>();
+    public List<Player> m_Players = new List<Player>();
 
     public bool HasGameStarted { get { return m_GameStarted; } }
     public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
 
     protected ClientPlayer m_ClientPlayer; //all networked will have a single client player that sends data
+    public string m_PlayerUsername;
 
     public void Awake()
     {
@@ -68,7 +69,7 @@ class GameManager : MonoBehaviour
 
     public void AddPlayer(string playerID)
     {
-        GameObject obj = (GameObject)Resources.Load("Prefabs/NetworkedPlayer");
+        GameObject obj = Instantiate((GameObject)Resources.Load("Prefabs/NetworkedPlayer"));
         m_Players.Add(obj.GetComponent<NetworkedPlayer>());
     }
 
@@ -81,6 +82,18 @@ class GameManager : MonoBehaviour
             {
                 Destroy(m_Players[i].gameObject);
                 m_Players.RemoveAt(i);
+            }
+        }
+    }
+
+    public void UpdatePlayerInformation(PlayerInfo info, string playerID)
+    {
+        for (int i = 0; i < m_Players.Count; i++)
+        {
+            NetworkedPlayer nPlayer = m_Players[i].GetComponent<NetworkedPlayer>();
+            if (nPlayer != null && nPlayer.playerID == playerID)
+            {
+                nPlayer.playerInfo = info;
             }
         }
     }

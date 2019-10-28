@@ -64,6 +64,7 @@ public class Player : MonoBehaviour
     {
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        playerInfo.currentSpeed = MaxSpeed;
         DontDestroyOnLoad(this);
     }
 

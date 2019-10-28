@@ -20,9 +20,6 @@ public abstract class Networked : MonoBehaviour
     protected NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 
     byte[] messageDataBuffer = new byte[256];
-
-
-
     protected abstract void HandleNetworkMessage(Message msg);
 
     public virtual void Awake()
@@ -39,8 +36,6 @@ public abstract class Networked : MonoBehaviour
     {
         DontDestroyOnLoad(this);
     }
-
-    
 
     public virtual void Update()
     {

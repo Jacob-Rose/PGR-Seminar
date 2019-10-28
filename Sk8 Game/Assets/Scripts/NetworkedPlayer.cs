@@ -10,10 +10,7 @@ public class NetworkedPlayer : Player
     {
         playerID = id;
     }
-    public override void Update()
-    {
-        base.Update();
-    }
+
     public void updatePlayerInfo(PlayerInfo info)
     {
         playerInfo = info;

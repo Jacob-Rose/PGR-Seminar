@@ -37,7 +37,7 @@ public class TileManager : MonoBehaviour
     void GetObstStatsSpawn(Vector2 spawnPosition, GameObject obstacle)
     {
         Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint(spawnPosition);
-        Instantiate(obstacle, obstaclePos, Quaternion.identity);
+        Instantiate(obstacle, obstaclePos, Quaternion.identity, transform);
     }
 
     //populate roads using GetObsStatsSpawn, is based on roads
@@ -46,13 +46,13 @@ public class TileManager : MonoBehaviour
         Vector2 spawnPos = firstTransform.transform.position;
         for (int i = 0; i < roadSize; i++)
         {
-            Instantiate(road, spawnPos, Quaternion.identity);
+            Instantiate(road, spawnPos, Quaternion.identity, transform);
             //GetObstStatsSpawn(spawnPos, testObstacle);
 
             if (i == roadSize)
             {
                 //Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint();
-                Instantiate(endTest, spawnPos, Quaternion.identity);
+                Instantiate(endTest, spawnPos, Quaternion.identity, transform);
 
             }
             //this needs to change to occur based on distance from start point

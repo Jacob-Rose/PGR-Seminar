@@ -7,19 +7,15 @@ using UnityEngine.UI;
 public class ConnectionMenu : MonoBehaviour
 {
     public TextMeshProUGUI ipText;
+    public TextMeshProUGUI usernameText;
     public Button submitButton;
     // Start is called before the first frame update
     void Start()
     {
         submitButton.onClick.AddListener(ConnectToIP);
-        ipText.text = Networked.GetIP().ToString();
     }
 
     // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     void ConnectToIP()
     {

@@ -5,6 +5,7 @@ using UnityEngine;
 
 enum NetworkEvent
 {
+    FirstSync, //sends the player username and other needed information
     StartGame,
     InitSync, //to sync on first connect
     PlayerConnected,
@@ -122,6 +123,41 @@ public class PlayerUpdateMessage : Message
         Buffer.BlockCopy(BitConverter.GetBytes(info.zRot), 0, buffer, 6, 4);
         Buffer.BlockCopy(BitConverter.GetBytes(info.position.x), 0, buffer, 10, 4);
         Buffer.BlockCopy(BitConverter.GetBytes(info.position.y), 0, buffer, 14, 4);
+        return buffer;
+    }
+}
+
+public class FirstSyncMessage : Message
+{
+    public string playerID;
+    public FirstSyncMessage(byte[] buffer)
+    {
+        int currentByteIndex = 0;//event type took two bytes
+        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort); //2
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        playerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            playerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        currentByteIndex += playerID.Length * sizeof(char);
+    }
+
+    public FirstSyncMessage(string playerID)
+    {
+        this.playerID = playerID;
+    }
+    public override byte[] toBuffer()
+    {
+        byte[] buffer = new byte[14 + playerID.Length * sizeof(char)];
+        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
+        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        for (int i = 0; i < playerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+        }
         return buffer;
     }
 }

@@ -7,15 +7,8 @@ using UnityEngine;
  */
 public class ClientPlayer : Player
 {
-
     public float zRotAmount = 10.0f;
     // Start is called before the first frame update
-    public override void Start()
-    {
-
-        playerInfo.currentSpeed = MaxSpeed;
-        base.Start();
-    }
 
     // Update is called once per frame
     public override void Update()
