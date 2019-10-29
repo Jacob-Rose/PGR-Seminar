@@ -70,7 +70,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 5
+  m_Time: 3
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -148,9 +148,10 @@ GameObject:
   - component: {fileID: 5769516655359432253}
   - component: {fileID: 5769516655359432255}
   - component: {fileID: 5769516655359432254}
+  - component: {fileID: 8563787578087096098}
   m_Layer: 0
   m_Name: ClientPlayer
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -164,7 +165,7 @@ Transform:
   m_GameObject: {fileID: 5769516655359432252}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.894, y: 1.894, z: 1.894}
   m_Children:
   - {fileID: 512051266868452756}
   - {fileID: 437630712321049396}
@@ -226,7 +227,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: a8e32af6243a59740b2a53b311f2f05f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 2a4c62af9b825924ba649a4a6422584f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -258,6 +259,56 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!60 &8563787578087096098
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769516655359432252}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 0.13, y: 0.42}
+      - {x: 0.049999997, y: 0.48}
+      - {x: -0.08, y: 0.48}
+      - {x: -0.14, y: 0.39}
+      - {x: -0.26, y: 0.16}
+      - {x: -0.26, y: 0.099999994}
+      - {x: -0.14, y: -0.06}
+      - {x: -0.13, y: -0.31}
+      - {x: -0.049999997, y: -0.37}
+      - {x: 0.08, y: -0.37}
+      - {x: 0.14, y: -0.28}
+      - {x: 0.26, y: 0.07}
+      - {x: 0.26, y: 0.22999999}
+    - - {x: 0.22, y: 0.22}
+      - {x: 0.24, y: 0.19999999}
+      - {x: 0.26999998, y: 0.21}
+      - {x: 0.26999998, y: 0.25}
+      - {x: 0.25, y: 0.26999998}
+      - {x: 0.22, y: 0.26}
+    - - {x: -0.26999998, y: 0.24}
+      - {x: -0.25, y: 0.22}
+      - {x: -0.22, y: 0.22999999}
+      - {x: -0.22, y: 0.26999998}
+      - {x: -0.24, y: 0.29}
+      - {x: -0.26999998, y: 0.28}
 --- !u!1 &7866656770219140326
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,6 +319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 512051266868452756}
   - component: {fileID: 2909947657653808923}
+  - component: {fileID: 564304653}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -328,7 +380,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 5
+  m_Time: 3
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -394,3 +446,29 @@ TrailRenderer:
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
   m_Emitting: 1
+--- !u!61 &564304653
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7866656770219140326}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.19664623, y: -3.8001375}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.3614572, y: 6.9201546}
+  m_EdgeRadius: 0

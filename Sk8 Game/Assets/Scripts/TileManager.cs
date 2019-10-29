@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
+    public GameObject[] obstList;
     //is the start of the race
     public GameObject firstTransform;
     //Gen manager
@@ -33,11 +34,24 @@ public class TileManager : MonoBehaviour
         //stageLevelAmount = obstManager.GetComponent<ObstGen>().GetStagePoint();
     }
 
-    //Get obstacle data and spawnPos, instantiate at Vector based on randomized func
-    void GetObstStatsSpawn(Vector2 spawnPosition, GameObject obstacle)
+    public struct ObstInfo
     {
+        public Vector3 spawnedPos;
+        public GameObject spawnedObstacle;
+        //add bool interacted with
+    }
+
+    //Get obstacle data and spawnPos, instantiate at Vector based on randomized func
+    ObstInfo GetObstStatsSpawn(Vector2 spawnPosition, GameObject[] obstacleList)
+    {
+        ObstInfo returnVal = new ObstInfo();
         Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint(spawnPosition);
-        Instantiate(obstacle, obstaclePos, Quaternion.identity, transform);
+        float obstListNum = (float)obstacleList.Length;
+        GameObject determinedObst = obstList[(int)Random.Range(0,obstListNum)];
+
+        Instantiate(determinedObst, obstaclePos, Quaternion.identity, transform);
+        //Debug.Log(obstaclePos, determinedObst);
+        return returnVal;
     }
 
     //populate roads using GetObsStatsSpawn, is based on roads
@@ -58,7 +72,7 @@ public class TileManager : MonoBehaviour
             //this needs to change to occur based on distance from start point
             for (int j = 0; j < stageLevelAmount; j++)
             {
-                GetObstStatsSpawn(spawnPos, testObstacle);
+                GetObstStatsSpawn(spawnPos, obstList);
             }
             spawnPos.y += 9;
             

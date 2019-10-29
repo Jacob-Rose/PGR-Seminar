@@ -8297,7 +8297,7 @@ Transform:
   - {fileID: 704025236}
   - {fileID: 549005275}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &322970210
 PrefabInstance:
@@ -21757,7 +21757,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -22381,7 +22381,7 @@ Transform:
   m_LocalScale: {x: 12.040167, y: 6.122, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &966634153
 BoxCollider2D:
@@ -24287,6 +24287,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f5695ca236857c478ed8b398bc56317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  obstList:
+  - {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0, type: 3}
+  - {fileID: 421345708782655166, guid: 6b4bfd82888223544b6f7e41325aa375, type: 3}
   firstTransform: {fileID: 1368724442}
   obstManager: {fileID: 1033165293}
   endTest: {fileID: 966634150}
@@ -48056,7 +48059,7 @@ PrefabInstance:
     - target: {fileID: 7043197784675426859, guid: b307ef44237d93a46b3cf2e7770bfb19,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7043197784675426859, guid: b307ef44237d93a46b3cf2e7770bfb19,
         type: 3}
