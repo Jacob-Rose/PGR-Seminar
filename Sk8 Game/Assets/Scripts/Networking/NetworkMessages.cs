@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 enum NetworkEvent
@@ -57,7 +58,6 @@ public class GameStartMessage : Message
     public DateTime timeToStart; //universal time to start, usually a few seconds past DateTime.Now()
     public GameStartMessage(byte[] buffer) // for client to decipher
     {
-        
         int currentByteIndex = 0;
         eventType = BitConverter.ToUInt16(buffer, 0);
         currentByteIndex += 2;
@@ -86,23 +86,42 @@ public class PlayerUpdateMessage : Message
     public PlayerInfo info;
     public PlayerUpdateMessage(byte[] buffer)
     {
-        info = new PlayerInfo();
-        int currentByteIndex = 0;//event type took two bytes
-        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
-        currentByteIndex += sizeof(ushort); //2
-        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
-        playerID = "";
-        for (int i = 0; i < playerIDCount; i++)
+        byte[] eventTypeBuffer = new byte[sizeof(ushort)];
+        byte[] playerIDLengthBuffer = new byte[sizeof(ushort)];
+        int currentIndex = 0;
+        Buffer.BlockCopy(buffer, currentIndex, eventTypeBuffer, 0, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(buffer, currentIndex, playerIDLengthBuffer, 0, playerIDLengthBuffer.Length);
+        currentIndex += playerIDLengthBuffer.Length;
+        int playerIDBufferCount = BitConverter.ToUInt16(playerIDLengthBuffer, 0);
+        byte[] playerIDBuffer = new byte[playerIDBufferCount]; //we know length of string now (in bytes)
+        Buffer.BlockCopy(buffer, currentIndex, playerIDBuffer, 0, playerIDBuffer.Length);
+        currentIndex += playerIDBuffer.Length;
+        byte[] zRotBuffer = new byte[sizeof(float)];
+        Buffer.BlockCopy(buffer, currentIndex, zRotBuffer, 0, zRotBuffer.Length);
+        currentIndex += zRotBuffer.Length;
+        byte[] xPosBuffer = new byte[sizeof(float)];
+        Buffer.BlockCopy(buffer, currentIndex, xPosBuffer, 0, xPosBuffer.Length);
+        currentIndex += xPosBuffer.Length;
+        byte[] yPosBuffer = new byte[sizeof(float)];
+        Buffer.BlockCopy(buffer, currentIndex, yPosBuffer, 0, yPosBuffer.Length);
+        currentIndex += yPosBuffer.Length;
+
+        playerID = Encoding.ASCII.GetString(playerIDBuffer);
+        Player p = GameManager.Instance.GetPlayer(playerID);
+        if(p != null)
         {
-            playerID += BitConverter.ToChar(buffer, currentByteIndex);
-            currentByteIndex += sizeof(char);
+            info = p.playerInfo;
+            info.position.x = BitConverter.ToSingle(xPosBuffer, 0);
+            info.position.y = BitConverter.ToSingle(yPosBuffer, 0);
+            info.zRot = BitConverter.ToSingle(zRotBuffer, 0);
         }
-        info.zRot = BitConverter.ToSingle(buffer, currentByteIndex);
-        currentByteIndex += sizeof(float); //10
-        info.position.x = BitConverter.ToSingle(buffer, currentByteIndex);
-        currentByteIndex += sizeof(float); //14
-        info.position.y = BitConverter.ToSingle(buffer, currentByteIndex);
-        currentByteIndex += sizeof(float); //18
+        else
+        {
+            Debug.LogError("Could not find player in game");
+        }
+        
+        eventType = (ushort)NetworkEvent.PlayerUpdateInfo;
     }
 
     public PlayerUpdateMessage(PlayerInfo info, string playerID) {
@@ -112,30 +131,26 @@ public class PlayerUpdateMessage : Message
     }
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[16 + (playerID.Length * sizeof(char))];
-        byte[] otherToAdd;
+        byte[] eventTypeBuffer = BitConverter.GetBytes(eventType);
+        byte[] playerIDBuffer = Encoding.ASCII.GetBytes(playerID);
+        byte[] playerIDLengthBuffer = BitConverter.GetBytes((ushort)playerIDBuffer.Length);
+        byte[] zRotBuffer = BitConverter.GetBytes(info.zRot);
+        byte[] xPosBuffer = BitConverter.GetBytes(info.position.x);
+        byte[] yPosBuffer = BitConverter.GetBytes(info.position.y);
+        byte[] buffer = new byte[eventTypeBuffer.Length + playerIDBuffer.Length + zRotBuffer.Length + xPosBuffer.Length +  yPosBuffer.Length + sizeof(ushort)];
         int currentIndex = 0;
-        otherToAdd = BitConverter.GetBytes(eventType);
-        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(ushort));
-        currentIndex += sizeof(ushort);
-        otherToAdd = BitConverter.GetBytes(((ushort)playerID.Length));
-        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(ushort));
-        currentIndex += sizeof(ushort);
-        for (int i = 0; i < playerID.Length; i++)
-        {
-            otherToAdd = BitConverter.GetBytes(playerID.ToCharArray()[i]);
-            Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(char));
-            currentIndex += sizeof(char);
-        }
-        otherToAdd = BitConverter.GetBytes(info.zRot);
-        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(float));
-        currentIndex += sizeof(float);
-        otherToAdd = BitConverter.GetBytes(info.position.x);
-        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(float));
-        currentIndex += sizeof(float);
-        otherToAdd = BitConverter.GetBytes(info.position.y);
-        Buffer.BlockCopy(otherToAdd, 0, buffer, currentIndex, sizeof(float));
-        currentIndex += sizeof(float);
+        Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(playerIDLengthBuffer, 0, buffer, currentIndex, playerIDLengthBuffer.Length);
+        currentIndex += playerIDLengthBuffer.Length;
+        Buffer.BlockCopy(playerIDBuffer, 0, buffer, currentIndex, playerIDBuffer.Length);
+        currentIndex += playerIDBuffer.Length;
+        Buffer.BlockCopy(zRotBuffer, 0, buffer, currentIndex, zRotBuffer.Length);
+        currentIndex += zRotBuffer.Length;
+        Buffer.BlockCopy(xPosBuffer, 0, buffer, currentIndex, xPosBuffer.Length);
+        currentIndex += xPosBuffer.Length;
+        Buffer.BlockCopy(yPosBuffer, 0, buffer, currentIndex, yPosBuffer.Length);
+        currentIndex += yPosBuffer.Length;
         return buffer;
     }
 }
@@ -145,17 +160,8 @@ public class FirstSyncMessage : Message
     public string playerID;
     public FirstSyncMessage(byte[] buffer)
     {
-        int currentByteIndex = 0;//event type took two bytes
-        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
-        currentByteIndex += sizeof(ushort); //2
-        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
-        playerID = "";
-        for (int i = 0; i < playerIDCount; i++)
-        {
-            playerID += BitConverter.ToChar(buffer, currentByteIndex);
-            currentByteIndex += sizeof(char);
-        }
-        currentByteIndex += playerID.Length * sizeof(char);
+        //TODO
+        eventType = (ushort)NetworkEvent.PlayerUpdateInfo;
     }
 
     public FirstSyncMessage(string playerID)
@@ -165,12 +171,7 @@ public class FirstSyncMessage : Message
     public override byte[] toBuffer()
     {
         byte[] buffer = new byte[14 + playerID.Length * sizeof(char)];
-        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
-        for (int i = 0; i < playerID.Length; i++)
-        {
-            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
-        }
+        //TODO
         return buffer;
     }
 }
@@ -180,17 +181,17 @@ public class PlayerConnectedMessage : Message
     public string playerID;
     public PlayerConnectedMessage(byte[] buffer)
     {
-        int currentByteIndex = 0;
-        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
-        currentByteIndex += sizeof(ushort);
-        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
-        playerID = "";
-        for(int i = 0; i < playerIDCount; i++)
-        {
-            playerID += BitConverter.ToChar(buffer, currentByteIndex);
-            currentByteIndex += sizeof(char);
-        }
-        currentByteIndex += playerID.Length * sizeof(char);
+        byte[] eventTypeBuffer = new byte[sizeof(ushort)];
+        byte[] playerIDLengthBuffer = new byte[sizeof(ushort)];
+        int currentIndex = 0;
+        Buffer.BlockCopy(buffer, currentIndex, eventTypeBuffer, 0, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(buffer, currentIndex, playerIDLengthBuffer, 0, playerIDLengthBuffer.Length);
+        currentIndex += playerIDLengthBuffer.Length;
+        int playerIDBufferCount = BitConverter.ToUInt16(playerIDLengthBuffer, 0);
+        byte[] playerIDBuffer = new byte[playerIDBufferCount]; //we know length of string now (in bytes)
+        Buffer.BlockCopy(buffer, currentIndex, playerIDBuffer, 0, playerIDBuffer.Length);
+        playerID = Encoding.ASCII.GetString(playerIDBuffer);
     }
 
     public PlayerConnectedMessage(string playerID) {
@@ -199,13 +200,17 @@ public class PlayerConnectedMessage : Message
     }
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[4 + (playerID.Length * sizeof(char))];
-        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
-        for(int i = 0; i < playerID.Length; i++)
-        {
-            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
-        }
+        byte[] eventTypeBuffer = BitConverter.GetBytes(eventType);
+        byte[] playerIDBuffer = Encoding.ASCII.GetBytes(playerID);
+        byte[] playerIDLengthBuffer = BitConverter.GetBytes((ushort)playerIDBuffer.Length);
+        byte[] buffer = new byte[eventTypeBuffer.Length + playerIDLengthBuffer.Length + playerIDBuffer.Length];
+        int currentIndex = 0;
+        Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(playerIDLengthBuffer, 0, buffer, currentIndex, playerIDLengthBuffer.Length);
+        currentIndex += playerIDLengthBuffer.Length;
+        Buffer.BlockCopy(playerIDBuffer, 0, buffer, currentIndex, playerIDBuffer.Length);
+        currentIndex += playerIDBuffer.Length;
         return buffer;
     }
 }

@@ -24,14 +24,9 @@ public class VHostBehavior : Networked
 
     public override void Start()
     {
-
-        PlayerUpdateMessage test = new PlayerUpdateMessage(new PlayerInfo(), "herr");
-        PlayerUpdateMessage Reader = new PlayerUpdateMessage(test.toBuffer());
-
         m_Instance = this;
         m_Address.SetAddress("::0", m_Port);
         m_ListenSocket = m_Server.CreateListenSocket(ref m_Address);
-
         m_Status = (info, context) => {
             switch (info.connectionInfo.state)
             {
@@ -51,7 +46,6 @@ public class VHostBehavior : Networked
                 case ConnectionState.ClosedByPeer:
                     m_Server.CloseConnection(info.connection);
                     Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
-                    GameManager.Instance.RemovePlayer(m_Connections[info.connection]);
                     m_Connections.Remove(info.connection);
                     break;
             }
@@ -65,7 +59,7 @@ public class VHostBehavior : Networked
         if (m_Server != null && m_Status != null)
         {
             m_Server.DispatchCallback(m_Status);
-            PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, "host");
+            PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
             foreach (var c in m_Connections)
             {
                 netMessageCount = m_Server.ReceiveMessagesOnConnection(c.Key, netMessages, maxMessages);
@@ -76,6 +70,7 @@ public class VHostBehavior : Networked
             {
                 m_Connections[m_NewConnectionName.Value.Key] = m_NewConnectionName.Value.Value;
             }
+            SendMessageToAllPlayers(cPlayerUpdateMsg);
         }
     }
     public void StartGameInSeconds(float seconds)
@@ -84,6 +79,17 @@ public class VHostBehavior : Networked
         GameManager.Instance.StartGameInSeconds(seconds);
         GameStartMessage msg = new GameStartMessage(timeToStart.Ticks);
         SendMessageToAllPlayers(msg);
+    }
+
+    public void SendMessageToAllExceptPlayer(string player, Message m)
+    {
+        foreach (var pair in m_Connections)
+        {
+            if(pair.Value != player && pair.Value != null)
+            {
+                m_Server.SendMessageToConnection(pair.Key, m.toBuffer());
+            }
+        }
     }
 
     public void SendMessageToAllPlayers(Message msg)
@@ -101,14 +107,13 @@ public class VHostBehavior : Networked
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
             m_NewConnectionName = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, nMsg.playerID);
             GameManager.Instance.AddPlayer(nMsg.playerID);
+            SendMessageToAllExceptPlayer(nMsg.playerID, msg);
         }
         if (msg is PlayerUpdateMessage)
         {
             PlayerUpdateMessage nMsg = msg as PlayerUpdateMessage;
-
-            GameManager.Instance.UpdatePlayerInformation(nMsg.info, nMsg.playerID);
+            GameManager.Instance.UpdatePlayerInformation(ref nMsg.info, nMsg.playerID);
+            SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
         }
-
-        SendMessageToAllPlayers(msg);//all messages relayed
     }
 }

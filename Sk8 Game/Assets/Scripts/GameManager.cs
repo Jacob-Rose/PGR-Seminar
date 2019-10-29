@@ -67,10 +67,12 @@ class GameManager : MonoBehaviour
         Invoke("StartGame", seconds);
     }
 
-    public void AddPlayer(string playerID)
+    public NetworkedPlayer AddPlayer(string playerID)
     {
         GameObject obj = Instantiate((GameObject)Resources.Load("Prefabs/NetworkedPlayer"));
+        obj.GetComponent<NetworkedPlayer>().playerID = playerID;
         m_Players.Add(obj.GetComponent<NetworkedPlayer>());
+        return obj.GetComponent<NetworkedPlayer>();
     }
 
     public void RemovePlayer(string playerID)
@@ -86,7 +88,7 @@ class GameManager : MonoBehaviour
         }
     }
 
-    public void UpdatePlayerInformation(PlayerInfo info, string playerID)
+    public void UpdatePlayerInformation(ref PlayerInfo info, string playerID)
     {
         for (int i = 0; i < m_Players.Count; i++)
         {
@@ -102,4 +104,18 @@ class GameManager : MonoBehaviour
     {
         return m_Players;
     }
+
+    public Player GetPlayer(string playerID)
+    {
+        for (int i = 0; i < m_Players.Count; i++)
+        {
+            NetworkedPlayer nPlayer = m_Players[i].GetComponent<NetworkedPlayer>();
+            if (nPlayer != null && nPlayer.playerID == playerID)
+            {
+                return nPlayer;
+            }
+        }
+        return null;
+    }
+
 }

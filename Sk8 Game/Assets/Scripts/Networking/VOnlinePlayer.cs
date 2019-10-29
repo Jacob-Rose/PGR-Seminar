@@ -74,7 +74,9 @@ public class VOnlinePlayer : Networked
         if(msg is PlayerConnectedMessage)
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
-            GameManager.Instance.AddPlayer(nMsg.playerID);
+            NetworkedPlayer p = GameManager.Instance.AddPlayer(nMsg.playerID);
+            p.playerID = nMsg.playerID;
+            
         }
         else if(msg is PlayerDisconnectedMessage)
         {
@@ -84,7 +86,7 @@ public class VOnlinePlayer : Networked
         else if(msg is PlayerUpdateMessage)
         {
             PlayerUpdateMessage nMsg = msg as PlayerUpdateMessage;
-            GameManager.Instance.UpdatePlayerInformation(nMsg.info, nMsg.playerID);
+            GameManager.Instance.UpdatePlayerInformation(ref nMsg.info, nMsg.playerID);
         }
     }
 

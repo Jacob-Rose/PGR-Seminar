@@ -43,7 +43,6 @@ public class ClientPlayer : Player
         else
         {
             playerInfo.move = PlayerMove.NONE;
-
             playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
         }
     }

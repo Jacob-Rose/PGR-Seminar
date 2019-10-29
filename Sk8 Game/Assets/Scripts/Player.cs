@@ -51,6 +51,8 @@ public class Player : MonoBehaviour
 
     protected SpriteRenderer m_SpriteRenderer;
 
+    private bool lastFrameGameStarted = false;
+
     protected float MaxSpeed
     {
         get
@@ -65,6 +67,7 @@ public class Player : MonoBehaviour
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         playerInfo.currentSpeed = MaxSpeed;
+        playerInfo.position = transform.position;
         DontDestroyOnLoad(this);
     }
 
@@ -77,12 +80,25 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.Instance.HasGameStarted)
             return;
+        if(!lastFrameGameStarted)
+        {
+            lastFrameGameStarted = true;
+            playerInfo.position = transform.position;
+        }
         MovePlayer(Time.deltaTime);
 
     }
 
+    public void LateUpdate()
+    {
+        if (!GameManager.Instance.HasGameStarted)
+            return;
+        playerInfo.position = transform.position;
+    }
+
     public void MovePlayer(float deltaTime)
     {
+        transform.position = playerInfo.position;
         if (playerInfo.move == PlayerMove.OLLIE)
         {
             m_SpriteRenderer.color = Color.red;
@@ -97,8 +113,9 @@ public class Player : MonoBehaviour
             m_SpriteRenderer.color = Color.white;
         }
 
-        m_Rigidbody.velocity = transform.up * playerInfo.currentSpeed;
-        playerInfo.position = transform.position;
+        playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
+        transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);
+        playerInfo.position = transform.position;
     }
 }
