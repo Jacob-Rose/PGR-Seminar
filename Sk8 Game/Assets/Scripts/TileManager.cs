@@ -16,6 +16,7 @@ public class TileManager : MonoBehaviour
     //is rock
     public GameObject testObstacle;
 
+    public int IDInt = 0;
     //[SerializeField]
     public int roadSize = 300;
     //[SerializeField]
@@ -34,10 +35,17 @@ public class TileManager : MonoBehaviour
         //stageLevelAmount = obstManager.GetComponent<ObstGen>().GetStagePoint();
     }
 
+    public enum ObstacleType
+    { 
+        CONE,
+        ROCK
+    }
+
     public struct ObstInfo
     {
+        public int obstID;
         public Vector3 spawnedPos;
-        public GameObject spawnedObstacle;
+        public ObstacleType obstacleType;
         //add bool interacted with
     }
 
@@ -47,10 +55,17 @@ public class TileManager : MonoBehaviour
         ObstInfo returnVal = new ObstInfo();
         Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint(spawnPosition);
         float obstListNum = (float)obstacleList.Length;
-        GameObject determinedObst = obstList[(int)Random.Range(0,obstListNum)];
 
-        Instantiate(determinedObst, obstaclePos, Quaternion.identity, transform);
+        ObstacleType obstype = (ObstacleType)Random.Range(0,1);
+
+        //GameObject determinedObst = obstList[(int)Random.Range(0,obstListNum)];
+
+        //Instantiate(determinedObst, obstaclePos, Quaternion.identity, transform);
         //Debug.Log(obstaclePos, determinedObst);
+        returnVal.obstacleType = obstype;
+        returnVal.spawnedPos = obstaclePos;
+        returnVal.obstID = IDInt;
+        IDInt++;
         return returnVal;
     }
 
