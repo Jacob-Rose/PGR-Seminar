@@ -6,9 +6,7 @@ using UnityEngine;
 
 enum NetworkEvent
 {
-    FirstSync, //sends the player username and other needed information
     StartGame,
-    InitSync, //to sync on first connect
     PlayerConnected,
     PlayerDisconnected,
     PlayerUpdateInfo,
@@ -20,7 +18,6 @@ public abstract class Message
 {
     //first two bytes is for event type
     public ushort eventType;
-
     public abstract byte[] toBuffer();
 
     public static Message decipherMessage(byte[] msgBytes)
@@ -51,6 +48,7 @@ public abstract class Message
         }
         return msg;
     }
+
 }
 
 public class GameStartMessage : Message
@@ -106,6 +104,9 @@ public class PlayerUpdateMessage : Message
         byte[] yPosBuffer = new byte[sizeof(float)];
         Buffer.BlockCopy(buffer, currentIndex, yPosBuffer, 0, yPosBuffer.Length);
         currentIndex += yPosBuffer.Length;
+        byte[] speedBuffer = new byte[sizeof(float)];
+        Buffer.BlockCopy(buffer, currentIndex, speedBuffer, 0, speedBuffer.Length);
+        currentIndex += speedBuffer.Length;
 
         playerID = Encoding.ASCII.GetString(playerIDBuffer);
         Player p = GameManager.Instance.GetPlayer(playerID);
@@ -115,6 +116,7 @@ public class PlayerUpdateMessage : Message
             info.position.x = BitConverter.ToSingle(xPosBuffer, 0);
             info.position.y = BitConverter.ToSingle(yPosBuffer, 0);
             info.zRot = BitConverter.ToSingle(zRotBuffer, 0);
+            info.currentSpeed = BitConverter.ToSingle(speedBuffer, 0);
         }
         else
         {
@@ -137,7 +139,14 @@ public class PlayerUpdateMessage : Message
         byte[] zRotBuffer = BitConverter.GetBytes(info.zRot);
         byte[] xPosBuffer = BitConverter.GetBytes(info.position.x);
         byte[] yPosBuffer = BitConverter.GetBytes(info.position.y);
-        byte[] buffer = new byte[eventTypeBuffer.Length + playerIDBuffer.Length + zRotBuffer.Length + xPosBuffer.Length +  yPosBuffer.Length + sizeof(ushort)];
+        byte[] speedBuffer = BitConverter.GetBytes(info.currentSpeed);
+        byte[] buffer = new byte[eventTypeBuffer.Length 
+            + playerIDBuffer.Length 
+            + zRotBuffer.Length 
+            + xPosBuffer.Length 
+            + yPosBuffer.Length 
+            + sizeof(ushort)
+            + speedBuffer.Length];
         int currentIndex = 0;
         Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
         currentIndex += eventTypeBuffer.Length;
@@ -151,27 +160,8 @@ public class PlayerUpdateMessage : Message
         currentIndex += xPosBuffer.Length;
         Buffer.BlockCopy(yPosBuffer, 0, buffer, currentIndex, yPosBuffer.Length);
         currentIndex += yPosBuffer.Length;
-        return buffer;
-    }
-}
-
-public class FirstSyncMessage : Message
-{
-    public string playerID;
-    public FirstSyncMessage(byte[] buffer)
-    {
-        //TODO
-        eventType = (ushort)NetworkEvent.PlayerUpdateInfo;
-    }
-
-    public FirstSyncMessage(string playerID)
-    {
-        this.playerID = playerID;
-    }
-    public override byte[] toBuffer()
-    {
-        byte[] buffer = new byte[14 + playerID.Length * sizeof(char)];
-        //TODO
+        Buffer.BlockCopy(speedBuffer, 0, buffer, currentIndex, speedBuffer.Length);
+        currentIndex += speedBuffer.Length;
         return buffer;
     }
 }
@@ -251,50 +241,26 @@ public class PlayerDisconnectedMessage : Message
     }
 }
 
-/*
-public class InitSyncMessage : Message
+public class ObstacleGeneratedMessage : Message
 {
-    public List<PlayerInfo> playerIDs;
-    InitSyncMessage(List<PlayerInfo> playerIDs)
+    public int itemID;
+    public Vector2 itemPos;
+    public /*enum*/ int itemType;
+
+    public ObstacleGeneratedMessage(byte[] buffer)
     {
-        this.playerIDs = playerIDs;
+
     }
 
-    InitSyncMessage(byte[] buffer)
+    public ObstacleGeneratedMessage(int itemID, Vector2 itemPos, /*enum*/ int itemType)
     {
-        int currentByteIndex = 0;
-        eventType = BitConverter.ToUInt16(buffer, (int)currentByteIndex);
-        currentByteIndex += 2;
-        ushort count = BitConverter.ToUInt16(buffer, (int)currentByteIndex);
-        currentByteIndex += 2;
-        for (int i = 0; i < count; i++)
-        {
-            PlayerInfo info = new PlayerInfo();
-            info.id = BitConverter.ToInt32(buffer, currentByteIndex);
-            currentByteIndex += 4;
-            info.zRot = BitConverter.ToSingle(buffer, currentByteIndex);
-            currentByteIndex += 4;
-            info.position.x = BitConverter.ToSingle(buffer, currentByteIndex);
-            currentByteIndex += 4;
-            info.position.y = BitConverter.ToSingle(buffer, currentByteIndex);
-            currentByteIndex += 4;
-            playerIDs.Add();
-        }
+
     }
 
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[(playerIDs.Count * 4) + 4];
-        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes((ushort)playerIDs.Count), 0, buffer, 2, 2);
-        for (int i = 0; i < playerIDs.Count; i++)
-        {
-            Buffer.BlockCopy(BitConverter.GetBytes(playerIDs[i].id), 0, buffer, 4 + (i * 16), 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(playerIDs[i].zRot), 0, buffer, 8 + (i * 16), 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(playerIDs[i].position.x), 0, buffer, 12 + (i * 16), 4);
-            Buffer.BlockCopy(BitConverter.GetBytes(playerIDs[i].position.y), 0, buffer, 16 + (i * 16), 4);
-        }
+        byte[] buffer = new byte[16];
         return buffer;
     }
+
 }
-*/
