@@ -56,7 +56,7 @@ public class TileManager : MonoBehaviour
         Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint(spawnPosition);
         float obstListNum = (float)obstacleList.Length;
 
-        ObstacleType obstype = (ObstacleType)Random.Range(0,1);
+        ObstacleType obstype = (ObstacleType)Random.Range(0,1); // second value will be the max number of seperate different game objects
 
         //GameObject determinedObst = obstList[(int)Random.Range(0,obstListNum)];
 
