@@ -118,4 +118,9 @@ class GameManager : MonoBehaviour
         return null;
     }
 
+    public void ClientPlayerReachedEnd()
+    {
+
+    }
+
 }

@@ -25,24 +25,16 @@ public class ClientPlayer : Player
     {
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            playerInfo.move = PlayerMove.TURNLEFT;
             playerInfo.zRot += zRotAmount * deltaTime;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            playerInfo.move = PlayerMove.TURNRIGHT;
             playerInfo.zRot -= zRotAmount * deltaTime;
-            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
-        }
-        else if (Input.GetKey(KeyCode.Space))
-        {
-            playerInfo.move = PlayerMove.OLLIE;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
         }
         else
         {
-            playerInfo.move = PlayerMove.NONE;
             playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
         }
     }

@@ -88,6 +88,11 @@ public class VOnlinePlayer : Networked
             PlayerUpdateMessage nMsg = msg as PlayerUpdateMessage;
             GameManager.Instance.UpdatePlayerInformation(ref nMsg.info, nMsg.playerID);
         }
+        else if(msg is ObstacleGeneratedMessage)
+        {
+            ObstacleGeneratedMessage nMsg = msg as ObstacleGeneratedMessage;
+            TileManager.m_Instance.SpawnObstacle(nMsg.itemID, nMsg.itemPos, nMsg.itemType);
+        }
     }
 
     public void ConnectToIP(string ip)

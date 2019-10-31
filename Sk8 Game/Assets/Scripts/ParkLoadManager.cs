@@ -11,7 +11,7 @@ public class ParkLoadManager : MonoBehaviour
         List<Player> players = GameManager.Instance.GetPlayers();
         foreach(Player p in players)
         {
-            p.transform.position = new Vector3(startPos.position.x, startPos.position.y, 0.0f);
+            p.SetPosition(new Vector3(startPos.position.x, startPos.position.y, 0.0f));
         }
     }
 

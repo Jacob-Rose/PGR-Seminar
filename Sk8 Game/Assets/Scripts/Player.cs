@@ -16,8 +16,6 @@ public struct PlayerInfo //sent from server to
     public float currentSpeed;
     [SerializeField]
     public int currentScore;
-    [SerializeField]
-    public PlayerMove move;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -51,8 +49,6 @@ public class Player : MonoBehaviour
 
     protected SpriteRenderer m_SpriteRenderer;
 
-    private bool lastFrameGameStarted = false;
-
     protected float MaxSpeed
     {
         get
@@ -80,39 +76,19 @@ public class Player : MonoBehaviour
     {
         if (!GameManager.Instance.HasGameStarted)
             return;
-        if(!lastFrameGameStarted)
-        {
-            lastFrameGameStarted = true;
-            playerInfo.position = transform.position;
-        }
         MovePlayer(Time.deltaTime);
-
     }
 
-    public void LateUpdate()
+    public void SetPosition(Vector2 pos)
     {
-        if (!GameManager.Instance.HasGameStarted)
-            return;
-        playerInfo.position = transform.position;
+        transform.position = new Vector3(pos.x, pos.y, 0);
+        playerInfo.position = pos;
     }
 
     public void MovePlayer(float deltaTime)
     {
         transform.position = playerInfo.position;
-        if (playerInfo.move == PlayerMove.OLLIE)
-        {
-            m_SpriteRenderer.color = Color.red;
-        }
-        //update positions based on the input of the player
-        //m_Rigidbody.velocity = transform.up * posInfo.currentSpeed; Rigidbody will end up as a part of the player once base.Update() is working
-        //transform.Rotate(new Vector3(0,0,posInfo.zRot).normalized) * Time.deltaTime * posInfo.currentSpeed, Space.World); Still need to test this some more.
-        //update the speed of the player
-        if (playerInfo.move == PlayerMove.NONE)
-        {
-            playerInfo.currentSpeed += acceleration;
-            m_SpriteRenderer.color = Color.white;
-        }
-
+        playerInfo.currentSpeed = Mathf.Clamp(playerInfo.currentSpeed + (acceleration * deltaTime), 0, MaxSpeed);
         playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);

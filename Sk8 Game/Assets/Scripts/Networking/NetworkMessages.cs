@@ -10,6 +10,7 @@ enum NetworkEvent
     PlayerConnected,
     PlayerDisconnected,
     PlayerUpdateInfo,
+    PlayerLostRace,
     ObstacleGenerated,
     ObstacleModified
 }
@@ -42,6 +43,9 @@ public abstract class Message
                 break;
             case NetworkEvent.PlayerConnected:
                 msg = new PlayerConnectedMessage(msgBytes);
+                break;
+            case NetworkEvent.ObstacleGenerated:
+                msg = new ObstacleGeneratedMessage(msgBytes);
                 break;
             default:
                 throw new Exception("oops");
@@ -243,23 +247,48 @@ public class PlayerDisconnectedMessage : Message
 
 public class ObstacleGeneratedMessage : Message
 {
-    public int itemID;
+    public uint itemID;
     public Vector2 itemPos;
     public /*enum*/ int itemType;
 
     public ObstacleGeneratedMessage(byte[] buffer)
     {
-
+        eventType = (ushort)NetworkEvent.ObstacleGenerated;
+        itemID = BitConverter.ToUInt32(buffer,2);
+        itemPos = Vector2.zero;
+        itemPos.x = BitConverter.ToSingle(buffer, 6);
+        itemPos.y = BitConverter.ToSingle(buffer, 10);
+        itemType = BitConverter.ToInt32(buffer, 14);
     }
 
-    public ObstacleGeneratedMessage(int itemID, Vector2 itemPos, /*enum*/ int itemType)
+    public ObstacleGeneratedMessage(uint itemID, Vector2 itemPos, /*enum*/ int itemType)
     {
-
+        this.itemID = itemID;
+        this.itemPos = itemPos;
+        this.itemType = itemType;
     }
 
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[16];
+        byte[] buffer = new byte[18];
+        byte[] eventTypeBuffer = BitConverter.GetBytes(eventType);
+        byte[] itemIDBuffer = BitConverter.GetBytes(itemID);
+        byte[] itemPosXBuffer = BitConverter.GetBytes(itemPos.x);
+        byte[] itemPosYBuffer = BitConverter.GetBytes(itemPos.y);
+        byte[] itemTypeBuffer = BitConverter.GetBytes(itemType);
+        int currentIndex = 0;
+        Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(itemIDBuffer, 0, buffer, currentIndex, itemIDBuffer.Length);
+        currentIndex += itemIDBuffer.Length;
+        Buffer.BlockCopy(itemPosXBuffer, 0, buffer, currentIndex, itemPosXBuffer.Length);
+        currentIndex += itemPosXBuffer.Length;
+        Buffer.BlockCopy(itemPosYBuffer, 0, buffer, currentIndex, itemPosYBuffer.Length);
+        currentIndex += itemPosYBuffer.Length;
+        Buffer.BlockCopy(itemTypeBuffer, 0, buffer, currentIndex, itemTypeBuffer.Length);
+        currentIndex += itemTypeBuffer.Length;
+
+        //Buffer.BlockCopy()
         return buffer;
     }
 

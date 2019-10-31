@@ -4,27 +4,14 @@ using UnityEngine;
 
 public class Grass : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public float maxSpeedRelative = 0.6f;
+    public float speedMultiplier = 0.9f;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("lower player speed");
-        }
-        if (collision.GetComponent<ClientPlayer>())
-        {
-            collision.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= 0.9f;
+            //collision.gameObject.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= speedMultiplier * (1.0f-Time.deltaTime);
         }
     }
 }

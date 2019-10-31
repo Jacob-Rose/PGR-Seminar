@@ -2,19 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu()]
-public class Obstacle : ScriptableObject 
+public class Obstacle : MonoBehaviour 
 {
-    //will be populated and used at later date
+    private static List<Obstacle> m_AllObstacles = new List<Obstacle>();
+    public uint id;
+    public float speedMultiplier; //possibly add boost with two times
+    public bool spinPlayer; //TODO implement
 
-	public GameObject obstacleTemplate;
-	public int spawnChance;
-    public Vector2 spawnPoint;
-	/*public bool shadowCast;
-	public bool fadeAnim;
-	public ChunkType[] chunkTypes;
-	public int[] stages;
-	public Vector2 xSpawnRange;
-	public Vector2 ySpawnRange;*/
+    public void Start()
+    {
+        m_AllObstacles.Add(this);
+    }
+
+    public static int getAllObstacleCount()
+    {
+        return m_AllObstacles.Count;
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.CompareTag("Player"))
+        {
+            collision.gameObject.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= speedMultiplier;
+        }
+    }
+
 }
-//public enum ChunkType{ROAD,SHOLDER,BOUNDS};

@@ -187,7 +187,7 @@ MonoBehaviour:
   startSpeed: 10
   speedDecreaseAmount: 0.05
   speedMod: 1
-  acceleration: 0
+  acceleration: 1
   zRotAmount: 30
 --- !u!212 &5769516655359432255
 SpriteRenderer:

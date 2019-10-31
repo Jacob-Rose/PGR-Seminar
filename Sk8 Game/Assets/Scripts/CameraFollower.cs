@@ -5,8 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraFollower : MonoBehaviour
 {
-    private List<Player> targets; //set in start to use toolbox
-    public float smoothTime = 0.1f;
+    private List<Player> m_Targets; //set in start to use toolbox
+    private Camera m_Camera;
+    [Range(0.0f,1.0f)]
+    public float lerpAmount = 0.6f;
     public float zoomOffset = 0.0f; //additional or less zoom to add from start
     public float zoomMultiplier = 1.0f; //how much to zoom out or in
 
@@ -14,59 +16,57 @@ public class CameraFollower : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        targets = GameManager.Instance.GetPlayers();
+        m_Targets = GameManager.Instance.GetPlayers();
+        m_Camera = GetComponent<Camera>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        targets = GameManager.Instance.GetPlayers();
-        if (targets.Count == 0)
+        m_Targets = GameManager.Instance.GetPlayers();
+        if (m_Targets.Count == 0)
         {
             return;
         }
-        Vector3 newPos = getCenterPoint();
+        Bounds newPos = getEncapsulatingBounds();
+
         //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
-        transform.position = new Vector3(0.0f, newPos.y, -10.0f);
+        transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, newPos.center.y, -10.0f), lerpAmount);
+        m_Camera.orthographicSize = newPos.extents.y * zoomMultiplier + zoomOffset;
     }
 
-    void Move()
-    {
-        Vector3 newPos = getCenterPoint();
-        //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
-        transform.position = new Vector3(0.0f, newPos.y, -10.0f);
-    }
-
-    void Zoom()
-    {
-        if(targets.Count > 0)
-        {
-            GetComponent<Camera>().orthographicSize = (GetGreatestDistance() * zoomMultiplier) + zoomOffset;
-        }
-        
-    }
 
     float GetGreatestDistance()
     {
-        Bounds b = new Bounds(targets[0].transform.position, Vector3.zero);
-        for (int i = 1; i < targets.Count; i++)
+        Bounds b = new Bounds(m_Targets[0].transform.position, Vector3.zero);
+        for (int i = 1; i < m_Targets.Count; i++)
         {
-            b.Encapsulate(targets[i].transform.position);
+            b.Encapsulate(m_Targets[i].transform.position);
         }
 
-        return b.size.x;
+        return b.size.y;
     }
     Vector3 getCenterPoint()
     {
-        if(targets.Count == 1)
+        if(m_Targets.Count == 1)
         {
-            return targets[0].transform.position;
+            return m_Targets[0].transform.position;
         }
-        Bounds b = new Bounds(targets[0].transform.position, Vector3.zero);
-        for(int i =0; i< targets.Count; i++)
+        Bounds b = new Bounds(m_Targets[0].transform.position, Vector3.zero);
+        for(int i =0; i< m_Targets.Count; i++)
         {
-            b.Encapsulate(targets[i].transform.position);
+            b.Encapsulate(m_Targets[i].transform.position);
         }
         return b.center;
+    }
+
+    Bounds getEncapsulatingBounds()
+    {
+        Bounds b = new Bounds(m_Targets[0].transform.position, Vector3.zero);
+        for (int i = 1; i < m_Targets.Count; i++)
+        {
+            b.Encapsulate(m_Targets[i].transform.position);
+        }
+        return b;
     }
 }

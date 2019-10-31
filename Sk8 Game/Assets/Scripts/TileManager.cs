@@ -7,23 +7,24 @@ public class TileManager : MonoBehaviour
     public GameObject[] obstList;
     //is the start of the race
     public GameObject firstTransform;
-    //Gen manager
-    public GameObject obstManager;
     //void that ends game when player hits
     public GameObject endTest;
     //just a sprite for the road
     public GameObject road;
-    //is rock
-    public GameObject testObstacle;
 
     //[SerializeField]
     public int roadSize = 300;
     //[SerializeField]
     public int stageLevelAmount = 1;
+
+    public static TileManager m_Instance;
     // Start is called before the first frame update
     void Start()
     {
-        //InvokeRepeating("GetObstStatsSpawn", 2.0f, 2.0f);
+        if(m_Instance == null)
+        {
+            m_Instance = this;
+        }
         PopulateRoads();
     }
 
@@ -42,39 +43,52 @@ public class TileManager : MonoBehaviour
     }
 
     //Get obstacle data and spawnPos, instantiate at Vector based on randomized func
-    ObstInfo GetObstStatsSpawn(Vector2 spawnPosition, GameObject[] obstacleList)
+    ObstInfo SpawnObstaclesOnTile(Bounds tileBounds)
     {
         ObstInfo returnVal = new ObstInfo();
-        Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint(spawnPosition);
-        float obstListNum = (float)obstacleList.Length;
-        GameObject determinedObst = obstList[(int)Random.Range(0,obstListNum)];
-
-        Instantiate(determinedObst, obstaclePos, Quaternion.identity, transform);
-        //Debug.Log(obstaclePos, determinedObst);
+        Vector3 obstaclePos = CreateObstaclePoint(tileBounds);
+        float obstListNum = (float)obstList.Length;
+        int randomIndex = (int)Random.Range(0, obstListNum); //assume all players have the same list, used in message
+        Obstacle newObs = SpawnObstacle((uint)Obstacle.getAllObstacleCount(), obstaclePos, randomIndex);
+        VHostBehavior.m_Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage(newObs.id, new Vector2(newObs.transform.position.x, newObs.transform.position.y), randomIndex));
         return returnVal;
+    }
+
+    public Vector2 CreateObstaclePoint(Bounds possibleSpawnBounds)
+    {
+        Vector2 randomPos = new Vector2(Random.Range(-possibleSpawnBounds.extents.x, possibleSpawnBounds.extents.x), 
+            Random.Range(-possibleSpawnBounds.extents.y, possibleSpawnBounds.extents.y)) ;
+        randomPos += new Vector2(possibleSpawnBounds.center.x, possibleSpawnBounds.center.y);
+        return randomPos;
+    }
+
+    public Obstacle SpawnObstacle(uint itemID, Vector2 pos, int itemType)
+    {
+        GameObject determinedObst = obstList[itemType];
+
+        Obstacle newObstacle = Instantiate(determinedObst, pos, Quaternion.identity, transform).GetComponent<Obstacle>();
+        newObstacle.id = itemID;
+        return newObstacle;
     }
 
     //populate roads using GetObsStatsSpawn, is based on roads
     public void PopulateRoads()
     {
-        Vector2 spawnPos = firstTransform.transform.position;
+        Bounds roadBounds = new Bounds(firstTransform.transform.position, new Vector3(5, 5));
         for (int i = 0; i < roadSize; i++)
         {
-            Instantiate(road, spawnPos, Quaternion.identity, transform);
-            //GetObstStatsSpawn(spawnPos, testObstacle);
+            Instantiate(road, roadBounds.center, Quaternion.identity, transform);
 
-            if (i == roadSize)
+            if (i == roadSize-3) //few roads to slow down on
             {
-                //Vector3 obstaclePos = obstManager.GetComponent<ObstGen>().CreateObstaclePoint();
-                Instantiate(endTest, spawnPos, Quaternion.identity, transform);
-
+                Instantiate(endTest, roadBounds.center, Quaternion.identity, transform);
             }
-            //this needs to change to occur based on distance from start point
-            for (int j = 0; j < stageLevelAmount; j++)
+            if(VHostBehavior.m_Instance != null && i != 0) //only call spawn if host, sends to other players
             {
-                GetObstStatsSpawn(spawnPos, obstList);
+                SpawnObstaclesOnTile(roadBounds);
             }
-            spawnPos.y += 9;
+            
+            roadBounds.center = new Vector3(roadBounds.center.x, roadBounds.center.y + 9, 0.0f);
             
         }
     }
