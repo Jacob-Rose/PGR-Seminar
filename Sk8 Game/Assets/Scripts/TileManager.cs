@@ -50,7 +50,6 @@ public class TileManager : MonoBehaviour
         float obstListNum = (float)obstList.Length;
         int randomIndex = (int)Random.Range(0, obstListNum); //assume all players have the same list, used in message
         Obstacle newObs = SpawnObstacle((uint)Obstacle.getAllObstacleCount(), obstaclePos, randomIndex);
-        VHostBehavior.m_Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage(newObs.id, new Vector2(newObs.transform.position.x, newObs.transform.position.y), randomIndex));
         return returnVal;
     }
 
@@ -91,5 +90,6 @@ public class TileManager : MonoBehaviour
             roadBounds.center = new Vector3(roadBounds.center.x, roadBounds.center.y + 9, 0.0f);
             
         }
+        //TODO Send Message with all Obstacle information
     }
 }

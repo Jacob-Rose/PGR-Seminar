@@ -249,7 +249,7 @@ public class ObstacleGeneratedMessage : Message
 {
     public uint itemID;
     public Vector2 itemPos;
-    public /*enum*/ int itemType;
+    public /*enum*/ ushort itemType;
 
     public ObstacleGeneratedMessage(byte[] buffer)
     {
@@ -258,10 +258,10 @@ public class ObstacleGeneratedMessage : Message
         itemPos = Vector2.zero;
         itemPos.x = BitConverter.ToSingle(buffer, 6);
         itemPos.y = BitConverter.ToSingle(buffer, 10);
-        itemType = BitConverter.ToInt32(buffer, 14);
+        itemType = BitConverter.ToUInt16(buffer, 14);
     }
 
-    public ObstacleGeneratedMessage(uint itemID, Vector2 itemPos, /*enum*/ int itemType)
+    public ObstacleGeneratedMessage(uint itemID, Vector2 itemPos, /*enum*/ ushort itemType)
     {
         this.itemID = itemID;
         this.itemPos = itemPos;
@@ -270,7 +270,7 @@ public class ObstacleGeneratedMessage : Message
 
     public override byte[] toBuffer()
     {
-        byte[] buffer = new byte[18];
+        byte[] buffer = new byte[16];
         byte[] eventTypeBuffer = BitConverter.GetBytes(eventType);
         byte[] itemIDBuffer = BitConverter.GetBytes(itemID);
         byte[] itemPosXBuffer = BitConverter.GetBytes(itemPos.x);
@@ -287,8 +287,6 @@ public class ObstacleGeneratedMessage : Message
         currentIndex += itemPosYBuffer.Length;
         Buffer.BlockCopy(itemTypeBuffer, 0, buffer, currentIndex, itemTypeBuffer.Length);
         currentIndex += itemTypeBuffer.Length;
-
-        //Buffer.BlockCopy()
         return buffer;
     }
 
