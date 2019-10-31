@@ -320,6 +320,7 @@ GameObject:
   - component: {fileID: 512051266868452756}
   - component: {fileID: 2909947657653808923}
   - component: {fileID: 564304653}
+  - component: {fileID: 6329089640293587662}
   m_Layer: 0
   m_Name: Trail
   m_TagString: Untagged
@@ -472,3 +473,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.3614572, y: 6.9201546}
   m_EdgeRadius: 0
+--- !u!114 &6329089640293587662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7866656770219140326}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ce52d9a506f5e4b89987ff8649e4ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 4
+  speedMultiplier: 1.4
+  spinPlayer: 0

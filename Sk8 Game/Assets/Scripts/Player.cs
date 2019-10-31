@@ -94,4 +94,31 @@ public class Player : MonoBehaviour
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);
         playerInfo.position = transform.position;
     }
+
+    public void LookForObstacles()
+    {
+        for(int i = 0; i < Obstacle.getAllObstacleCount(); i++)
+        {
+            if(CheckIfClose(playerInfo.position,Obstacle.m_AllObstacles[i].transform.position))
+            {
+                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
+                if(Input.GetKey(KeyCode.E))
+                {
+                    //Interact with the obstacle
+                }
+            }
+        }
+    }
+
+    public bool CheckIfClose(Vector2 playerPos, Vector2 obstPos)
+    {
+        if((obstPos - playerPos).magnitude < 3.0f)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
