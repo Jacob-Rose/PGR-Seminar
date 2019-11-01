@@ -114,6 +114,7 @@ public class Player : MonoBehaviour
     {
         if((obstPos - playerPos).magnitude < 3.0f)
         {
+            Debug.Log("Near obstacle");
             return true;
         }
         else
@@ -121,4 +122,23 @@ public class Player : MonoBehaviour
             return false;
         }
     }
+    public IEnumerator SpinPlayerDuration(float duration)
+    {
+        float time = 0.0f;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            transform.Rotate(0, 0, 20, Space.Self);
+            //m_SpriteRenderer.transform.Rotate(0, 0, 180, Space.Self);
+            Debug.Log("did rotatino");
+            yield return new WaitForSeconds(0.01f);
+        }
+    }
+    public void StartSpin()
+    {
+        StartCoroutine(SpinPlayerDuration(1.0f));
+        //m_SpriteRenderer.transform.Rotate(0, 0, 90, Space.Self);
+
+    }
+
 }

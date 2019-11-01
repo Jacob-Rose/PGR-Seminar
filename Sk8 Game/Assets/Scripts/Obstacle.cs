@@ -24,6 +24,8 @@ public class Obstacle : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             collision.gameObject.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= speedMultiplier;
+            collision.gameObject.GetComponent<Player>().StartSpin();
+            Debug.Log("ran spin");
         }
     }
 
