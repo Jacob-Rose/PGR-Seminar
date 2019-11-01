@@ -141,4 +141,19 @@ public class Player : MonoBehaviour
 
     }
 
+    public void BackDraft()
+    {
+        for (int i = 0; i < GameManager.GetPlayers(); i++)
+        {
+            if (CheckIfClose(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
+            {
+                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
+                if (Input.GetKey(KeyCode.E))
+                {
+                    //Interact with the obstacle
+                }
+            }
+        }
+    }
+
 }
