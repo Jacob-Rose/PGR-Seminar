@@ -9,9 +9,13 @@ public class Obstacle : MonoBehaviour
     public float speedMultiplier; //possibly add boost with two times
     public bool spinPlayer; //TODO implement
 
-    public void Start()
+    Obstacle()
     {
         m_AllObstacles.Add(this);
+    }
+    public void Start()
+    {
+        
     }
 
     public static int getAllObstacleCount()
