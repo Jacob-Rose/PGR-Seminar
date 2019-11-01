@@ -16,6 +16,8 @@ public struct PlayerInfo //sent from server to
     public float currentSpeed;
     [SerializeField]
     public int currentScore;
+    [SerializeField]
+    public bool collidable;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -49,6 +51,10 @@ public class Player : MonoBehaviour
 
     protected SpriteRenderer m_SpriteRenderer;
 
+    private float dodgeTimer = 0.0f;
+    private float attackTimer = 0.0f;
+
+
     protected float MaxSpeed
     {
         get
@@ -60,6 +66,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
+        playerInfo.collidable = true;
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         playerInfo.currentSpeed = MaxSpeed;
@@ -77,6 +84,19 @@ public class Player : MonoBehaviour
         if (!GameManager.Instance.HasGameStarted)
             return;
         MovePlayer(Time.deltaTime);
+        dodgeTimer += Time.deltaTime;
+        attackTimer += Time.deltaTime;
+        PlayerAttack();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (dodgeTimer > 5.0f)
+            {
+                dodgeTimer = 0.0f;
+                StartCoroutine(Dodge(1.0f));
+            }
+        }
+        LookForObstacles();
+        BackDraft();
     }
 
     public void SetPosition(Vector2 pos)
@@ -105,7 +125,13 @@ public class Player : MonoBehaviour
                 if(Input.GetKey(KeyCode.E))
                 {
                     //Interact with the obstacle
+                    Debug.Log("Interacted with highlighted obstacle");
                 }
+            }
+            else
+            {
+                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
+
             }
         }
     }
@@ -114,7 +140,6 @@ public class Player : MonoBehaviour
     {
         if((obstPos - playerPos).magnitude < 3.0f)
         {
-            Debug.Log("Near obstacle");
             return true;
         }
         else
@@ -143,17 +168,52 @@ public class Player : MonoBehaviour
 
     public void BackDraft()
     {
-        for (int i = 0; i < GameManager.GetPlayers(); i++)
+        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if (CheckIfClose(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
+            if (playerInfo.position.y <= (GameManager.Instance.m_Players[i].transform.position.y - 10))
             {
-                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
-                if (Input.GetKey(KeyCode.E))
-                {
-                    //Interact with the obstacle
-                }
+                playerInfo.currentSpeed *= 1.6f * Time.deltaTime;
+            }
+            else
+            {
             }
         }
     }
 
+    public void PlayerAttack()
+    {
+        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
+        {
+            if (CheckIfClose(playerInfo.position, GameManager.Instance.m_Players[i].transform.position))
+            {
+                if (Input.GetKeyDown(KeyCode.LeftControl))
+                {
+                    if (attackTimer > 3.0f)
+                    {
+                        dodgeTimer = 0.0f;
+                        //Run crash animation
+                        playerInfo.currentSpeed *= 0.85f;
+
+                    }
+                }
+            }
+            else
+            {
+            }
+        }
+    }
+
+    public IEnumerator Dodge(float duration)
+    {
+        float time = 0.0f;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            playerInfo.collidable = false;
+            m_SpriteRenderer.color = Color.blue;
+            yield return 0;
+        }
+        m_SpriteRenderer.color = Color.white;
+        playerInfo.collidable = true;
+    }
 }

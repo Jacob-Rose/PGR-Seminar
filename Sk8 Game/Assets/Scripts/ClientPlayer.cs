@@ -33,6 +33,10 @@ public class ClientPlayer : Player
             playerInfo.zRot -= zRotAmount * deltaTime;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
         }
+        else if (Input.GetKeyDown(KeyCode.Space))
+        {
+            
+        }
         else
         {
             playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
