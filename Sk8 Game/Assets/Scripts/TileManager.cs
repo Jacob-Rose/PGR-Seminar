@@ -15,7 +15,7 @@ public class TileManager : MonoBehaviour
     //[SerializeField]
     public int roadSize = 300;
     //[SerializeField]
-    public int stageLevelAmount = 1;
+    public int obstaclesPerTile = 2;
 
     public static TileManager m_Instance;
     // Start is called before the first frame update
@@ -50,6 +50,7 @@ public class TileManager : MonoBehaviour
         float obstListNum = (float)obstList.Length;
         int randomIndex = (int)Random.Range(0, obstListNum); //assume all players have the same list, used in message
         Obstacle newObs = SpawnObstacle((uint)Obstacle.getAllObstacleCount(), obstaclePos, randomIndex);
+        VHostBehavior.m_Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage((uint)Obstacle.getAllObstacleCount(), obstaclePos, (ushort)randomIndex), Valve.Sockets.SendType.Reliable);
         return returnVal;
     }
 
@@ -61,22 +62,25 @@ public class TileManager : MonoBehaviour
         return randomPos;
     }
 
+    
+
     public Obstacle SpawnObstacle(uint itemID, Vector2 pos, int itemType)
     {
         GameObject determinedObst = obstList[itemType];
-
         Obstacle newObstacle = Instantiate(determinedObst, pos, Quaternion.identity, transform).GetComponent<Obstacle>();
         newObstacle.id = itemID;
+        
         return newObstacle;
     }
 
+    const float roadHeight = 9.0f;
     //populate roads using GetObsStatsSpawn, is based on roads
     public void PopulateRoads()
     {
         Bounds roadBounds = new Bounds(firstTransform.transform.position, new Vector3(5, 5));
         for (int i = 0; i < roadSize; i++)
         {
-            Instantiate(road, roadBounds.center, Quaternion.identity, transform);
+            GameObject newRoad = Instantiate(road, roadBounds.center, Quaternion.identity, transform);
 
             if (i == roadSize-3) //few roads to slow down on
             {
@@ -87,9 +91,8 @@ public class TileManager : MonoBehaviour
                 SpawnObstaclesOnTile(roadBounds);
             }
             
-            roadBounds.center = new Vector3(roadBounds.center.x, roadBounds.center.y + 9, 0.0f);
+            roadBounds.center = new Vector3(roadBounds.center.x, roadBounds.center.y + roadHeight, 0.0f);
             
         }
-        //TODO Send Message with all Obstacle information
     }
 }

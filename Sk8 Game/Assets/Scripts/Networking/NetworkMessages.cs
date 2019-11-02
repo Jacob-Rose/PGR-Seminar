@@ -263,6 +263,7 @@ public class ObstacleGeneratedMessage : Message
 
     public ObstacleGeneratedMessage(uint itemID, Vector2 itemPos, /*enum*/ ushort itemType)
     {
+        eventType = (ushort)NetworkEvent.ObstacleGenerated;
         this.itemID = itemID;
         this.itemPos = itemPos;
         this.itemType = itemType;

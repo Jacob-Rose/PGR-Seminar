@@ -50,6 +50,9 @@ public class VHostBehavior : Networked
                     break;
             }
         };
+
+        ObstacleGeneratedMessage msg = new ObstacleGeneratedMessage(123, new Vector2(10.0f, 20.0f), 2);
+        Message nMsg = Message.decipherMessage(msg.toBuffer());
         base.Start();
     }
 
@@ -92,11 +95,11 @@ public class VHostBehavior : Networked
         }
     }
 
-    public void SendMessageToAllPlayers(Message msg)
+    public void SendMessageToAllPlayers(Message msg, SendType type = SendType.Unreliable)
     {
         foreach (var pair in m_Connections)
         {
-            m_Server.SendMessageToConnection(pair.Key, msg.toBuffer());
+            m_Server.SendMessageToConnection(pair.Key, msg.toBuffer(), type);
         }
     }
 
