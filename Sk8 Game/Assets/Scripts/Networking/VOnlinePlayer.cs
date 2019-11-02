@@ -76,7 +76,6 @@ public class VOnlinePlayer : Networked
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
             NetworkedPlayer p = GameManager.Instance.AddPlayer(nMsg.playerID);
             p.playerID = nMsg.playerID;
-            
         }
         else if(msg is PlayerDisconnectedMessage)
         {
@@ -92,6 +91,11 @@ public class VOnlinePlayer : Networked
         {
             ObstacleGeneratedMessage nMsg = msg as ObstacleGeneratedMessage;
             TileManager.m_Instance.SpawnObstacle(nMsg.itemID, nMsg.itemPos, nMsg.itemType);
+        }
+        else if(msg is PlayerFellBehindMessage)
+        {
+            PlayerFellBehindMessage nMsg = msg as PlayerFellBehindMessage;
+            GameManager.Instance.PlayerFellBehind(nMsg.playerID);
         }
     }
 

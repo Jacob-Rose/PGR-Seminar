@@ -15,4 +15,17 @@ public class NetworkedPlayer : Player
     {
         playerInfo = info;
     }
+
+    public void OnGUI()
+    {
+        if(Camera.main != null)
+        {
+            Vector3 point = Camera.main.WorldToScreenPoint(transform.position);
+            GUIStyle labelStyle = GUI.skin.label;
+            labelStyle.fontSize = 12;
+            labelStyle.alignment = TextAnchor.MiddleCenter;
+            Rect labelRect = new Rect(point + new Vector3(0, -10, 0), new Vector2(200.0f, 50.0f));
+            GUI.Label(labelRect, playerID, labelStyle);
+        }
+    }
 }

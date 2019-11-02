@@ -1,41 +1,45 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
+using UnityEngine.InputSystem;
 /*
  * Note: More than one client player can exist, make sure to not hardcode in controls except for early testing
  */
 public class ClientPlayer : Player
 {
+    [SerializeField]
+    public InputMaster controls;
     public float zRotAmount = 10.0f;
-    // Start is called before the first frame update
+    public void Awake()
+    {
+        controls = new InputMaster();
+    }
 
-    // Update is called once per frame
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Disable();
+    }
+
     public override void Update()
     {
-        //get keypress, send to server
-        //update posInfo based on input
-
-        //instead of calculating how long key is held, it just adds a constant amount each time. This can change, just still working on timers.
         HandleInput(Time.deltaTime);
         base.Update();
     }
 
     public void HandleInput(float deltaTime)
     {
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (controls.Player.LEFT.ReadValue<float>() > 0.1f)
         {
             playerInfo.zRot += zRotAmount * deltaTime;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        else if (controls.Player.RIGHT.ReadValue<float>() > 0.1f)
         {
             playerInfo.zRot -= zRotAmount * deltaTime;
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
-        }
-        else if (Input.GetKeyDown(KeyCode.Space))
-        {
-            
         }
         else
         {

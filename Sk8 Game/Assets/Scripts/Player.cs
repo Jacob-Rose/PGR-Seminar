@@ -161,7 +161,8 @@ public class Player : MonoBehaviour
     }
     public void StartSpin()
     {
-        StartCoroutine(SpinPlayerDuration(1.0f));
+        //the spin should be visual
+        //StartCoroutine(SpinPlayerDuration(1.0f));
         //m_SpriteRenderer.transform.Rotate(0, 0, 90, Space.Self);
 
     }

@@ -46,6 +46,7 @@ public class VHostBehavior : Networked
                 case ConnectionState.ClosedByPeer:
                     m_Server.CloseConnection(info.connection);
                     Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
+                    PlayerDisconnected(m_Connections[info.connection]);
                     m_Connections.Remove(info.connection);
                     break;
             }
@@ -84,18 +85,18 @@ public class VHostBehavior : Networked
         SendMessageToAllPlayers(msg);
     }
 
-    public void SendMessageToAllExceptPlayer(string player, Message m)
+    public void SendMessageToAllExceptPlayer(string player, Message m, SendType type = SendType.NoDelay)
     {
         foreach (var pair in m_Connections)
         {
             if(pair.Value != player && pair.Value != null)
             {
-                m_Server.SendMessageToConnection(pair.Key, m.toBuffer());
+                m_Server.SendMessageToConnection(pair.Key, m.toBuffer(), type);
             }
         }
     }
 
-    public void SendMessageToAllPlayers(Message msg, SendType type = SendType.Unreliable)
+    public void SendMessageToAllPlayers(Message msg, SendType type = SendType.NoDelay)
     {
         foreach (var pair in m_Connections)
         {
@@ -118,5 +119,12 @@ public class VHostBehavior : Networked
             GameManager.Instance.UpdatePlayerInformation(ref nMsg.info, nMsg.playerID);
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
         }
+    }
+
+    public void PlayerDisconnected(string playerID)
+    {
+        PlayerDisconnectedMessage dMsg = new PlayerDisconnectedMessage(playerID);
+        SendMessageToAllPlayers(dMsg, SendType.Reliable);
+        GameManager.Instance.RemovePlayer(playerID);
     }
 }

@@ -45,6 +45,15 @@ class GameManager : MonoBehaviour
         }
     }
 
+    public void PlayerFellBehind(string playerID)
+    {
+        RemovePlayer(playerID);
+        if(VHostBehavior.m_Instance != null)
+        {
+            VHostBehavior.m_Instance.SendMessageToAllPlayers(new PlayerFellBehindMessage(playerID));
+        }
+    }
+
     public void SpawnClientPlayer()
     {
         m_ClientPlayer = ((GameObject)Instantiate(Resources.Load("Prefabs/ClientPlayer"))).GetComponent<ClientPlayer>();
@@ -77,13 +86,21 @@ class GameManager : MonoBehaviour
 
     public void RemovePlayer(string playerID)
     {
-        for(int i = 0; i < m_Players.Count; i++)
+        if(playerID == this.m_PlayerUsername)
         {
-            NetworkedPlayer nPlayer = m_Players[i].GetComponent<NetworkedPlayer>();
-            if (nPlayer != null && nPlayer.playerID == playerID)
+            Destroy(m_Players[0].gameObject);
+            m_Players.RemoveAt(0);
+        }
+        else
+        {
+            for (int i = 0; i < m_Players.Count; i++)
             {
-                Destroy(m_Players[i].gameObject);
-                m_Players.RemoveAt(i);
+                NetworkedPlayer nPlayer = m_Players[i].GetComponent<NetworkedPlayer>();
+                if (nPlayer != null && nPlayer.playerID == playerID)
+                {
+                    Destroy(m_Players[i].gameObject);
+                    m_Players.RemoveAt(i);
+                }
             }
         }
     }

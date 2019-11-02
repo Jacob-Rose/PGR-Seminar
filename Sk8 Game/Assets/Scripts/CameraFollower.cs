@@ -33,6 +33,25 @@ public class CameraFollower : MonoBehaviour
         //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
         transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, newPos.center.y, -10.0f), lerpAmount);
         m_Camera.orthographicSize = newPos.extents.y * zoomMultiplier + zoomOffset;
+        if(newPos.extents.y > 10.0f)
+        {
+            Player lastPlace = null;
+            for(int i = 0; i< m_Targets.Count; i++)
+            {
+                if(lastPlace == null || m_Targets[i].transform.position.y < lastPlace.transform.position.y)
+                {
+                    lastPlace = m_Targets[i];
+                }
+            }
+            if(lastPlace is NetworkedPlayer)
+            {
+                GameManager.Instance.PlayerFellBehind((lastPlace as NetworkedPlayer).playerID);
+            }
+            else
+            {
+                GameManager.Instance.PlayerFellBehind(GameManager.Instance.m_PlayerUsername);
+            }
+        }
     }
 
 
