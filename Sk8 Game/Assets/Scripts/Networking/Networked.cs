@@ -9,8 +9,8 @@ using Valve.Sockets;
 
 public abstract class Networked : MonoBehaviour
 {
-
     protected NetworkingSockets m_Server = new NetworkingSockets();
+
     protected Address m_Address = new Address();
     protected StatusCallback m_Status;
     public ushort m_Port = 9000;

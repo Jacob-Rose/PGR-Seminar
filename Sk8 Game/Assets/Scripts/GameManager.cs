@@ -20,7 +20,9 @@ class GameManager : MonoBehaviour
     public bool HasGameStarted { get { return m_GameStarted; } }
     public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
 
-    protected ClientPlayer m_ClientPlayer; //all networked will have a single client player that sends data
+    public ClientPlayer ClientPlayer { get { return m_ClientPlayer; } }
+
+    protected ClientPlayer m_ClientPlayer = null; //all networked will have a single client player that sends data
     public string m_PlayerUsername;
 
     public void Awake()
@@ -40,8 +42,17 @@ class GameManager : MonoBehaviour
         {
             GUIStyle textStyle = GUI.skin.label;
             textStyle.alignment = TextAnchor.MiddleCenter;
+            GUI.color = Color.red;
+            textStyle.fontSize = 40;
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height /2), SecondsTillStart.ToString("F1"), textStyle);
+        }
+        if(m_ClientPlayer == null)
+        {
+            GUIStyle textStyle = GUI.skin.label;
+            textStyle.alignment = TextAnchor.MiddleCenter;
             textStyle.fontSize = 30;
-            GUI.Label(new Rect(0, 0, Screen.width, Screen.height), SecondsTillStart.ToString("F1"), textStyle);
+            GUI.color = Color.red;
+            GUI.Label(new Rect(0, 0, Screen.width, Screen.height / 2), "Spectating", textStyle);
         }
     }
 
@@ -62,9 +73,7 @@ class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        //add any other things we need
-        //callListeners();
-        GameManager.Instance.m_GameStarted = true;
+        m_GameStarted = true;
         m_GameIsStarting = false;
     }
 

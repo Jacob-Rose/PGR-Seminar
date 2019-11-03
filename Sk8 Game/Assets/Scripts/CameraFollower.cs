@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 [RequireComponent(typeof(Camera))]
 public class CameraFollower : MonoBehaviour
@@ -11,6 +12,8 @@ public class CameraFollower : MonoBehaviour
     public float lerpAmount = 0.6f;
     public float zoomOffset = 0.0f; //additional or less zoom to add from start
     public float zoomMultiplier = 1.0f; //how much to zoom out or in
+
+    public float maxDistance = 10.0f;
 
     private Vector3 velocity;
     // Start is called before the first frame update
@@ -33,17 +36,25 @@ public class CameraFollower : MonoBehaviour
         //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
         transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, newPos.center.y, -10.0f), lerpAmount);
         m_Camera.orthographicSize = newPos.extents.y * zoomMultiplier + zoomOffset;
-        if(newPos.extents.y > 10.0f)
+
+        Player lastPlace = null;
+        for (int i = 0; i < m_Targets.Count; i++)
         {
-            Player lastPlace = null;
-            for(int i = 0; i< m_Targets.Count; i++)
+            if (lastPlace == null || m_Targets[i].transform.position.y < lastPlace.transform.position.y)
             {
-                if(lastPlace == null || m_Targets[i].transform.position.y < lastPlace.transform.position.y)
-                {
-                    lastPlace = m_Targets[i];
-                }
+                lastPlace = m_Targets[i];
             }
-            if(lastPlace is NetworkedPlayer)
+        }
+        if(lastPlace is ClientPlayer)
+        {
+            FloatParameter intensity = new FloatParameter();
+            intensity.value = newPos.extents.y / maxDistance;
+            GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity = intensity;
+        }
+        
+        if (newPos.extents.y > maxDistance)
+        {
+            if (lastPlace is NetworkedPlayer)
             {
                 GameManager.Instance.PlayerFellBehind((lastPlace as NetworkedPlayer).playerID);
             }

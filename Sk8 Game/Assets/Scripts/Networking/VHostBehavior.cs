@@ -27,6 +27,12 @@ public class VHostBehavior : Networked
         m_Instance = this;
         m_Address.SetAddress("::0", m_Port);
         m_ListenSocket = m_Server.CreateListenSocket(ref m_Address);
+        SetupStatusDelegate();
+        base.Start();
+    }
+
+    public void SetupStatusDelegate()
+    {
         m_Status = (info, context) => {
             switch (info.connectionInfo.state)
             {
@@ -52,9 +58,6 @@ public class VHostBehavior : Networked
             }
         };
 
-        ObstacleGeneratedMessage msg = new ObstacleGeneratedMessage(123, new Vector2(10.0f, 20.0f), 2);
-        Message nMsg = Message.decipherMessage(msg.toBuffer());
-        base.Start();
     }
 
 
@@ -63,7 +66,13 @@ public class VHostBehavior : Networked
         if (m_Server != null && m_Status != null)
         {
             m_Server.DispatchCallback(m_Status);
-            PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
+            ClientPlayer cPlayer = GameManager.Instance.ClientPlayer;
+            if (cPlayer != null)
+            {
+                PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
+                SendMessageToAllPlayers(cPlayerUpdateMsg);
+            }
+            
             foreach (var c in m_Connections)
             {
                 netMessageCount = m_Server.ReceiveMessagesOnConnection(c.Key, netMessages, maxMessages);
@@ -74,7 +83,7 @@ public class VHostBehavior : Networked
             {
                 m_Connections[m_NewConnectionName.Value.Key] = m_NewConnectionName.Value.Value;
             }
-            SendMessageToAllPlayers(cPlayerUpdateMsg);
+            
         }
     }
     public void StartGameInSeconds(float seconds)

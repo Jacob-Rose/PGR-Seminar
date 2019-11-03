@@ -31,20 +31,21 @@ public class ClientPlayer : Player
 
     public void HandleInput(float deltaTime)
     {
-        if (controls.Player.LEFT.ReadValue<float>() > 0.1f)
+        
+        if(Mathf.Abs(controls.Player.TURN.ReadValue<float>()) > 0.1f)
         {
-            playerInfo.zRot += zRotAmount * deltaTime;
-            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
-        }
-        else if (controls.Player.RIGHT.ReadValue<float>() > 0.1f)
-        {
-            playerInfo.zRot -= zRotAmount * deltaTime;
-            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime;
+            playerInfo.zRot -= zRotAmount * deltaTime * controls.Player.TURN.ReadValue<float>();
+            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime * controls.Player.TURN.ReadValue<float>();
         }
         else
         {
             playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
         }
     }
-    
+
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(0, 0, Screen.width, 80), playerInfo.currentScore.ToString());
+    }
+
 }

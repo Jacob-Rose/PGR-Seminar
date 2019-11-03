@@ -188,7 +188,7 @@ MonoBehaviour:
   speedDecreaseAmount: 0.05
   speedMod: 1
   acceleration: 1
-  zRotAmount: 30
+  zRotAmount: 50
 --- !u!212 &5769516655359432255
 SpriteRenderer:
   m_ObjectHideFlags: 0
