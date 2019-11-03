@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: -608448495948908468}
   - component: {fileID: 504967043}
   m_Layer: 0
-  m_Name: Rock
-  m_TagString: Barricade
+  m_Name: Rock2
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 84633536fd13f0b459041df466ea9abc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: de58a89db4ee45448b89a94285c593dd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
-  speedMultiplier: 0.8
+  speedMultiplier: 0.6
   spinPlayer: 0
 --- !u!61 &504967043
 BoxCollider2D:

@@ -127,6 +127,23 @@ public class Player : MonoBehaviour
                 if(Input.GetKey(KeyCode.E))
                 {
                     //Interact with the obstacle
+                    if (Obstacle.m_AllObstacles[i].tag == "Barricade")
+                    {
+                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/Rock2");
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/Rock2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
+                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
+
+                    }
+                    else if(Obstacle.m_AllObstacles[i].tag == "TrafficCone")
+                    {
+                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2");
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
+                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
+                    }
+                    else
+                    {
+
+                    }
                     Debug.Log("Interacted with highlighted obstacle");
                 }
             }
