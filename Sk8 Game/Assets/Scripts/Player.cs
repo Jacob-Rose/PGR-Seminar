@@ -50,6 +50,7 @@ public class Player : MonoBehaviour
     protected Rigidbody2D m_Rigidbody;
 
     protected SpriteRenderer m_SpriteRenderer;
+    public Sprite[] sprites;
 
     private float dodgeTimer = 0.0f;
     private float attackTimer = 0.0f;
@@ -69,6 +70,7 @@ public class Player : MonoBehaviour
         playerInfo.collidable = true;
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        //m_SpriteRenderer.sprite = sprites[1];
         playerInfo.currentSpeed = MaxSpeed;
         playerInfo.position = transform.position;
         DontDestroyOnLoad(this);
@@ -211,10 +213,10 @@ public class Player : MonoBehaviour
         {
             time += Time.deltaTime;
             playerInfo.collidable = false;
-            m_SpriteRenderer.color = Color.blue;
+            m_SpriteRenderer.sprite = sprites[1];
             yield return 0;
         }
-        m_SpriteRenderer.color = Color.white;
+        m_SpriteRenderer.sprite = sprites[0];
         playerInfo.collidable = true;
     }
 }
