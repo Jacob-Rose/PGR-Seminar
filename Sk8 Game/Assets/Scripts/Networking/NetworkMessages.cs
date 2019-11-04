@@ -115,6 +115,9 @@ public class PlayerUpdateMessage : Message
         byte[] speedBuffer = new byte[sizeof(float)];
         Buffer.BlockCopy(buffer, currentIndex, speedBuffer, 0, speedBuffer.Length);
         currentIndex += speedBuffer.Length;
+        byte[] colliderBuffer = new byte[sizeof(bool)];
+        Buffer.BlockCopy(buffer, currentIndex, colliderBuffer, 0, colliderBuffer.Length);
+        currentIndex += colliderBuffer.Length;
 
         playerID = Encoding.ASCII.GetString(playerIDBuffer);
         Player p = GameManager.Instance.GetPlayer(playerID);
@@ -125,6 +128,7 @@ public class PlayerUpdateMessage : Message
             info.position.y = BitConverter.ToSingle(yPosBuffer, 0);
             info.zRot = BitConverter.ToSingle(zRotBuffer, 0);
             info.currentSpeed = BitConverter.ToSingle(speedBuffer, 0);
+            info.collidable = BitConverter.ToBoolean(colliderBuffer, 0);
         }
         else
         {
@@ -148,13 +152,15 @@ public class PlayerUpdateMessage : Message
         byte[] xPosBuffer = BitConverter.GetBytes(info.position.x);
         byte[] yPosBuffer = BitConverter.GetBytes(info.position.y);
         byte[] speedBuffer = BitConverter.GetBytes(info.currentSpeed);
+        byte[] colliderBuffer = BitConverter.GetBytes(info.collidable);
         byte[] buffer = new byte[eventTypeBuffer.Length 
+            + playerIDLengthBuffer.Length
             + playerIDBuffer.Length 
             + zRotBuffer.Length 
             + xPosBuffer.Length 
             + yPosBuffer.Length 
-            + sizeof(ushort)
-            + speedBuffer.Length];
+            + speedBuffer.Length
+            + colliderBuffer.Length];
         int currentIndex = 0;
         Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
         currentIndex += eventTypeBuffer.Length;
@@ -170,6 +176,8 @@ public class PlayerUpdateMessage : Message
         currentIndex += yPosBuffer.Length;
         Buffer.BlockCopy(speedBuffer, 0, buffer, currentIndex, speedBuffer.Length);
         currentIndex += speedBuffer.Length;
+        Buffer.BlockCopy(colliderBuffer, 0, buffer, currentIndex, colliderBuffer.Length);
+        currentIndex += colliderBuffer.Length;
         return buffer;
     }
 }

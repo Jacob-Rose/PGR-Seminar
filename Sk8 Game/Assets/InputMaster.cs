@@ -29,7 +29,7 @@ public class InputMaster : IInputActionCollection, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": ""Keyboard"",
+                    ""name"": ""Arrows"",
                     ""id"": ""fc05ce80-4dc1-443b-83dc-0443e6503bfe"",
                     ""path"": ""1DAxis"",
                     ""interactions"": """",
@@ -82,6 +82,39 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""action"": ""TURN"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""A-D"",
+                    ""id"": ""86f74680-a5f9-4093-a920-a1f34962ab9d"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TURN"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""1f99f9df-0720-4dc9-b477-75900f1f950d"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""TURN"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""f59524ea-7f53-47a5-9c4c-e0f25c3347a3"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""TURN"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },

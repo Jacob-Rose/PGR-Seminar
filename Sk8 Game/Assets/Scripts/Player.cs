@@ -6,18 +6,18 @@ using UnityEngine;
  * Contains All The Shared Data and functions between ClientPlayer and NetworkedPlayer
  * Specific functions can be added to ClientPlayer and NetworkedPlayer classes as well.
  */
-public struct PlayerInfo //sent from server to 
+public class PlayerInfo //sent from server to 
 {
     [SerializeField]
-    public Vector2 position;
+    public Vector2 position = Vector2.zero;
     [SerializeField]
-    public float zRot;
+    public float zRot = 0.0f;
     [SerializeField]
-    public float currentSpeed;
+    public float currentSpeed = 0.0f;
     [SerializeField]
-    public int currentScore;
+    public int currentScore = 0;
     [SerializeField]
-    public bool collidable;
+    public bool collidable = false;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
     protected float acceleration; //modifier for the acceleration when the player speed rises in Update
 
     [SerializeField]
-    public PlayerInfo playerInfo;
+    public PlayerInfo playerInfo = new PlayerInfo();
 
     protected Rigidbody2D m_Rigidbody;
 
@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
     private float attackTimer = 0.0f;
 
 
-    protected float MaxSpeed
+    public float MaxSpeed
     {
         get
         {

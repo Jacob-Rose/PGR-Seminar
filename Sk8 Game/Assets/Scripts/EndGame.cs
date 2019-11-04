@@ -8,7 +8,12 @@ public class EndGame : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            GameManager.Instance.ClientPlayerReachedEnd();
+            Player p = collision.gameObject.GetComponent<ClientPlayer>();
+            if(p == null)
+            {
+                p = collision.gameObject.GetComponent<NetworkedPlayer>();
+            }
+            GameManager.Instance.PlayerHasWonGame(p);
         }
     }
 }

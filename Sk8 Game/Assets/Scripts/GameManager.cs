@@ -112,6 +112,16 @@ class GameManager : MonoBehaviour
                 }
             }
         }
+
+        if(m_Players.Count == 1)
+        {
+            PlayerHasWonGame(m_Players[0]);
+        }
+    }
+
+    public void PlayerHasWonGame(Player p)
+    {
+
     }
 
     public void UpdatePlayerInformation(ref PlayerInfo info, string playerID)
@@ -142,11 +152,6 @@ class GameManager : MonoBehaviour
             }
         }
         return null;
-    }
-
-    public void ClientPlayerReachedEnd()
-    {
-
     }
 
 }

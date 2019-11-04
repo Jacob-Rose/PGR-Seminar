@@ -28,9 +28,9 @@ public class Obstacle : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            if (collision.gameObject.GetComponent<ClientPlayer>().playerInfo.collidable == true)
+            if (collision.gameObject.GetComponent<Player>().playerInfo.collidable == true)
             {
-                collision.gameObject.GetComponent<ClientPlayer>().playerInfo.currentSpeed *= speedMultiplier;
+                collision.gameObject.GetComponent<Player>().playerInfo.currentSpeed *= speedMultiplier;
                 collision.gameObject.GetComponent<Player>().StartSpin();
                 Debug.Log("ran spin");
             }
