@@ -8,6 +8,11 @@ public class ClientPlayer : Player
     [SerializeField]
     public InputMaster controls;
     public float zRotAmount = 10.0f;
+
+
+    private float dodgeTimer = 0.0f;
+    private float attackTimer = 0.0f;
+
     public void Awake()
     {
         controls = new InputMaster();
@@ -26,13 +31,23 @@ public class ClientPlayer : Player
     public override void Update()
     {
         HandleInput(Time.deltaTime);
+        LookForObstacles();
         base.Update();
     }
 
     public void HandleInput(float deltaTime)
     {
-        
-        if(Mathf.Abs(controls.Player.TURN.ReadValue<float>()) > 0.1f)
+        dodgeTimer += deltaTime;
+        attackTimer += deltaTime;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (dodgeTimer > 5.0f)
+            {
+                dodgeTimer = 0.0f;
+                StartCoroutine(Dodge(1.0f));
+            }
+        }
+        if (Mathf.Abs(controls.Player.TURN.ReadValue<float>()) > 0.1f)
         {
             playerInfo.zRot -= zRotAmount * deltaTime * controls.Player.TURN.ReadValue<float>();
             playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime * controls.Player.TURN.ReadValue<float>();
@@ -40,6 +55,67 @@ public class ClientPlayer : Player
         else
         {
             playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
+        }
+    }
+
+    public void PlayerAttack()
+    {
+        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
+        {
+            if (CheckIfClose(playerInfo.position, GameManager.Instance.m_Players[i].transform.position))
+            {
+                if (Input.GetKeyDown(KeyCode.LeftControl))
+                {
+                    if (attackTimer > 3.0f)
+                    {
+                        dodgeTimer = 0.0f;
+                        //Run crash animation
+                        playerInfo.currentSpeed *= 0.85f;
+
+                    }
+                }
+            }
+            else
+            {
+            }
+        }
+    }
+
+    public void LookForObstacles()
+    {
+        for (int i = 0; i < Obstacle.getAllObstacleCount(); i++)
+        {
+            if (CheckIfClose(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
+            {
+                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
+                if (Input.GetKey(KeyCode.E))
+                {
+                    //Interact with the obstacle
+                    if (Obstacle.m_AllObstacles[i].tag == "Barricade")
+                    {
+                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/Rock2");
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/Rock2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
+                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
+
+                    }
+                    else if (Obstacle.m_AllObstacles[i].tag == "TrafficCone")
+                    {
+                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2");
+                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
+                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
+                    }
+                    else
+                    {
+
+                    }
+                    Debug.Log("Interacted with highlighted obstacle");
+                }
+            }
+            else
+            {
+                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
+
+            }
         }
     }
 

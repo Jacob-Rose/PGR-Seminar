@@ -52,9 +52,6 @@ public class Player : MonoBehaviour
     protected SpriteRenderer m_SpriteRenderer;
     public Sprite[] sprites;
 
-    private float dodgeTimer = 0.0f;
-    private float attackTimer = 0.0f;
-
 
     public float MaxSpeed
     {
@@ -86,18 +83,7 @@ public class Player : MonoBehaviour
         if (!GameManager.Instance.HasGameStarted)
             return;
         MovePlayer(Time.deltaTime);
-        dodgeTimer += Time.deltaTime;
-        attackTimer += Time.deltaTime;
-        PlayerAttack();
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (dodgeTimer > 5.0f)
-            {
-                dodgeTimer = 0.0f;
-                StartCoroutine(Dodge(1.0f));
-            }
-        }
-        LookForObstacles();
+        
         BackDraft();
     }
 
@@ -115,44 +101,6 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);
         playerInfo.position = transform.position;
-    }
-
-    public void LookForObstacles()
-    {
-        for(int i = 0; i < Obstacle.getAllObstacleCount(); i++)
-        {
-            if(CheckIfClose(playerInfo.position,Obstacle.m_AllObstacles[i].transform.position))
-            {
-                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
-                if(Input.GetKey(KeyCode.E))
-                {
-                    //Interact with the obstacle
-                    if (Obstacle.m_AllObstacles[i].tag == "Barricade")
-                    {
-                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/Rock2");
-                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/Rock2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
-                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
-
-                    }
-                    else if(Obstacle.m_AllObstacles[i].tag == "TrafficCone")
-                    {
-                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2");
-                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
-                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
-                    }
-                    else
-                    {
-
-                    }
-                    Debug.Log("Interacted with highlighted obstacle");
-                }
-            }
-            else
-            {
-                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
-
-            }
-        }
     }
 
     public bool CheckIfClose(Vector2 playerPos, Vector2 obstPos)
@@ -193,29 +141,6 @@ public class Player : MonoBehaviour
             if (playerInfo.position.y <= (GameManager.Instance.m_Players[i].transform.position.y - 10))
             {
                 playerInfo.currentSpeed *= 1.6f * Time.deltaTime;
-            }
-            else
-            {
-            }
-        }
-    }
-
-    public void PlayerAttack()
-    {
-        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
-        {
-            if (CheckIfClose(playerInfo.position, GameManager.Instance.m_Players[i].transform.position))
-            {
-                if (Input.GetKeyDown(KeyCode.LeftControl))
-                {
-                    if (attackTimer > 3.0f)
-                    {
-                        dodgeTimer = 0.0f;
-                        //Run crash animation
-                        playerInfo.currentSpeed *= 0.85f;
-
-                    }
-                }
             }
             else
             {
