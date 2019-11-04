@@ -94,9 +94,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ce52d9a506f5e4b89987ff8649e4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactedSprite: {fileID: 21300000, guid: dff5c86c34625e646891382574a891ac, type: 3}
   id: 0
   speedMultiplier: 0.65
   spinPlayer: 0
+  scoreIncreaseOnInteract: 5
 --- !u!60 &1310931210
 PolygonCollider2D:
   m_ObjectHideFlags: 0

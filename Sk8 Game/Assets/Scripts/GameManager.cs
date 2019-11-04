@@ -93,6 +93,11 @@ class GameManager : MonoBehaviour
         return obj.GetComponent<NetworkedPlayer>();
     }
 
+    public void ObstacleInteractedWith(uint obstacleID, string playerID)
+    {
+        Obstacle.m_AllObstacles[(int)obstacleID].InteractedWith(GetPlayer(playerID));
+    }
+
     public void RemovePlayer(string playerID)
     {
         if(playerID == this.m_PlayerUsername)

@@ -42,7 +42,7 @@ public class Player : MonoBehaviour
     protected float speedMod; //used for max speed calculation
 
     [SerializeField]
-    protected float acceleration; //modifier for the acceleration when the player speed rises in Update
+    protected float timeToMaxSpeed; //modifier for the acceleration when the player speed rises in Update
 
     [SerializeField]
     public PlayerInfo playerInfo = new PlayerInfo();
@@ -51,6 +51,8 @@ public class Player : MonoBehaviour
 
     protected SpriteRenderer m_SpriteRenderer;
     public Sprite[] sprites;
+
+    public float backDraftBoost = 1.1f;
 
 
     public float MaxSpeed
@@ -83,8 +85,7 @@ public class Player : MonoBehaviour
         if (!GameManager.Instance.HasGameStarted)
             return;
         MovePlayer(Time.deltaTime);
-        
-        BackDraft();
+        CheckBackDraft(Time.deltaTime);
     }
 
     public void SetPosition(Vector2 pos)
@@ -96,24 +97,13 @@ public class Player : MonoBehaviour
     public void MovePlayer(float deltaTime)
     {
         transform.position = playerInfo.position;
-        playerInfo.currentSpeed = Mathf.Clamp(playerInfo.currentSpeed + (acceleration * deltaTime), 0, MaxSpeed);
+        playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed, (deltaTime / timeToMaxSpeed));
         playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);
         playerInfo.position = transform.position;
     }
 
-    public bool CheckIfClose(Vector2 playerPos, Vector2 obstPos)
-    {
-        if((obstPos - playerPos).magnitude < 3.0f)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
     public IEnumerator SpinPlayerDuration(float duration)
     {
         float time = 0.0f;
@@ -134,16 +124,18 @@ public class Player : MonoBehaviour
 
     }
 
-    public void BackDraft()
+    public void CheckBackDraft(float deltaTime)
     {
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if (playerInfo.position.y <= (GameManager.Instance.m_Players[i].transform.position.y - 10))
+            Player oPlayer = GameManager.Instance.m_Players[i];
+            if(oPlayer != this)
             {
-                playerInfo.currentSpeed *= 1.6f * Time.deltaTime;
-            }
-            else
-            {
+                Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, 5.0f), new Vector2(5.0f, 10.0f));
+                if (draftBounds.Contains(playerInfo.position))
+                {
+                    playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * backDraftBoost, deltaTime);
+                }
             }
         }
     }

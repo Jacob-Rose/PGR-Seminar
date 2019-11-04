@@ -48,11 +48,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startSpeed: 10
   speedDecreaseAmount: 0.05
-  speedMod: 1
-  acceleration: 1
+  speedMod: 0.05
+  timeToMaxSpeed: 3
   sprites:
   - {fileID: 21300000, guid: 2a4c62af9b825924ba649a4a6422584f, type: 3}
   - {fileID: 21300000, guid: 8fec6f992865fe34eac48e84b6f4122c, type: 3}
+  backDraftBoost: 0
   playerID: 3
 --- !u!212 &2619901218841773871
 SpriteRenderer:

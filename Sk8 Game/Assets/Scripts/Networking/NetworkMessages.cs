@@ -51,6 +51,9 @@ public abstract class Message
             case NetworkEvent.PlayerFellBehind:
                 msg = new PlayerFellBehindMessage(msgBytes);
                 break;
+            case NetworkEvent.ObstacleModified:
+                msg = new ObstacleModifiedMessage(msgBytes);
+                break;
             default:
                 throw new Exception("oops");
         }
@@ -343,4 +346,46 @@ public class PlayerFellBehindMessage : Message
         currentIndex += playerIDBuffer.Length;
         return buffer;
     }
+}
+
+public class ObstacleModifiedMessage : Message
+{
+    public uint obstacleID;
+    public string playerID;
+    public ObstacleModifiedMessage(byte[] buffer)
+    {
+        int currentByteIndex = 0;
+        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        playerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            playerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        currentByteIndex += playerID.Length * sizeof(char);
+        obstacleID = BitConverter.ToUInt32(buffer, currentByteIndex);
+        currentByteIndex += sizeof(uint);
+    }
+
+    public ObstacleModifiedMessage(string playerID, uint obstacleID)
+    {
+        eventType = (ushort)NetworkEvent.ObstacleModified;
+        this.playerID = playerID;
+        this.obstacleID = obstacleID;
+    }
+    public override byte[] toBuffer()
+    {
+        byte[] buffer = new byte[4 + (playerID.Length * sizeof(char)) + sizeof(uint)];
+        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
+        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        for (int i = 0; i < playerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+        }
+        Buffer.BlockCopy(BitConverter.GetBytes(obstacleID), 0, buffer, buffer.Length - sizeof(uint), sizeof(uint));
+        return buffer;
+    }
+
 }

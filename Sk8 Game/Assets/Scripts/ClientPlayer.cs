@@ -9,6 +9,7 @@ public class ClientPlayer : Player
     public InputMaster controls;
     public float zRotAmount = 10.0f;
 
+    public float interactMaxDist = 4.0f;
 
     private float dodgeTimer = 0.0f;
     private float attackTimer = 0.0f;
@@ -58,25 +59,32 @@ public class ClientPlayer : Player
         }
     }
 
+    public bool CheckIfInInteractionRange(Vector2 a, Vector2 b)
+    {
+        return Vector2.Distance(a, b) < interactMaxDist;
+    }
+
     public void PlayerAttack()
     {
+        Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if (CheckIfClose(playerInfo.position, GameManager.Instance.m_Players[i].transform.position))
+            if (CheckIfInInteractionRange(playerInfo.position, GameManager.Instance.m_Players[i].transform.position))
             {
-                if (Input.GetKeyDown(KeyCode.LeftControl))
-                {
-                    if (attackTimer > 3.0f)
-                    {
-                        dodgeTimer = 0.0f;
-                        //Run crash animation
-                        playerInfo.currentSpeed *= 0.85f;
-
-                    }
-                }
+                closestPlayer = GameManager.Instance.m_Players[i];
             }
-            else
+        }
+        if(closestPlayer != null)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftControl))
             {
+                if (attackTimer > 3.0f)
+                {
+                    dodgeTimer = 0.0f;
+                    //Run crash animation
+                    playerInfo.currentSpeed *= 0.85f;
+
+                }
             }
         }
     }
@@ -85,29 +93,13 @@ public class ClientPlayer : Player
     {
         for (int i = 0; i < Obstacle.getAllObstacleCount(); i++)
         {
-            if (CheckIfClose(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
+            if (CheckIfInInteractionRange(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
             {
                 Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
                 if (Input.GetKey(KeyCode.E))
                 {
                     //Interact with the obstacle
-                    if (Obstacle.m_AllObstacles[i].tag == "Barricade")
-                    {
-                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/Rock2");
-                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/Rock2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
-                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
-
-                    }
-                    else if (Obstacle.m_AllObstacles[i].tag == "TrafficCone")
-                    {
-                        //Obstacle.m_AllObstacles[i].self = Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2");
-                        Instantiate(Resources.Load<GameObject>("Prefabs/Obstacles/TrafficSquare2"), Obstacle.m_AllObstacles[i].gameObject.transform.position, Quaternion.identity);
-                        Obstacle.m_AllObstacles[i].gameObject.SetActive(false);
-                    }
-                    else
-                    {
-
-                    }
+                    Obstacle.m_AllObstacles[i].HandleInteraction(this);
                     Debug.Log("Interacted with highlighted obstacle");
                 }
             }

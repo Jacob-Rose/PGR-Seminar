@@ -128,6 +128,12 @@ public class VHostBehavior : Networked
             GameManager.Instance.UpdatePlayerInformation(ref nMsg.info, nMsg.playerID);
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
         }
+        if(msg is ObstacleModifiedMessage)
+        {
+            ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
+            GameManager.Instance.ObstacleInteractedWith(nMsg.obstacleID, nMsg.playerID);
+            SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
+        }
     }
 
     public void PlayerDisconnected(string playerID)

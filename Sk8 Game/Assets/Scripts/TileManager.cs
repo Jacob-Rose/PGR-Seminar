@@ -28,13 +28,6 @@ public class TileManager : MonoBehaviour
         PopulateRoads();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        // v this doesnt really make sense atm, ignore
-        //stageLevelAmount = obstManager.GetComponent<ObstGen>().GetStagePoint();
-    }
-
     public struct ObstInfo
     {
         public Vector3 spawnedPos;

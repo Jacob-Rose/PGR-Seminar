@@ -99,6 +99,11 @@ public class VOnlinePlayer : Networked
         }
     }
 
+    public void SendMessage(Message m)
+    {
+        m_Server.SendMessageToConnection(m_Connection, m.toBuffer());
+    }
+
     public void ConnectToIP(string ip)
     {
         IPAddress address;
