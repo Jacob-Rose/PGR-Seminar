@@ -25,6 +25,8 @@ class GameManager : MonoBehaviour
     protected ClientPlayer m_ClientPlayer = null; //all networked will have a single client player that sends data
     public string m_PlayerUsername;
 
+
+
     public void Awake()
     {
         instance = this;

@@ -9,10 +9,12 @@ public class ClientPlayer : Player
     public InputMaster controls;
     public float zRotAmount = 10.0f;
 
-    public float interactMaxDist = 4.0f;
+    public float m_InteractMaxDist = 4.0f;
 
-    private float dodgeTimer = 0.0f;
-    private float attackTimer = 0.0f;
+    private float m_DodgeTimer = 0.0f;
+    private float m_AttackTimer = 0.0f;
+    private float m_CurrentClosestDistance = 0.0f;
+    private Obstacle m_ClosestObstacle = null;
 
     public void Awake()
     {
@@ -32,26 +34,38 @@ public class ClientPlayer : Player
     public override void Update()
     {
         HandleInput(Time.deltaTime);
-        LookForObstacles();
+        FindClosestObstacle();
+        
         base.Update();
     }
 
     public void HandleInput(float deltaTime)
     {
-        dodgeTimer += deltaTime;
+        m_DodgeTimer += deltaTime;
         //attackTimer += deltaTime;
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (controls.Player.Jump.ReadValue<float>() > 0.5f)
         {
-            if (dodgeTimer > 5.0f)
+            if (m_DodgeTimer > 3.0f)
             {
-                dodgeTimer = 0.0f;
+                m_DodgeTimer = 0.0f;
                 StartCoroutine(Dodge(1.0f));
             }
         }
-        if (Mathf.Abs(controls.Player.TURN.ReadValue<float>()) > 0.1f)
+
+        if (m_ClosestObstacle != null)
         {
-            playerInfo.zRot -= zRotAmount * deltaTime * controls.Player.TURN.ReadValue<float>();
-            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime * controls.Player.TURN.ReadValue<float>();
+            if (controls.Player.Interact.ReadValue<float>() > 0.5f)
+            {
+                //Interact with the obstacle
+                m_ClosestObstacle.HandleInteraction(this);
+                Debug.Log("Interacted with highlighted obstacle");
+            }
+        }
+        float turnValue = controls.Player.Turn.ReadValue<float>();
+        if (Mathf.Abs(turnValue) > 0.05f)
+        {
+            playerInfo.zRot -= zRotAmount * deltaTime * turnValue;
+            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime * turnValue;
         }
         else
         {
@@ -59,28 +73,23 @@ public class ClientPlayer : Player
         }
     }
 
-    public bool CheckIfInInteractionRange(Vector2 a, Vector2 b)
-    {
-        return Vector2.Distance(a, b) < interactMaxDist;
-    }
-
     public void PlayerAttack()
     {
         Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if (CheckIfInInteractionRange(playerInfo.position, GameManager.Instance.m_Players[i].transform.position))
+            /*if (Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) < )
             {
                 closestPlayer = GameManager.Instance.m_Players[i];
-            }
+            }*/
         }
         if(closestPlayer != null)
         {
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
-                if (attackTimer > 3.0f)
+                if (m_AttackTimer > 3.0f)
                 {
-                    dodgeTimer = 0.0f;
+                    m_DodgeTimer = 0.0f;
                     //Run crash animation
                     playerInfo.currentSpeed *= 0.85f;
 
@@ -89,19 +98,18 @@ public class ClientPlayer : Player
         }
     }
 
-    public void LookForObstacles()
+    public void FindClosestObstacle()
     {
+        m_CurrentClosestDistance = m_InteractMaxDist;
+        m_ClosestObstacle = null;
         for (int i = 0; i < Obstacle.getAllObstacleCount(); i++)
         {
-            if (CheckIfInInteractionRange(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
+            float oDist = Vector2.Distance(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position);
+            if (oDist < m_CurrentClosestDistance)
             {
                 Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    //Interact with the obstacle
-                    Obstacle.m_AllObstacles[i].HandleInteraction(this);
-                    Debug.Log("Interacted with highlighted obstacle");
-                }
+                m_ClosestObstacle = Obstacle.m_AllObstacles[i];
+                m_CurrentClosestDistance = oDist;
             }
             else
             {

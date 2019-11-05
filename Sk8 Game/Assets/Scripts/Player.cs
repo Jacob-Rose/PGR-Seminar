@@ -50,9 +50,8 @@ public class Player : MonoBehaviour
     protected Rigidbody2D m_Rigidbody;
 
     protected SpriteRenderer m_SpriteRenderer;
-    public Sprite[] sprites;
 
-    public float backDraftBoost = 1.1f;
+    public float m_BackDraftMultiplier = 1.1f;
 
 
     public float MaxSpeed
@@ -139,7 +138,7 @@ public class Player : MonoBehaviour
                 Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, 5.0f), new Vector2(2.0f, 10.0f));
                 if (draftBounds.Contains(playerInfo.position))
                 {
-                    playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * backDraftBoost, deltaTime);
+                    playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * m_BackDraftMultiplier, deltaTime);
                 }
             }
         }
@@ -148,14 +147,15 @@ public class Player : MonoBehaviour
     public IEnumerator Dodge(float duration)
     {
         float time = 0.0f;
+        GameObject spriteChild = this.transform.GetChild(0).gameObject;
         while (time <= duration)
         {
             time += Time.deltaTime;
             playerInfo.collidable = false;
-            m_SpriteRenderer.sprite = sprites[1];
+            spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
             yield return 0;
         }
-        m_SpriteRenderer.sprite = sprites[0];
+        spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         playerInfo.collidable = true;
     }
 }

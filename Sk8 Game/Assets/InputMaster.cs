@@ -19,10 +19,26 @@ public class InputMaster : IInputActionCollection, IDisposable
             ""id"": ""e49f1d37-72f8-4b16-bf6b-56f354314a55"",
             ""actions"": [
                 {
-                    ""name"": ""TURN"",
+                    ""name"": ""Turn"",
                     ""type"": ""Value"",
                     ""id"": ""4eb27db5-0cb7-4d2a-b9fc-9401b6428ae1"",
                     ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""c1adb7a6-d771-480a-b62c-4289669621d7"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Jump"",
+                    ""type"": ""Button"",
+                    ""id"": ""9233ed51-3ef8-45d4-9917-ace364aeb514"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
                 }
@@ -35,7 +51,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -46,7 +62,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -57,7 +73,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -68,7 +84,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""PS4Controller"",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -79,7 +95,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""XboxController"",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -90,7 +106,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -101,7 +117,7 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -112,9 +128,75 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""TURN"",
+                    ""action"": ""Turn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8174b060-1156-4926-8bcc-b5be3cc1d6df"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""51c8fd37-579f-47db-b009-c2cf9dfeba07"",
+                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PS4Controller"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c59e1a96-1acb-454b-a5df-801312639d22"",
+                    ""path"": ""<XInputController>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""XboxController"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d557697-2433-4e3a-9230-fd3519db9eb2"",
+                    ""path"": ""<XInputController>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""XboxController"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""247d091e-e09b-464d-9fb7-0d5072aab9ae"",
+                    ""path"": ""<DualShockGamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PS4Controller"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5a005e13-029e-4996-86ee-c4e3ff4a9d90"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -269,7 +351,9 @@ public class InputMaster : IInputActionCollection, IDisposable
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_TURN = m_Player.FindAction("TURN", throwIfNotFound: true);
+        m_Player_Turn = m_Player.FindAction("Turn", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Move = m_UI.FindAction("Move", throwIfNotFound: true);
@@ -323,12 +407,16 @@ public class InputMaster : IInputActionCollection, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
-    private readonly InputAction m_Player_TURN;
+    private readonly InputAction m_Player_Turn;
+    private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_Jump;
     public struct PlayerActions
     {
         private InputMaster m_Wrapper;
         public PlayerActions(InputMaster wrapper) { m_Wrapper = wrapper; }
-        public InputAction @TURN => m_Wrapper.m_Player_TURN;
+        public InputAction @Turn => m_Wrapper.m_Player_Turn;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -338,16 +426,28 @@ public class InputMaster : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                TURN.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTURN;
-                TURN.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTURN;
-                TURN.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTURN;
+                Turn.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTurn;
+                Turn.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTurn;
+                Turn.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTurn;
+                Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
-                TURN.started += instance.OnTURN;
-                TURN.performed += instance.OnTURN;
-                TURN.canceled += instance.OnTURN;
+                Turn.started += instance.OnTurn;
+                Turn.performed += instance.OnTurn;
+                Turn.canceled += instance.OnTurn;
+                Interact.started += instance.OnInteract;
+                Interact.performed += instance.OnInteract;
+                Interact.canceled += instance.OnInteract;
+                Jump.started += instance.OnJump;
+                Jump.performed += instance.OnJump;
+                Jump.canceled += instance.OnJump;
             }
         }
     }
@@ -422,7 +522,9 @@ public class InputMaster : IInputActionCollection, IDisposable
     }
     public interface IPlayerActions
     {
-        void OnTURN(InputAction.CallbackContext context);
+        void OnTurn(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnJump(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
