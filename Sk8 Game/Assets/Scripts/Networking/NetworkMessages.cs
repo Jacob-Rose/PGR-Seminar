@@ -358,13 +358,13 @@ public class ObstacleModifiedMessage : Message
         eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
         currentByteIndex += sizeof(ushort);
         int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
         playerID = "";
         for (int i = 0; i < playerIDCount; i++)
         {
             playerID += BitConverter.ToChar(buffer, currentByteIndex);
             currentByteIndex += sizeof(char);
         }
-        currentByteIndex += playerID.Length * sizeof(char);
         obstacleID = BitConverter.ToUInt32(buffer, currentByteIndex);
         currentByteIndex += sizeof(uint);
     }
@@ -379,10 +379,11 @@ public class ObstacleModifiedMessage : Message
     {
         byte[] buffer = new byte[4 + (playerID.Length * sizeof(char)) + sizeof(uint)];
         Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
-        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        uint playerIDLength = (ushort)playerID.Length;
+        Buffer.BlockCopy(BitConverter.GetBytes(playerIDLength), 0, buffer, 2, 2);
         for (int i = 0; i < playerID.Length; i++)
         {
-            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID.ToCharArray()[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
         }
         Buffer.BlockCopy(BitConverter.GetBytes(obstacleID), 0, buffer, buffer.Length - sizeof(uint), sizeof(uint));
         return buffer;

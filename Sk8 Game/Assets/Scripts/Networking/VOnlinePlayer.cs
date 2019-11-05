@@ -93,6 +93,11 @@ public class VOnlinePlayer : Networked
             ObstacleGeneratedMessage nMsg = msg as ObstacleGeneratedMessage;
             TileManager.Instance.SpawnObstacle(nMsg.itemID, nMsg.itemPos, nMsg.itemType);
         }
+        else if(msg is ObstacleModifiedMessage)
+        {
+            ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
+            Obstacle.m_AllObstacles[(int)nMsg.obstacleID].InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
+        }
         else if(msg is PlayerFellBehindMessage)
         {
             PlayerFellBehindMessage nMsg = msg as PlayerFellBehindMessage;
