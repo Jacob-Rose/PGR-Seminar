@@ -8,7 +8,8 @@ using Valve.Sockets;
 public class VHostBehavior : Networked
 {
     protected uint m_ListenSocket;
-    public static VHostBehavior m_Instance;
+    public static VHostBehavior Instance { get { return m_Instance; } }
+    private static VHostBehavior m_Instance;
     public Dictionary<uint, string> m_Connections = new Dictionary<uint, string>();
     private KeyValuePair<uint, string>? m_NewConnectionName = null;
     public uint m_NetworkMessageConnectionSource = 0; //where the message came from

@@ -515,13 +515,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f5695ca236857c478ed8b398bc56317, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstList:
-  - {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0, type: 3}
+  m_ObstacleList:
   - {fileID: 421345708782655166, guid: 6b4bfd82888223544b6f7e41325aa375, type: 3}
-  firstTransform: {fileID: 1368724442}
+  - {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0, type: 3}
+  m_StartTransform: {fileID: 1368724443}
   endTest: {fileID: 5568872276589035682, guid: f9756aaa45bd48e46b6b71cefb861e9d, type: 3}
   road: {fileID: 676402263228062703, guid: 0fd5a185887b17546a8d2e309c8e6aa9, type: 3}
-  roadSize: 400
+  roadSize: 200
   obstaclesPerTile: 2
 --- !u!1 &1368724442
 GameObject:

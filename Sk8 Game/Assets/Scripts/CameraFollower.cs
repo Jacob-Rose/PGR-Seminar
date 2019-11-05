@@ -26,6 +26,10 @@ public class CameraFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(m_Targets.Count == 0)
+        {
+            throw new System.Exception("No Players Exist");
+        }
         m_Targets = GameManager.Instance.GetPlayers();
         if (m_Targets.Count == 0)
         {

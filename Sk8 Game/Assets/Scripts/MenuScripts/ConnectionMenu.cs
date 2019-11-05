@@ -20,6 +20,6 @@ public class ConnectionMenu : MonoBehaviour
     void ConnectToIP()
     {
         string ip = ipText.text;
-        VOnlinePlayer.m_Instance.ConnectToIP(ip.Trim(new char[] { (char)8203 }));
+        VOnlinePlayer.Instance.ConnectToIP(ip.Trim(new char[] { (char)8203 }));
     }
 }

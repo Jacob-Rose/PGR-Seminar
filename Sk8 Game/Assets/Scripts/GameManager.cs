@@ -72,9 +72,9 @@ class GameManager : MonoBehaviour
     public void PlayerFellBehind(string playerID)
     {
         RemovePlayer(playerID);
-        if(VHostBehavior.m_Instance != null)
+        if(VHostBehavior.Instance != null)
         {
-            VHostBehavior.m_Instance.SendMessageToAllPlayers(new PlayerFellBehindMessage(playerID));
+            VHostBehavior.Instance.SendMessageToAllPlayers(new PlayerFellBehindMessage(playerID));
         }
     }
 

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class TileManager : MonoBehaviour
 {
-    public GameObject[] obstList;
+    public GameObject[] m_ObstacleList;
     //is the start of the race
-    public GameObject firstTransform;
+    public Transform m_StartTransform;
     //void that ends game when player hits
     public GameObject endTest;
     //just a sprite for the road
@@ -17,7 +17,9 @@ public class TileManager : MonoBehaviour
     //[SerializeField]
     public int obstaclesPerTile = 2;
 
-    public static TileManager m_Instance;
+    public static TileManager Instance { get { return m_Instance; } }
+
+    private static TileManager m_Instance;
     // Start is called before the first frame update
     void Start()
     {
@@ -32,18 +34,16 @@ public class TileManager : MonoBehaviour
     {
         public Vector3 spawnedPos;
         public GameObject spawnedObstacle;
-        //add bool interacted with
     }
 
-    //Get obstacle data and spawnPos, instantiate at Vector based on randomized func
     ObstInfo SpawnObstaclesOnTile(Bounds tileBounds)
     {
         ObstInfo returnVal = new ObstInfo();
         Vector3 obstaclePos = CreateObstaclePoint(tileBounds);
-        float obstListNum = (float)obstList.Length;
+        float obstListNum = (float)m_ObstacleList.Length;
         int randomIndex = (int)Random.Range(0, obstListNum); //assume all players have the same list, used in message
         Obstacle newObs = SpawnObstacle((uint)Obstacle.getAllObstacleCount(), obstaclePos, randomIndex);
-        VHostBehavior.m_Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage((uint)Obstacle.getAllObstacleCount(), obstaclePos, (ushort)randomIndex), Valve.Sockets.SendType.Reliable);
+        VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage((uint)Obstacle.getAllObstacleCount(), obstaclePos, (ushort)randomIndex), Valve.Sockets.SendType.Reliable);
         return returnVal;
     }
 
@@ -55,11 +55,9 @@ public class TileManager : MonoBehaviour
         return randomPos;
     }
 
-    
-
     public Obstacle SpawnObstacle(uint itemID, Vector2 pos, int itemType)
     {
-        GameObject determinedObst = obstList[itemType];
+        GameObject determinedObst = m_ObstacleList[itemType];
         Obstacle newObstacle = Instantiate(determinedObst, pos, Quaternion.identity, transform).GetComponent<Obstacle>();
         newObstacle.id = itemID;
         
@@ -70,7 +68,7 @@ public class TileManager : MonoBehaviour
     //populate roads using GetObsStatsSpawn, is based on roads
     public void PopulateRoads()
     {
-        Bounds roadBounds = new Bounds(firstTransform.transform.position, new Vector3(5, 5));
+        Bounds roadBounds = new Bounds(m_StartTransform.position, new Vector3(5, 5));
         for (int i = 0; i < roadSize; i++)
         {
             GameObject newRoad = Instantiate(road, roadBounds.center, Quaternion.identity, transform);
@@ -79,13 +77,14 @@ public class TileManager : MonoBehaviour
             {
                 Instantiate(endTest, roadBounds.center, Quaternion.identity, transform);
             }
-            if(VHostBehavior.m_Instance != null && i != 0) //only call spawn if host, sends to other players
+            if(VHostBehavior.Instance != null && i != 0) //only call spawn if host, sends to other players
             {
-                SpawnObstaclesOnTile(roadBounds);
-            }
-            
+                for(int j = 0; j < obstaclesPerTile; j++)
+                {
+                    SpawnObstaclesOnTile(roadBounds);
+                }
+            } 
             roadBounds.center = new Vector3(roadBounds.center.x, roadBounds.center.y + roadHeight, 0.0f);
-            
         }
     }
 }

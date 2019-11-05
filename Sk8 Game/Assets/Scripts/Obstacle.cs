@@ -21,6 +21,11 @@ public class Obstacle : MonoBehaviour
         m_AllObstacles.Remove(this);
     }
 
+    private void OnDestroy()
+    {
+        m_AllObstacles.Remove(this);
+    }
+
     public void InteractedWith(Player p)
     {
         p.playerInfo.currentScore += scoreIncreaseOnInteract;
@@ -35,13 +40,13 @@ public class Obstacle : MonoBehaviour
     {
         if (p is ClientPlayer)
         {
-            if (VHostBehavior.m_Instance != null)
+            if (VHostBehavior.Instance != null)
             {
-                VHostBehavior.m_Instance.SendMessageToAllPlayers(new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, id));
+                VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, id));
             }
-            else if (VOnlinePlayer.m_Instance != null)
+            else if (VOnlinePlayer.Instance != null)
             {
-                VOnlinePlayer.m_Instance.SendMessage(new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, id));
+                VOnlinePlayer.Instance.SendMessage(new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, id));
             }
         }
         InteractedWith(p);

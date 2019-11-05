@@ -12,7 +12,8 @@ public class VOnlinePlayer : Networked
 {
     protected uint m_Connection = uint.MaxValue;
 
-    public static VOnlinePlayer m_Instance;
+    public static VOnlinePlayer Instance { get { return m_Instance; } }
+    private static VOnlinePlayer m_Instance;
     public override void Start()
     {
         m_Instance = this;
@@ -90,7 +91,7 @@ public class VOnlinePlayer : Networked
         else if(msg is ObstacleGeneratedMessage)
         {
             ObstacleGeneratedMessage nMsg = msg as ObstacleGeneratedMessage;
-            TileManager.m_Instance.SpawnObstacle(nMsg.itemID, nMsg.itemPos, nMsg.itemType);
+            TileManager.Instance.SpawnObstacle(nMsg.itemID, nMsg.itemPos, nMsg.itemType);
         }
         else if(msg is PlayerFellBehindMessage)
         {

@@ -53,6 +53,9 @@ public class Player : MonoBehaviour
 
     public float m_BackDraftMultiplier = 1.1f;
 
+    protected bool m_IsDodging = false;
+    protected bool m_IsSpinning = false;
+
 
     public float MaxSpeed
     {
@@ -105,27 +108,31 @@ public class Player : MonoBehaviour
 
     public IEnumerator SpinPlayerDuration(float duration)
     {
+        m_IsSpinning = true;
         float time = 0.0f;
-        GameObject spriteChild = this.transform.GetChild(0).gameObject;
+        SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         while (time <= duration)
         {
             time += Time.deltaTime;
             //transform.Rotate(0, 0, 2000*time, Space.Self);
-            m_SpriteRenderer.enabled = false;
-            spriteChild.GetComponent<SpriteRenderer>().enabled = true;
-            spriteChild.GetComponent<SpriteRenderer>().transform.Rotate(0, 0, 10, Space.Self);
+            float rotAmount = 360.0f * ((time / duration) * 2.0f); //two full spins before done
+            spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, rotAmount);
             //playerInfo.collidable = false;
             Debug.Log("did rotatino");
-            
-            yield return new WaitForSeconds(0.01f);
+
+            yield return 0;
         }
-        spriteChild.GetComponent<SpriteRenderer>().enabled = false;
-        m_SpriteRenderer.enabled = true;
+        spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        m_IsSpinning = false;
 
     }
     public void StartSpin()
     {
-        StartCoroutine(SpinPlayerDuration(1.0f));
+        if(!m_IsSpinning)
+        {
+            StartCoroutine(SpinPlayerDuration(1.0f));
+        }
+        
     }
 
     public void CheckBackDraft(float deltaTime)
@@ -144,18 +151,5 @@ public class Player : MonoBehaviour
         }
     }
 
-    public IEnumerator Dodge(float duration)
-    {
-        float time = 0.0f;
-        GameObject spriteChild = this.transform.GetChild(0).gameObject;
-        while (time <= duration)
-        {
-            time += Time.deltaTime;
-            playerInfo.collidable = false;
-            spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
-            yield return 0;
-        }
-        spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-        playerInfo.collidable = true;
-    }
+    
 }

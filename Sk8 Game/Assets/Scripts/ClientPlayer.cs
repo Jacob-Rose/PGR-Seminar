@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using TMPro;
+using UnityEngine;
 using UnityEngine.InputSystem;
 /*
  * Note: More than one client player can exist, make sure to not hardcode in controls except for early testing
@@ -31,8 +33,14 @@ public class ClientPlayer : Player
         controls.Disable();
     }
 
+    public override void Start()
+    {
+        base.Start();
+    }
+
     public override void Update()
     {
+        GetComponentInChildren<TextMeshProUGUI>().text = GameManager.Instance.m_PlayerUsername;
         HandleInput(Time.deltaTime);
         FindClosestObstacle();
         
@@ -117,6 +125,23 @@ public class ClientPlayer : Player
 
             }
         }
+    }
+
+    public IEnumerator Dodge(float duration)
+    {
+        m_IsDodging = true;
+        float time = 0.0f;
+        GameObject spriteChild = this.transform.GetChild(0).gameObject;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            playerInfo.collidable = false;
+            spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+            yield return 0;
+        }
+        spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
+        playerInfo.collidable = true;
+        m_IsDodging = false;
     }
 
     private void OnGUI()
