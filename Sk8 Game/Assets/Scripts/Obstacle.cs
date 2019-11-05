@@ -61,6 +61,7 @@ public class Obstacle : MonoBehaviour
                 collision.gameObject.GetComponent<Player>().playerInfo.currentSpeed *= speedMultiplier;
                 collision.gameObject.GetComponent<Player>().StartSpin();
                 Debug.Log("ran spin");
+
             }
             else
             {

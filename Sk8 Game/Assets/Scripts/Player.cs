@@ -107,19 +107,27 @@ public class Player : MonoBehaviour
     public IEnumerator SpinPlayerDuration(float duration)
     {
         float time = 0.0f;
+        GameObject spriteChild = this.transform.GetChild(0).gameObject;
         while (time <= duration)
         {
             time += Time.deltaTime;
-            transform.Rotate(0, 0, 20, Space.Self);
-            //m_SpriteRenderer.transform.Rotate(0, 0, 180, Space.Self);
+            //transform.Rotate(0, 0, 2000*time, Space.Self);
+            m_SpriteRenderer.enabled = false;
+            spriteChild.GetComponent<SpriteRenderer>().enabled = true;
+            spriteChild.GetComponent<SpriteRenderer>().transform.Rotate(0, 0, 10, Space.Self);
+            //playerInfo.collidable = false;
             Debug.Log("did rotatino");
+            
             yield return new WaitForSeconds(0.01f);
         }
+        spriteChild.GetComponent<SpriteRenderer>().enabled = false;
+        m_SpriteRenderer.enabled = true;
+
     }
     public void StartSpin()
     {
         //the spin should be visual
-        //StartCoroutine(SpinPlayerDuration(1.0f));
+        StartCoroutine(SpinPlayerDuration(1.0f));
         //m_SpriteRenderer.transform.Rotate(0, 0, 90, Space.Self);
 
     }

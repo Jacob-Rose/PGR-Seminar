@@ -96,7 +96,7 @@ public class ClientPlayer : Player
             if (CheckIfInInteractionRange(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position))
             {
                 Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
-                if (Input.GetKey(KeyCode.E))
+                if (Input.GetKeyDown(KeyCode.E))
                 {
                     //Interact with the obstacle
                     Obstacle.m_AllObstacles[i].HandleInteraction(this);
