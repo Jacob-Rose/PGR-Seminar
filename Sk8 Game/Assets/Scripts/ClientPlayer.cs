@@ -83,6 +83,15 @@ public class ClientPlayer : Player
             {
                 //Interact with the obstacle
                 m_ClosestObstacle.HandleInteraction(this);
+                ObstacleModifiedMessage msg = new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, m_ClosestObstacle.id);
+                if (VHostBehavior.Instance != null)
+                {
+                    VHostBehavior.Instance.SendMessageToAllPlayers(msg);
+                }
+                else
+                {
+                    VOnlinePlayer.Instance.SendMessage(msg);
+                }
                 Debug.Log("Interacted with highlighted obstacle");
             }
         }
