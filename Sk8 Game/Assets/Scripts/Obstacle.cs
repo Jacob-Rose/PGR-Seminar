@@ -65,7 +65,7 @@ public class Obstacle : MonoBehaviour
             }
             else
             {
-                collision.gameObject.GetComponent<ClientPlayer>().playerInfo.collidable = true;
+                collision.gameObject.GetComponent<Player>().playerInfo.collidable = true;
             }
         }
     }

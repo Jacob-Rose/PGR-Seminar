@@ -36,6 +36,17 @@ class GameManager : MonoBehaviour
         SpawnClientPlayer();
     }
 
+    public void Update()
+    {
+        if(m_GameIsStarting)
+        {
+            if(SecondsTillStart < 0.0f)
+            {
+                StartGame();
+            }
+        }
+    }
+
     public void OnGUI()
     {
         if(m_GameIsStarting)
@@ -73,8 +84,11 @@ class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        m_GameStarted = true;
-        m_GameIsStarting = false;
+        if(m_GameStarted == false)
+        {
+            m_GameStarted = true;
+            m_GameIsStarting = false;
+        }
     }
 
     public void StartGameInSeconds(float seconds)

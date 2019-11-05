@@ -6,18 +6,18 @@ using UnityEngine;
  * Contains All The Shared Data and functions between ClientPlayer and NetworkedPlayer
  * Specific functions can be added to ClientPlayer and NetworkedPlayer classes as well.
  */
-public class PlayerInfo //sent from server to 
+public struct PlayerInfo //sent from server to 
 {
     [SerializeField]
-    public Vector2 position = Vector2.zero;
+    public Vector2 position;
     [SerializeField]
-    public float zRot = 0.0f;
+    public float zRot;
     [SerializeField]
-    public float currentSpeed = 0.0f;
+    public float currentSpeed;
     [SerializeField]
-    public int currentScore = 0;
+    public int currentScore;
     [SerializeField]
-    public bool collidable = false;
+    public bool collidable;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
     protected float timeToMaxSpeed; //modifier for the acceleration when the player speed rises in Update
 
     [SerializeField]
-    public PlayerInfo playerInfo = new PlayerInfo();
+    public PlayerInfo playerInfo;
 
     protected Rigidbody2D m_Rigidbody;
 
@@ -126,10 +126,7 @@ public class Player : MonoBehaviour
     }
     public void StartSpin()
     {
-        //the spin should be visual
         StartCoroutine(SpinPlayerDuration(1.0f));
-        //m_SpriteRenderer.transform.Rotate(0, 0, 90, Space.Self);
-
     }
 
     public void CheckBackDraft(float deltaTime)
@@ -139,7 +136,7 @@ public class Player : MonoBehaviour
             Player oPlayer = GameManager.Instance.m_Players[i];
             if(oPlayer != this)
             {
-                Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, 5.0f), new Vector2(5.0f, 10.0f));
+                Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, 5.0f), new Vector2(2.0f, 10.0f));
                 if (draftBounds.Contains(playerInfo.position))
                 {
                     playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * backDraftBoost, deltaTime);

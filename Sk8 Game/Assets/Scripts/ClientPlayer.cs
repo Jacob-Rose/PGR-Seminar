@@ -39,7 +39,7 @@ public class ClientPlayer : Player
     public void HandleInput(float deltaTime)
     {
         dodgeTimer += deltaTime;
-        attackTimer += deltaTime;
+        //attackTimer += deltaTime;
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (dodgeTimer > 5.0f)
