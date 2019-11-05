@@ -94,6 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3ce52d9a506f5e4b89987ff8649e4ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultSprite: {fileID: 21300000, guid: 84633536fd13f0b459041df466ea9abc, type: 3}
   interactedSprite: {fileID: 21300000, guid: de58a89db4ee45448b89a94285c593dd, type: 3}
   id: 0
   speedMultiplier: 0.8

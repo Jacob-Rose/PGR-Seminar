@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour 
 {
+    public Sprite defaultSprite = null;
     public Sprite interactedSprite = null;
     public static List<Obstacle> m_AllObstacles = new List<Obstacle>();
     //public GameObject self;
@@ -11,6 +12,8 @@ public class Obstacle : MonoBehaviour
     public float speedMultiplier; //possibly add boost with two times
     public bool spinPlayer; //TODO implement
     public int scoreIncreaseOnInteract = 5;
+
+    private SpriteRenderer m_SpriteRenderer;
     public Obstacle()
     {
         m_AllObstacles.Add(this);
@@ -19,6 +22,12 @@ public class Obstacle : MonoBehaviour
     ~Obstacle()
     {
         m_AllObstacles.Remove(this);
+    }
+
+    public void Start()
+    {
+        m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_SpriteRenderer.sprite = defaultSprite;
     }
 
     private void OnDestroy()
@@ -31,7 +40,7 @@ public class Obstacle : MonoBehaviour
         p.playerInfo.currentScore += scoreIncreaseOnInteract;
         if(interactedSprite != null)
         {
-            GetComponent<SpriteRenderer>().sprite = interactedSprite;
+            m_SpriteRenderer.sprite = interactedSprite;
         }
         
     }
@@ -61,10 +70,11 @@ public class Obstacle : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            if (collision.gameObject.GetComponent<Player>().playerInfo.collidable == true)
+            Player p = collision.gameObject.GetComponent<Player>();
+            if (p.playerInfo.collidable == true && !p.m_IsSpinning)
             {
-                collision.gameObject.GetComponent<Player>().playerInfo.currentSpeed *= speedMultiplier;
-                collision.gameObject.GetComponent<Player>().StartSpin();
+                p.playerInfo.currentSpeed *= speedMultiplier;
+                p.StartSpin();
                 Debug.Log("ran spin");
 
             }

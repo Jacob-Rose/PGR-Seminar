@@ -53,8 +53,8 @@ public class Player : MonoBehaviour
 
     public float m_BackDraftMultiplier = 1.1f;
 
-    protected bool m_IsDodging = false;
-    protected bool m_IsSpinning = false;
+    public bool m_IsDodging = false;
+    public bool m_IsSpinning = false;
 
 
     public float MaxSpeed
