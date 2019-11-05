@@ -287,10 +287,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSpeed: 10
-  speedDecreaseAmount: 0.05
-  speedMod: 0.05
+  speedDecreaseAmount: 0.1
+  speedMod: 0.01
   timeToMaxSpeed: 3
   m_BackDraftMultiplier: 0
+  m_IsDodging: 0
+  m_IsSpinning: 0
   playerID: 3
 --- !u!50 &5577072124538956677
 Rigidbody2D:

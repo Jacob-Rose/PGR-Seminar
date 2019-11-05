@@ -13,20 +13,14 @@ public class Obstacle : MonoBehaviour
     public bool spinPlayer; //TODO implement
     public int scoreIncreaseOnInteract = 5;
 
-    private SpriteRenderer m_SpriteRenderer;
-    public Obstacle()
-    {
-        m_AllObstacles.Add(this);
-    }
+    public bool m_InteractedWith = false;
 
-    ~Obstacle()
-    {
-        m_AllObstacles.Remove(this);
-    }
+    private SpriteRenderer m_SpriteRenderer;
 
     public void Start()
     {
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_AllObstacles.Add(this);
         m_SpriteRenderer.sprite = defaultSprite;
     }
 
@@ -41,6 +35,7 @@ public class Obstacle : MonoBehaviour
         if(interactedSprite != null)
         {
             m_SpriteRenderer.sprite = interactedSprite;
+            m_InteractedWith = true;
         }
         
     }
@@ -68,7 +63,7 @@ public class Obstacle : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Player"))
+        if(collision.gameObject.CompareTag("Player") && !m_InteractedWith)
         {
             Player p = collision.gameObject.GetComponent<Player>();
             if (p.playerInfo.collidable == true && !p.m_IsSpinning)

@@ -35,15 +35,17 @@ public class TileManager : MonoBehaviour
         public Vector3 spawnedPos;
         public GameObject spawnedObstacle;
     }
-
+    int obsCount = 0;
     ObstInfo SpawnObstaclesOnTile(Bounds tileBounds)
     {
+
         ObstInfo returnVal = new ObstInfo();
         Vector3 obstaclePos = CreateObstaclePoint(tileBounds);
         float obstListNum = (float)m_ObstacleList.Length;
         int randomIndex = (int)Random.Range(0, obstListNum); //assume all players have the same list, used in message
         Obstacle newObs = SpawnObstacle((uint)Obstacle.getAllObstacleCount(), obstaclePos, randomIndex);
-        VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage((uint)Obstacle.getAllObstacleCount(), obstaclePos, (ushort)randomIndex), Valve.Sockets.SendType.Reliable);
+        VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage((uint)obsCount, obstaclePos, (ushort)randomIndex), Valve.Sockets.SendType.Reliable);
+        obsCount++;
         return returnVal;
     }
 

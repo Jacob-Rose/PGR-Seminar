@@ -70,7 +70,7 @@ public class Player : MonoBehaviour
     {
         playerInfo.collidable = true;
         m_Rigidbody = GetComponent<Rigidbody2D>();
-        m_SpriteRenderer = GetComponent<SpriteRenderer>();
+        m_SpriteRenderer = GetComponentInChildren<SpriteRenderer>();
         //m_SpriteRenderer.sprite = sprites[1];
         playerInfo.currentSpeed = MaxSpeed;
         playerInfo.position = transform.position;
@@ -103,6 +103,10 @@ public class Player : MonoBehaviour
         playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);
+        if(!m_IsDodging)
+        {
+            m_SpriteRenderer.transform.localRotation = Quaternion.Euler(0, 0, 0);
+        }
         playerInfo.position = transform.position;
     }
 

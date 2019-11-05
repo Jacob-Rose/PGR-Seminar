@@ -26,6 +26,7 @@ public class ClientPlayer : Player
     private void OnEnable()
     {
         controls.Enable();
+        controls.Player.Interact.performed += InteractButtonPressed;
     }
 
     private void OnDisable()
@@ -54,22 +55,12 @@ public class ClientPlayer : Player
     {
         m_DodgeTimer += deltaTime;
         //attackTimer += deltaTime;
-        if (controls.Player.Jump.ReadValue<float>() > 0.5f)
+        if (controls.Player.Jump.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
         {
             if (m_DodgeTimer > 3.0f)
             {
                 m_DodgeTimer = 0.0f;
                 StartCoroutine(Dodge(1.0f));
-            }
-        }
-
-        if (m_ClosestObstacle != null)
-        {
-            if (controls.Player.Interact.ReadValue<float>() > 0.5f)
-            {
-                //Interact with the obstacle
-                m_ClosestObstacle.HandleInteraction(this);
-                Debug.Log("Interacted with highlighted obstacle");
             }
         }
         float turnValue = controls.Player.Turn.ReadValue<float>();
@@ -81,6 +72,19 @@ public class ClientPlayer : Player
         else
         {
             playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
+        }
+    }
+
+    public void InteractButtonPressed(InputAction.CallbackContext context)
+    {
+        if (m_ClosestObstacle != null && !m_ClosestObstacle.m_InteractedWith && !m_IsSpinning && !m_IsDodging)
+        {
+            if (controls.Player.Interact.ReadValue<float>() > 0.5f)
+            {
+                //Interact with the obstacle
+                m_ClosestObstacle.HandleInteraction(this);
+                Debug.Log("Interacted with highlighted obstacle");
+            }
         }
     }
 
@@ -115,17 +119,20 @@ public class ClientPlayer : Player
         m_ClosestObstacle = null;
         for (int i = 0; i < Obstacle.getAllObstacleCount(); i++)
         {
-            float oDist = Vector2.Distance(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position);
-            if (oDist < m_CurrentClosestDistance)
+            if(Obstacle.m_AllObstacles[i] != null)
             {
-                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
-                m_ClosestObstacle = Obstacle.m_AllObstacles[i];
-                m_CurrentClosestDistance = oDist;
-            }
-            else
-            {
-                Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
+                float oDist = Vector2.Distance(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position);
+                if (oDist < m_CurrentClosestDistance)
+                {
+                    Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
+                    m_ClosestObstacle = Obstacle.m_AllObstacles[i];
+                    m_CurrentClosestDistance = oDist;
+                }
+                else
+                {
+                    Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
 
+                }
             }
         }
     }
@@ -157,8 +164,10 @@ public class ClientPlayer : Player
         GUIStyle speedStyle = GUI.skin.label;
         speedStyle.alignment = TextAnchor.MiddleRight;
         speedStyle.fontSize = 20;
-        Rect forwardSpeedRect = new Rect(Screen.width / 2, 0, (Screen.width / 2) - 10, 80);
-        Rect speedRect = new Rect(Screen.width / 2, 80, (Screen.width / 2)- 10, 80);
+        Rect maxSpeedRect = new Rect(Screen.width / 2, 0, (Screen.width / 2) - 10, 40);
+        Rect forwardSpeedRect = new Rect(Screen.width / 2, 40, (Screen.width / 2) - 10, 40);
+        Rect speedRect = new Rect(Screen.width / 2, 80, (Screen.width / 2)- 10, 40);
+        GUI.Label(maxSpeedRect, "Max-Speed: " + MaxSpeed.ToString("F1"), speedStyle);
         GUI.Label(forwardSpeedRect, "F-Speed: " + (playerInfo.currentSpeed * transform.up.y).ToString("F1"), speedStyle);
         GUI.Label(speedRect, "C-Speed: " + playerInfo.currentSpeed.ToString("F1"), speedStyle);
     }
