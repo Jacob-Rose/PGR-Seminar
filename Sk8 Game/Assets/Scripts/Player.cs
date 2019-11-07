@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 /*
  * Contains All The Shared Data and functions between ClientPlayer and NetworkedPlayer
@@ -141,6 +142,7 @@ public class Player : MonoBehaviour
 
     public void CheckBackDraft(float deltaTime)
     {
+        bool drafting = false;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
             Player oPlayer = GameManager.Instance.m_Players[i];
@@ -150,8 +152,20 @@ public class Player : MonoBehaviour
                 if (draftBounds.Contains(playerInfo.position))
                 {
                     playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * m_BackDraftMultiplier, deltaTime);
+                    drafting = true;
                 }
             }
+        }
+        PostProcessVolume v = GetComponent<PostProcessVolume>();
+        ChromaticAberration ca;
+        v.profile.TryGetSettings<ChromaticAberration>(out ca);
+        if (drafting)
+        {
+            ca.intensity.value = 1.0f;
+        }
+        else
+        {
+            ca.intensity.value = 0.0f;
         }
     }
 

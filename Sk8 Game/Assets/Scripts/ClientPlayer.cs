@@ -79,21 +79,18 @@ public class ClientPlayer : Player
     {
         if (m_ClosestObstacle != null && !m_ClosestObstacle.m_InteractedWith && !m_IsSpinning && !m_IsDodging)
         {
-            if (controls.Player.Interact.ReadValue<float>() > 0.5f)
+            //Interact with the obstacle
+            m_ClosestObstacle.HandleInteraction(this);
+            ObstacleModifiedMessage msg = new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, m_ClosestObstacle.id);
+            if (VHostBehavior.Instance != null)
             {
-                //Interact with the obstacle
-                m_ClosestObstacle.HandleInteraction(this);
-                ObstacleModifiedMessage msg = new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, m_ClosestObstacle.id);
-                if (VHostBehavior.Instance != null)
-                {
-                    VHostBehavior.Instance.SendMessageToAllPlayers(msg);
-                }
-                else
-                {
-                    VOnlinePlayer.Instance.SendMessage(msg);
-                }
-                Debug.Log("Interacted with highlighted obstacle");
+                VHostBehavior.Instance.SendMessageToAllPlayers(msg, Valve.Sockets.SendType.Reliable);
             }
+            else
+            {
+                VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
+            }
+            Debug.Log("Interacted with highlighted obstacle");
         }
     }
 

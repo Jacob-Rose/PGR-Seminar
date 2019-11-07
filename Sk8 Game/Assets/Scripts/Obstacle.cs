@@ -17,7 +17,7 @@ public class Obstacle : MonoBehaviour
 
     private SpriteRenderer m_SpriteRenderer;
 
-    public void Start()
+    public virtual void Start()
     {
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         m_AllObstacles.Add(this);
@@ -37,6 +37,7 @@ public class Obstacle : MonoBehaviour
             m_SpriteRenderer.sprite = interactedSprite;
             m_InteractedWith = true;
         }
+        Debug.Log(p.ToString() + "interacted with obstacle");
         
     }
 
@@ -46,7 +47,7 @@ public class Obstacle : MonoBehaviour
         {
             if (VHostBehavior.Instance != null)
             {
-                VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, id));
+                VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, id), Valve.Sockets.SendType.Reliable);
             }
             else if (VOnlinePlayer.Instance != null)
             {

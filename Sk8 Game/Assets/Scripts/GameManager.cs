@@ -6,30 +6,23 @@ using UnityEngine.SceneManagement;
 
 class GameManager : MonoBehaviour
 {
-    private bool m_GameStarted = false;
-
-    private DateTime timeToStart;
-    private bool m_GameIsStarting = false;
-
-    private static GameManager instance = null;
-
-    public static GameManager Instance { get { return instance; } }
+    public static GameManager Instance { get; private set; } = null;
+    public string m_PlayerUsername;
 
     public List<Player> m_Players = new List<Player>();
 
-    public bool HasGameStarted { get { return m_GameStarted; } }
+    public bool HasGameStarted { get; private set; } = false;
     public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
 
     public ClientPlayer ClientPlayer { get { return m_ClientPlayer; } }
 
-    protected ClientPlayer m_ClientPlayer = null; //all networked will have a single client player that sends data
-    public string m_PlayerUsername;
-
-
+    protected ClientPlayer m_ClientPlayer = null;
+    protected DateTime timeToStart;
+    protected bool m_GameIsStarting = false;
 
     public void Awake()
     {
-        instance = this;
+        Instance = this;
     }
 
     public void Start()
@@ -86,11 +79,15 @@ class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        if(m_GameStarted == false)
+        if(HasGameStarted == false)
         {
-            m_GameStarted = true;
+            HasGameStarted = true;
             m_GameIsStarting = false;
         }
+    }
+    public void PlayerHasWonGame(Player p)
+    {
+        //TODO
     }
 
     public void StartGameInSeconds(float seconds)
@@ -109,11 +106,6 @@ class GameManager : MonoBehaviour
         return obj.GetComponent<NetworkedPlayer>();
     }
 
-    public void ObstacleInteractedWith(uint obstacleID, string playerID)
-    {
-        Obstacle.m_AllObstacles[(int)obstacleID].InteractedWith(GetPlayer(playerID));
-    }
-
     public void RemovePlayer(string playerID)
     {
         if(playerID == this.m_PlayerUsername)
@@ -130,19 +122,14 @@ class GameManager : MonoBehaviour
                 {
                     Destroy(m_Players[i].gameObject);
                     m_Players.RemoveAt(i);
+                    break;
                 }
             }
         }
-
         if(m_Players.Count == 1)
         {
             PlayerHasWonGame(m_Players[0]);
         }
-    }
-
-    public void PlayerHasWonGame(Player p)
-    {
-
     }
 
     public void UpdatePlayerInformation(ref PlayerInfo info, string playerID)

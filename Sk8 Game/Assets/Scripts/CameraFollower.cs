@@ -51,9 +51,10 @@ public class CameraFollower : MonoBehaviour
         }
         if(lastPlace is ClientPlayer)
         {
-            FloatParameter intensity = new FloatParameter();
-            intensity.value = newPos.extents.y / maxDistance;
-            GetComponent<PostProcessVolume>().profile.GetSetting<Vignette>().intensity = intensity;
+            PostProcessVolume v = GetComponent<PostProcessVolume>();
+            Vignette vig;
+            v.profile.TryGetSettings<Vignette>(out vig);
+            vig.intensity.value = newPos.extents.y / maxDistance;
         }
         
         if (newPos.extents.y > maxDistance)

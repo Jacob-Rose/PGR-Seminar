@@ -39,34 +39,48 @@ public class VHostBehavior : Networked
             {
                 case ConnectionState.None:
                     break;
-
                 case ConnectionState.Connecting:
                     m_Server.AcceptConnection(info.connection);
                     break;
-
                 case ConnectionState.Connected:
                     Debug.Log("Client connected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
-                    m_Connections.Add(info.connection, null);
-                    m_Server.SendMessageToConnection(info.connection, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
+                    PlayerConnected(info.connection);
                     break;
-
                 case ConnectionState.ClosedByPeer:
                     m_Server.CloseConnection(info.connection);
                     Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
-                    PlayerDisconnected(m_Connections[info.connection]);
-                    m_Connections.Remove(info.connection);
+                    PlayerDisconnected(info.connection, m_Connections[info.connection]);
                     break;
             }
         };
-
     }
 
+    public void PlayerConnected(uint connection)
+    {
+        m_Connections.Add(connection, null);
+        m_Server.SendMessageToConnection(connection, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
+        foreach(var pair in m_Connections)
+        {
+            if(pair.Key != connection)
+            {
+                m_Server.SendMessageToConnection(connection, new PlayerConnectedMessage(pair.Value).toBuffer(), SendType.Reliable);
+            }
+        }
+    }
+
+    public void PlayerDisconnected(uint connection, string playerID)
+    {
+        PlayerDisconnectedMessage dMsg = new PlayerDisconnectedMessage(playerID);
+        SendMessageToAllPlayers(dMsg, SendType.Reliable);
+        GameManager.Instance.RemovePlayer(playerID);
+        m_Connections.Remove(connection);
+    }
 
     public override void Update()
     {
         if (m_Server != null && m_Status != null)
         {
-            m_Server.DispatchCallback(m_Status);
+            m_Server.DispatchCallback(m_Status); //check for new or changed connections
             ClientPlayer cPlayer = GameManager.Instance.ClientPlayer;
             if (cPlayer != null)
             {
@@ -132,15 +146,10 @@ public class VHostBehavior : Networked
         if(msg is ObstacleModifiedMessage)
         {
             ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
-            GameManager.Instance.ObstacleInteractedWith(nMsg.obstacleID, nMsg.playerID);
+            Obstacle.m_AllObstacles[(int)nMsg.obstacleID].InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
         }
     }
 
-    public void PlayerDisconnected(string playerID)
-    {
-        PlayerDisconnectedMessage dMsg = new PlayerDisconnectedMessage(playerID);
-        SendMessageToAllPlayers(dMsg, SendType.Reliable);
-        GameManager.Instance.RemovePlayer(playerID);
-    }
+    
 }

@@ -105,9 +105,9 @@ public class VOnlinePlayer : Networked
         }
     }
 
-    public void SendMessage(Message m)
+    public void SendMessage(Message m, SendType type = SendType.NoDelay)
     {
-        m_Server.SendMessageToConnection(m_Connection, m.toBuffer());
+        m_Server.SendMessageToConnection(m_Connection, m.toBuffer(), type);
     }
 
     public void ConnectToIP(string ip)

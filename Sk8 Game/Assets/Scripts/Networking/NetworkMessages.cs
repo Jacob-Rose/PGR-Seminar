@@ -11,6 +11,8 @@ enum NetworkEvent
     PlayerDisconnected,
     PlayerUpdateInfo,
     PlayerFellBehind,
+    PlayerHitObstacle,
+    PlayerDodgeActivated,
     PlayerFinishedRace,
     ObstacleGenerated,
     ObstacleModified
@@ -53,6 +55,9 @@ public abstract class Message
                 break;
             case NetworkEvent.ObstacleModified:
                 msg = new ObstacleModifiedMessage(msgBytes);
+                break;
+            case NetworkEvent.PlayerDodgeActivated:
+                msg = new PlayerDodgeActivatedMessage(msgBytes);
                 break;
             default:
                 throw new Exception("oops");
@@ -389,4 +394,45 @@ public class ObstacleModifiedMessage : Message
         return buffer;
     }
 
+}
+
+public class PlayerDodgeActivatedMessage : Message
+{
+    public string playerID;
+    public PlayerDodgeActivatedMessage(byte[] buffer)
+    {
+        byte[] eventTypeBuffer = new byte[sizeof(ushort)];
+        byte[] playerIDLengthBuffer = new byte[sizeof(ushort)];
+        int currentIndex = 0;
+        Buffer.BlockCopy(buffer, currentIndex, eventTypeBuffer, 0, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(buffer, currentIndex, playerIDLengthBuffer, 0, playerIDLengthBuffer.Length);
+        currentIndex += playerIDLengthBuffer.Length;
+        int playerIDBufferCount = BitConverter.ToUInt16(playerIDLengthBuffer, 0);
+        byte[] playerIDBuffer = new byte[playerIDBufferCount]; //we know length of string now (in bytes)
+        Buffer.BlockCopy(buffer, currentIndex, playerIDBuffer, 0, playerIDBuffer.Length);
+        playerID = Encoding.ASCII.GetString(playerIDBuffer);
+    }
+
+    public PlayerDodgeActivatedMessage(string playerID)
+    {
+        eventType = (ushort)NetworkEvent.PlayerConnected;
+        this.playerID = playerID;
+    }
+
+    public override byte[] toBuffer()
+    {
+        byte[] eventTypeBuffer = BitConverter.GetBytes(eventType);
+        byte[] playerIDBuffer = Encoding.ASCII.GetBytes(playerID);
+        byte[] playerIDLengthBuffer = BitConverter.GetBytes((ushort)playerIDBuffer.Length);
+        byte[] buffer = new byte[eventTypeBuffer.Length + playerIDLengthBuffer.Length + playerIDBuffer.Length];
+        int currentIndex = 0;
+        Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
+        currentIndex += eventTypeBuffer.Length;
+        Buffer.BlockCopy(playerIDLengthBuffer, 0, buffer, currentIndex, playerIDLengthBuffer.Length);
+        currentIndex += playerIDLengthBuffer.Length;
+        Buffer.BlockCopy(playerIDBuffer, 0, buffer, currentIndex, playerIDBuffer.Length);
+        currentIndex += playerIDBuffer.Length;
+        return buffer;
+    }
 }
