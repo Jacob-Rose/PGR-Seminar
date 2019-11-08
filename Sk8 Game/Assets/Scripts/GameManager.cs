@@ -10,6 +10,7 @@ class GameManager : MonoBehaviour
     public string m_PlayerUsername;
 
     public List<Player> m_Players = new List<Player>();
+    public List<Obstacle> m_AllObstacles = new List<Obstacle>();
 
     public bool HasGameStarted { get; private set; } = false;
     public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
@@ -23,6 +24,11 @@ class GameManager : MonoBehaviour
     public void Awake()
     {
         Instance = this;
+    }
+
+    public int getAllObstacleCount()
+    {
+        return m_AllObstacles.Count;
     }
 
     public void Start()
@@ -143,7 +149,6 @@ class GameManager : MonoBehaviour
             }
         }
     }
-
     public List<Player> GetPlayers()
     {
         return m_Players;

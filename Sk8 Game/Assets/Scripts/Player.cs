@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
@@ -78,17 +79,27 @@ public class Player : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
-    public PlayerInfo GetPlayerInfo()
-    {
-        return playerInfo;
-    }
-
     public virtual void Update()
     {
         if (!GameManager.Instance.HasGameStarted)
             return;
         MovePlayer(Time.deltaTime);
         CheckBackDraft(Time.deltaTime);
+        CheckDodgeSprite(Time.deltaTime);
+    }
+
+    private void CheckDodgeSprite(float deltaTime)
+    {
+        GameObject spriteChild = transform.GetChild(0).gameObject;
+        SpriteRenderer sr = spriteChild.GetComponent<SpriteRenderer>();
+        if (playerInfo.collidable)
+        {
+            sr.transform.localScale = Vector3.Lerp(sr.transform.localScale, new Vector3(1.0f, 1.0f, 1.0f), 0.2f);
+        }
+        else
+        {
+            sr.transform.localScale = Vector3.Lerp(sr.transform.localScale, new Vector3(1.3f, 1.3f, 1.3f), 0.2f);
+        }
     }
 
     public void SetPosition(Vector2 pos)
@@ -103,31 +114,23 @@ public class Player : MonoBehaviour
         playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed, (deltaTime / timeToMaxSpeed));
         playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
-        transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f);
-        if(!m_IsDodging)
-        {
-            m_SpriteRenderer.transform.localRotation = Quaternion.Euler(0, 0, 0);
-        }
+        transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f); //in case the update is off from current position
         playerInfo.position = transform.position;
     }
 
+    public int m_SpinCount = 2;
     public IEnumerator SpinPlayerDuration(float duration)
     {
         m_IsSpinning = true;
         float time = 0.0f;
-        SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         while (time <= duration)
         {
             time += Time.deltaTime;
-            //transform.Rotate(0, 0, 2000*time, Space.Self);
-            float rotAmount = 360.0f * ((time / duration) * 2.0f); //two full spins before done
-            spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, rotAmount);
-            //playerInfo.collidable = false;
-            Debug.Log("did rotatino");
-
+            float rotAmount = 360.0f * ((time / duration) * m_SpinCount); //two full spins before done
+            m_SpriteRenderer.transform.localRotation = Quaternion.Euler(0, 0, rotAmount);
             yield return 0;
         }
-        spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        m_SpriteRenderer.transform.localRotation = Quaternion.Euler(0, 0, 0);
         m_IsSpinning = false;
 
     }
@@ -137,7 +140,6 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(SpinPlayerDuration(1.0f));
         }
-        
     }
 
     public void CheckBackDraft(float deltaTime)
@@ -156,17 +158,26 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        PostProcessVolume v = GetComponent<PostProcessVolume>();
-        ChromaticAberration ca;
-        v.profile.TryGetSettings<ChromaticAberration>(out ca);
-        if (drafting)
+        Camera cam = Camera.main;
+        if(cam != null)
         {
-            ca.intensity.value = 1.0f;
+            PostProcessVolume v = cam.GetComponent<PostProcessVolume>();
+            if (v != null)
+            {
+                ChromaticAberration ca;
+                v.profile.TryGetSettings(out ca);
+                if (drafting)
+                {
+                    ca.intensity.value = Mathf.Lerp(ca.intensity.value, 1, 0.2f);
+                }
+                else
+                {
+                    ca.intensity.value = Mathf.Lerp(ca.intensity.value, 0, 0.2f);
+                }
+            }
         }
-        else
-        {
-            ca.intensity.value = 0.0f;
-        }
+        
+        
     }
 
     

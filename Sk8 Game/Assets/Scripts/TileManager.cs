@@ -8,13 +8,15 @@ public class TileManager : MonoBehaviour
     //is the start of the race
     public Transform m_StartTransform;
     //void that ends game when player hits
-    public GameObject endTest;
+    public GameObject m_EndPrefab;
     //just a sprite for the road
-    public GameObject road;
+    public GameObject m_RoadPrefab;
+    public GameObject m_GrassPrefab;
 
-    //[SerializeField]
-    public int roadSize = 300;
-    //[SerializeField]
+    public int roadCount = 300;
+    public Vector2 desiredRoadTileSize = new Vector2(8.0f, 12.0f);
+    public float m_GrassWidth = 4.0f;
+    //private Vector2 roadTileSize;
     public int obstaclesPerTile = 2;
 
     public static TileManager Instance { get { return m_Instance; } }
@@ -27,7 +29,17 @@ public class TileManager : MonoBehaviour
         {
             m_Instance = this;
         }
+        m_RoadPrefab.transform.localScale = Vector2.one;
+        m_GrassPrefab.transform.localScale = Vector2.one;
+        Bounds spriteBounds = m_RoadPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
+        m_RoadPrefab.transform.localScale = new Vector3(desiredRoadTileSize.x / spriteBounds.size.x, desiredRoadTileSize.y / spriteBounds.size.y, 1);
+        spriteBounds = m_GrassPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
+        m_GrassPrefab.transform.localScale = new Vector3(m_GrassWidth / spriteBounds.size.x, desiredRoadTileSize.y / spriteBounds.size.y, 1) ;
+        spriteBounds = m_RoadPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
+        m_EndPrefab.transform.localScale = new Vector3(desiredRoadTileSize.x / spriteBounds.size.x, 6.0f / spriteBounds.size.y, 1);
+
         PopulateRoads();
+        
     }
 
     public struct ObstInfo
@@ -43,7 +55,7 @@ public class TileManager : MonoBehaviour
         Vector3 obstaclePos = CreateObstaclePoint(tileBounds);
         float obstListNum = (float)m_ObstacleList.Length;
         int randomIndex = (int)Random.Range(0, obstListNum); //assume all players have the same list, used in message
-        Obstacle newObs = SpawnObstacle((uint)Obstacle.getAllObstacleCount(), obstaclePos, randomIndex);
+        Obstacle newObs = SpawnObstacle((uint)GameManager.Instance.getAllObstacleCount(), obstaclePos, randomIndex);
         VHostBehavior.Instance.SendMessageToAllPlayers(new ObstacleGeneratedMessage((uint)obsCount, obstaclePos, (ushort)randomIndex), Valve.Sockets.SendType.Reliable);
         obsCount++;
         return returnVal;
@@ -62,7 +74,7 @@ public class TileManager : MonoBehaviour
         GameObject determinedObst = m_ObstacleList[itemType];
         Obstacle newObstacle = Instantiate(determinedObst, pos, Quaternion.identity, transform).GetComponent<Obstacle>();
         newObstacle.id = itemID;
-        
+        GameManager.Instance.m_AllObstacles.Insert((int)itemID, newObstacle);
         return newObstacle;
     }
 
@@ -70,23 +82,33 @@ public class TileManager : MonoBehaviour
     //populate roads using GetObsStatsSpawn, is based on roads
     public void PopulateRoads()
     {
-        Bounds roadBounds = new Bounds(m_StartTransform.position, new Vector3(5, 5));
-        for (int i = 0; i < roadSize; i++)
+        //todo replace with not all at once spawn
+        for (int i = 0; i < roadCount; i++)
         {
-            GameObject newRoad = Instantiate(road, roadBounds.center, Quaternion.identity, transform);
-
-            if (i == roadSize-3) //few roads to slow down on
-            {
-                Instantiate(endTest, roadBounds.center, Quaternion.identity, transform);
-            }
-            if(VHostBehavior.Instance != null && i != 0) //only call spawn if host, sends to other players
-            {
-                for(int j = 0; j < obstaclesPerTile; j++)
-                {
-                    SpawnObstaclesOnTile(roadBounds);
-                }
-            } 
-            roadBounds.center = new Vector3(roadBounds.center.x, roadBounds.center.y + roadHeight, 0.0f);
+            SpawnRoad();
         }
+    }
+
+    public int m_CurrentRoadCount = 0;
+    public void SpawnRoad()
+    {
+        Bounds spawnBounds = new Bounds(new Vector3(0,(m_CurrentRoadCount -1) * desiredRoadTileSize.y,0) + m_StartTransform.position, new Vector3(desiredRoadTileSize.x, desiredRoadTileSize.y, 0));
+        //Spawn Road Item
+        GameObject newRoad = Instantiate(m_RoadPrefab, spawnBounds.center, Quaternion.identity, transform);
+        GameObject grassLeft = Instantiate(m_GrassPrefab, spawnBounds.center + new Vector3((spawnBounds.size.x + m_GrassWidth)* 0.5f , 0,0), Quaternion.identity, transform);
+        GameObject grassRight = Instantiate(m_GrassPrefab, spawnBounds.center - new Vector3((spawnBounds.size.x + m_GrassWidth) * 0.5f, 0,0), Quaternion.identity, transform);
+        if (m_CurrentRoadCount >= roadCount - 3) //spawn end for the last three roads
+        {
+            Instantiate(m_EndPrefab, spawnBounds.center, Quaternion.identity, transform);
+        }
+        //Only host spawns obstacle, and dont spawn on first tile
+        if (VHostBehavior.Instance != null && m_CurrentRoadCount > 1)
+        {
+            for (int j = 0; j < obstaclesPerTile; j++)
+            {
+                SpawnObstaclesOnTile(spawnBounds);
+            }
+        }
+        m_CurrentRoadCount++;
     }
 }

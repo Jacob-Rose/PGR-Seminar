@@ -11,7 +11,6 @@ public class VHostBehavior : Networked
     public static VHostBehavior Instance { get { return m_Instance; } }
     private static VHostBehavior m_Instance;
     public Dictionary<uint, string> m_Connections = new Dictionary<uint, string>();
-    private KeyValuePair<uint, string>? m_NewConnectionName = null;
     public uint m_NetworkMessageConnectionSource = 0; //where the message came from
 
     public override void OnDestroy()
@@ -59,13 +58,6 @@ public class VHostBehavior : Networked
     {
         m_Connections.Add(connection, null);
         m_Server.SendMessageToConnection(connection, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
-        foreach(var pair in m_Connections)
-        {
-            if(pair.Key != connection)
-            {
-                m_Server.SendMessageToConnection(connection, new PlayerConnectedMessage(pair.Value).toBuffer(), SendType.Reliable);
-            }
-        }
     }
 
     public void PlayerDisconnected(uint connection, string playerID)
@@ -87,16 +79,11 @@ public class VHostBehavior : Networked
                 PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
                 SendMessageToAllPlayers(cPlayerUpdateMsg);
             }
-            
             foreach (var c in m_Connections)
             {
                 netMessageCount = m_Server.ReceiveMessagesOnConnection(c.Key, netMessages, maxMessages);
                 m_NetworkMessageConnectionSource = c.Key;
                 readNetworkMessages();
-            }
-            if(m_NewConnectionName.HasValue)
-            {
-                m_Connections[m_NewConnectionName.Value.Key] = m_NewConnectionName.Value.Value;
             }
             
         }
@@ -130,12 +117,12 @@ public class VHostBehavior : Networked
 
     protected override void HandleNetworkMessage(Message msg)
     {
-        if(msg is PlayerConnectedMessage)
+        if(msg is PlayerConnectedMessage) //player sends this once connected to send name
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
-            m_NewConnectionName = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, nMsg.playerID);
+            m_Connections[m_NetworkMessageConnectionSource] = nMsg.playerID; //add to array
             GameManager.Instance.AddPlayer(nMsg.playerID);
-            SendMessageToAllExceptPlayer(nMsg.playerID, msg);
+            SendMessageToAllExceptPlayer(nMsg.playerID, msg, SendType.Reliable);
         }
         if (msg is PlayerUpdateMessage)
         {
@@ -145,10 +132,12 @@ public class VHostBehavior : Networked
         }
         if(msg is ObstacleModifiedMessage)
         {
+            Debug.Log("Obstacle Modified Message");
             ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
-            Obstacle.m_AllObstacles[(int)nMsg.obstacleID].InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
-            SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
+            SendMessageToAllExceptPlayer(nMsg.playerID, nMsg, SendType.Reliable);
+            GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID].InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
         }
+        base.HandleNetworkMessage(msg);
     }
 
     

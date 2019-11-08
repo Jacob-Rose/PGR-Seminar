@@ -6,7 +6,6 @@ public class Obstacle : MonoBehaviour
 {
     public Sprite defaultSprite = null;
     public Sprite interactedSprite = null;
-    public static List<Obstacle> m_AllObstacles = new List<Obstacle>();
     //public GameObject self;
     public uint id;
     public float speedMultiplier; //possibly add boost with two times
@@ -20,25 +19,23 @@ public class Obstacle : MonoBehaviour
     public virtual void Start()
     {
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
-        m_AllObstacles.Add(this);
         m_SpriteRenderer.sprite = defaultSprite;
     }
 
     private void OnDestroy()
     {
-        m_AllObstacles.Remove(this);
+        if(GameManager.Instance.m_AllObstacles.Contains(this))
+        {
+            GameManager.Instance.m_AllObstacles.Remove(this);
+        }
+        
     }
 
     public void InteractedWith(Player p)
     {
+        m_SpriteRenderer.sprite = interactedSprite;
+        m_InteractedWith = true;
         p.playerInfo.currentScore += scoreIncreaseOnInteract;
-        if(interactedSprite != null)
-        {
-            m_SpriteRenderer.sprite = interactedSprite;
-            m_InteractedWith = true;
-        }
-        Debug.Log(p.ToString() + "interacted with obstacle");
-        
     }
 
     public void HandleInteraction(Player p)
@@ -55,11 +52,6 @@ public class Obstacle : MonoBehaviour
             }
         }
         InteractedWith(p);
-    }
-
-    public static int getAllObstacleCount()
-    {
-        return m_AllObstacles.Count;
     }
 
     public void OnTriggerEnter2D(Collider2D collision)

@@ -21,5 +21,6 @@ public class ConnectionMenu : MonoBehaviour
     {
         string ip = ipText.text;
         VOnlinePlayer.Instance.ConnectToIP(ip.Trim(new char[] { (char)8203 }));
+        submitButton.enabled = false;
     }
 }

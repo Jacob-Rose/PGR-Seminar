@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Grass : MonoBehaviour
 {
-    public float maxSpeedRelative = 0.6f;
     public float speedMultiplier = 0.9f;
 
     private void OnTriggerStay2D(Collider2D collision)

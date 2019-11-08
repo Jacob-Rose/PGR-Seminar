@@ -26,18 +26,12 @@ public class CameraFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(m_Targets.Count == 0)
-        {
-            throw new System.Exception("No Players Exist");
-        }
         m_Targets = GameManager.Instance.GetPlayers();
         if (m_Targets.Count == 0)
         {
-            return;
+            throw new System.Exception("No Players Exist");
         }
         Bounds newPos = getEncapsulatingBounds();
-
-        //Vector3 toSet = Vector3.SmoothDamp(transform.position, newPos, ref velocity, smoothTime);
         transform.position = Vector3.Lerp(transform.position, new Vector3(0.0f, newPos.center.y, -10.0f), lerpAmount);
         m_Camera.orthographicSize = newPos.extents.y * zoomMultiplier + zoomOffset;
 
@@ -49,11 +43,11 @@ public class CameraFollower : MonoBehaviour
                 lastPlace = m_Targets[i];
             }
         }
-        if(lastPlace is ClientPlayer)
+        PostProcessVolume v = GetComponent<PostProcessVolume>();
+        Vignette vig;
+        v.profile.TryGetSettings<Vignette>(out vig);
+        if (lastPlace is ClientPlayer)
         {
-            PostProcessVolume v = GetComponent<PostProcessVolume>();
-            Vignette vig;
-            v.profile.TryGetSettings<Vignette>(out vig);
             vig.intensity.value = newPos.extents.y / maxDistance;
         }
         
@@ -66,33 +60,9 @@ public class CameraFollower : MonoBehaviour
             else
             {
                 GameManager.Instance.PlayerFellBehind(GameManager.Instance.m_PlayerUsername);
+                vig.intensity.value = 0.0f;//reset for spectating
             }
         }
-    }
-
-
-    float GetGreatestDistance()
-    {
-        Bounds b = new Bounds(m_Targets[0].transform.position, Vector3.zero);
-        for (int i = 1; i < m_Targets.Count; i++)
-        {
-            b.Encapsulate(m_Targets[i].transform.position);
-        }
-
-        return b.size.y;
-    }
-    Vector3 getCenterPoint()
-    {
-        if(m_Targets.Count == 1)
-        {
-            return m_Targets[0].transform.position;
-        }
-        Bounds b = new Bounds(m_Targets[0].transform.position, Vector3.zero);
-        for(int i =0; i< m_Targets.Count; i++)
-        {
-            b.Encapsulate(m_Targets[i].transform.position);
-        }
-        return b.center;
     }
 
     Bounds getEncapsulatingBounds()

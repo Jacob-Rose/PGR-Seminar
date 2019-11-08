@@ -12,8 +12,9 @@ public class ClientPlayer : Player
     public float zRotAmount = 10.0f;
 
     public float m_InteractMaxDist = 4.0f;
+    public float m_DodgeTimeInAir = 1.5f;
 
-    private float m_DodgeTimer = 0.0f;
+    private float m_TimeSinceDodge = 0.0f;
     private float m_AttackTimer = 0.0f;
     private float m_CurrentClosestDistance = 0.0f;
     private Obstacle m_ClosestObstacle = null;
@@ -53,14 +54,14 @@ public class ClientPlayer : Player
 
     public void HandleInput(float deltaTime)
     {
-        m_DodgeTimer += deltaTime;
+        m_TimeSinceDodge += deltaTime;
         //attackTimer += deltaTime;
         if (controls.Player.Jump.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
         {
-            if (m_DodgeTimer > 3.0f)
+            if (m_TimeSinceDodge > 3.0f)
             {
-                m_DodgeTimer = 0.0f;
-                StartCoroutine(Dodge(1.0f));
+                m_TimeSinceDodge = 0.0f;
+                StartCoroutine(Dodge(m_DodgeTimeInAir));
             }
         }
         float turnValue = controls.Player.Turn.ReadValue<float>();
@@ -81,6 +82,7 @@ public class ClientPlayer : Player
         {
             //Interact with the obstacle
             m_ClosestObstacle.HandleInteraction(this);
+            m_ClosestObstacle.GetComponent<SpriteRenderer>().color = Color.white;
             ObstacleModifiedMessage msg = new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, m_ClosestObstacle.id);
             if (VHostBehavior.Instance != null)
             {
@@ -90,7 +92,6 @@ public class ClientPlayer : Player
             {
                 VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
             }
-            Debug.Log("Interacted with highlighted obstacle");
         }
     }
 
@@ -110,7 +111,7 @@ public class ClientPlayer : Player
             {
                 if (m_AttackTimer > 3.0f)
                 {
-                    m_DodgeTimer = 0.0f;
+                    m_TimeSinceDodge = 0.0f;
                     //Run crash animation
                     playerInfo.currentSpeed *= 0.85f;
 
@@ -123,23 +124,22 @@ public class ClientPlayer : Player
     {
         m_CurrentClosestDistance = m_InteractMaxDist;
         m_ClosestObstacle = null;
-        for (int i = 0; i < Obstacle.getAllObstacleCount(); i++)
+        for (int i = 0; i < GameManager.Instance.getAllObstacleCount(); i++)
         {
-            if(Obstacle.m_AllObstacles[i] != null)
+            if(GameManager.Instance.m_AllObstacles[i] != null && !GameManager.Instance.m_AllObstacles[i].m_InteractedWith)
             {
-                float oDist = Vector2.Distance(playerInfo.position, Obstacle.m_AllObstacles[i].transform.position);
+                float oDist = Vector2.Distance(playerInfo.position, GameManager.Instance.m_AllObstacles[i].transform.position);
                 if (oDist < m_CurrentClosestDistance)
                 {
-                    Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.yellow;
-                    m_ClosestObstacle = Obstacle.m_AllObstacles[i];
+                    m_ClosestObstacle = GameManager.Instance.m_AllObstacles[i];
                     m_CurrentClosestDistance = oDist;
                 }
-                else
-                {
-                    Obstacle.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
-
-                }
+                GameManager.Instance.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;
             }
+        }
+        if(m_ClosestObstacle != null)
+        {
+            m_ClosestObstacle.GetComponent<SpriteRenderer>().color = Color.yellow;
         }
     }
 
@@ -147,15 +147,12 @@ public class ClientPlayer : Player
     {
         m_IsDodging = true;
         float time = 0.0f;
-        GameObject spriteChild = this.transform.GetChild(0).gameObject;
         while (time <= duration)
         {
             time += Time.deltaTime;
             playerInfo.collidable = false;
-            spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
             yield return 0;
         }
-        spriteChild.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
         playerInfo.collidable = true;
         m_IsDodging = false;
     }

@@ -20,7 +20,7 @@ public abstract class Networked : MonoBehaviour
     protected NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
 
     byte[] messageDataBuffer = new byte[256];
-    protected abstract void HandleNetworkMessage(Message msg);
+    
 
     public virtual void Awake()
     {
@@ -52,14 +52,20 @@ public abstract class Networked : MonoBehaviour
             for (int i = 0; i < netMessageCount; i++)
             {
                 ref NetworkingMessage netMessage = ref netMessages[i];
-                Debug.Log("Message received from server - Channel ID: " + netMessage.channel + ", Data length: " + netMessage.length);
                 netMessage.CopyTo(messageDataBuffer);
                 uint connection = netMessage.connection; //who sent it
                 netMessage.Destroy();
                 Message m = Message.decipherMessage(messageDataBuffer);
-
                 HandleNetworkMessage(m);
             }
+        }
+    }
+
+    protected virtual void HandleNetworkMessage(Message msg)
+    {
+        if (msg is PlayerConnectedMessage) //reposition players for both
+        {
+            List<Player> players = GameManager.Instance.m_Players;
         }
     }
 

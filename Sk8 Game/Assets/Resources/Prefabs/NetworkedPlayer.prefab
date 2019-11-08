@@ -69,12 +69,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 10
-  m_Sprite: {fileID: 21300000, guid: 2a4c62af9b825924ba649a4a6422584f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8fec6f992865fe34eac48e84b6f4122c, type: 3}
   m_Color: {r: 1, g: 0.5801887, b: 0.5801887, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.4285715, y: 1.4285715}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -293,6 +293,7 @@ MonoBehaviour:
   m_BackDraftMultiplier: 0
   m_IsDodging: 0
   m_IsSpinning: 0
+  m_SpinCount: 2
   playerID: 3
 --- !u!50 &5577072124538956677
 Rigidbody2D:
@@ -302,7 +303,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2619901218841773858}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
