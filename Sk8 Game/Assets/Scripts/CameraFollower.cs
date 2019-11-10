@@ -36,32 +36,42 @@ public class CameraFollower : MonoBehaviour
         m_Camera.orthographicSize = newPos.extents.y * zoomMultiplier + zoomOffset;
 
         Player lastPlace = null;
+        Player firstPlace = null;
         for (int i = 0; i < m_Targets.Count; i++)
         {
             if (lastPlace == null || m_Targets[i].transform.position.y < lastPlace.transform.position.y)
             {
                 lastPlace = m_Targets[i];
             }
+            if (firstPlace == null || m_Targets[i].transform.position.y > firstPlace.transform.position.y)
+            {
+                firstPlace = m_Targets[i];
+            }
         }
         PostProcessVolume v = GetComponent<PostProcessVolume>();
-        Vignette vig;
-        v.profile.TryGetSettings<Vignette>(out vig);
-        if (lastPlace is ClientPlayer)
+        Vignette vig = v.profile.GetSetting<Vignette>();
+        if(GameManager.Instance.ClientPlayer != null)
         {
-            vig.intensity.value = newPos.extents.y / maxDistance;
+            float distFromFirst = firstPlace.transform.position.y - GameManager.Instance.ClientPlayer.transform.position.y;
+            vig.intensity.value = distFromFirst / maxDistance;
+        }
+        else
+        {
+            vig.intensity.value = 0.0f;
         }
         
+        string playerID;
+        if(lastPlace is ClientPlayer)
+        {
+            playerID = GameManager.Instance.m_PlayerUsername;
+        }
+        else
+        {
+            playerID = (lastPlace as NetworkedPlayer).playerID;
+        }
         if (newPos.extents.y > maxDistance)
         {
-            if (lastPlace is NetworkedPlayer)
-            {
-                GameManager.Instance.PlayerFellBehind((lastPlace as NetworkedPlayer).playerID);
-            }
-            else
-            {
-                GameManager.Instance.PlayerFellBehind(GameManager.Instance.m_PlayerUsername);
-                vig.intensity.value = 0.0f;//reset for spectating
-            }
+            GameManager.Instance.PlayerFellBehind(playerID);
         }
     }
 
