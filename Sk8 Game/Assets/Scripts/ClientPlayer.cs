@@ -14,11 +14,12 @@ public class ClientPlayer : Player
     public float m_InteractMaxDist = 4.0f;
     public float m_DodgeTimeInAir = 1.5f;
 
-    public float m_DodgeBarDisplay; //current dodge bar progress
-
 
     private float m_TimeSinceDodge = 0.0f;
+    private float m_TimeUntilDodge = 3.0f;
     private float m_AttackTimer = 0.0f;
+    private float m_InteractTimer = 0.0f;
+    private float m_InteractLimit = 1.0f;
     private float m_CurrentClosestDistance = 0.0f;
     private IObstacle m_ClosestObstacle = null;
 
@@ -50,7 +51,6 @@ public class ClientPlayer : Player
             return;
 
         HandleInput(Time.deltaTime);
-        m_DodgeBarDisplay = m_TimeSinceDodge;
         FindClosestObstacle();
         
         base.Update();
@@ -58,11 +58,15 @@ public class ClientPlayer : Player
 
     public void HandleInput(float deltaTime)
     {
-        m_TimeSinceDodge += deltaTime;
+        if(!m_IsDodging)
+        {
+            m_TimeSinceDodge += deltaTime;
+        }
+
         //attackTimer += deltaTime;
         if (controls.Player.Jump.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
         {
-            if (m_TimeSinceDodge > 3.0f)
+            if (m_TimeSinceDodge > m_TimeUntilDodge)
             {
                 m_TimeSinceDodge = 0.0f;
                 StartCoroutine(Dodge(m_DodgeTimeInAir));
@@ -82,9 +86,11 @@ public class ClientPlayer : Player
 
     public void InteractButtonPressed(InputAction.CallbackContext context)
     {
-        if (m_ClosestObstacle != null && !m_IsSpinning && !m_IsDodging)
+        m_InteractTimer += Time.deltaTime;
+        if (m_ClosestObstacle != null && !m_IsSpinning && !m_IsDodging && m_InteractTimer >= m_InteractLimit)
         {
             //Interact with the obstacle
+            m_InteractTimer = 0.0f;
             m_ClosestObstacle.GetComponent<SpriteRenderer>().color = Color.white;
             m_ClosestObstacle.HandleInteraction(this);
 
@@ -180,20 +186,37 @@ public class ClientPlayer : Player
         GUI.Label(forwardSpeedRect, "F-Speed: " + (playerInfo.currentSpeed * transform.up.y).ToString("F1"), speedStyle);
         GUI.Label(speedRect, "C-Speed: " + playerInfo.currentSpeed.ToString("F1"), speedStyle);
 
+        //Start of Dodge Bar code
         Vector2 dodgeBarPos = new Vector2(20, 200);
-        Vector2 dodgeBarSize = new Vector2(90, 20);
+        Vector2 dodgeBarSize = new Vector2(Screen.width * 0.1f, 20);
         Texture2D emptyTex = Texture2D.blackTexture;
-        Texture2D fullTex = Texture2D.whiteTexture;
-        Rect dodgeBarLabel = new Rect(-355, 140, (Screen.width / 2) - 10, 100);
-        GUI.Label(dodgeBarLabel, "Dodge " , scoreStyle);
-        GUI.BeginGroup(new Rect(dodgeBarPos.x, dodgeBarPos.y, dodgeBarSize.x, dodgeBarSize.y));
-        GUI.Box(new Rect(0, 0, dodgeBarSize.x, dodgeBarSize.y), emptyTex);
+        Texture2D fullTex = Texture2D.blackTexture;
+
+        Rect dodgeBarRect = new Rect(10, Screen.height * 0.4f, dodgeBarSize.x, dodgeBarSize.y);
+        GUI.BeginGroup(dodgeBarRect);
+        GUI.Label(new Rect(0,0,dodgeBarRect.width, dodgeBarRect.height), "Dodge " , scoreStyle);
+        GUI.Box(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), emptyTex);
+        GUI.Box(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(m_TimeSinceDodge, 0, m_TimeUntilDodge) / m_TimeUntilDodge), dodgeBarSize.y), fullTex);
+        GUI.EndGroup();
+
+
+
+        //Start of Interact Bar code
+        Vector2 interactBarPos = new Vector2(20, 300);
+        Vector2 interactBarSize = new Vector2(60, 20);
+        Texture2D emptyTex2 = Texture2D.blackTexture;
+        Texture2D fullTex2 = Texture2D.blackTexture;
+        Rect interactBarLabel = new Rect(-355, 240, (Screen.width / 2) - 10, 100);
+        GUI.Label(interactBarLabel, "Interact", scoreStyle);
+        GUI.BeginGroup(new Rect(interactBarPos.x, interactBarPos.y, interactBarSize.x, interactBarSize.y));
+        GUI.Box(new Rect(0, 0, interactBarSize.x, interactBarSize.y), emptyTex2);
 
         //draw the filled-in part:
-        GUI.BeginGroup(new Rect(0, 0, dodgeBarSize.x * m_DodgeBarDisplay, dodgeBarSize.y));
-        GUI.Box(new Rect(0, 0, dodgeBarSize.x, dodgeBarSize.y), fullTex);
+        //GUI.BeginGroup(new Rect(0, 0, interactBarSize.x * m_DodgeBarDisplay, interactBarSize.y));
+        //GUI.Box(new Rect(0, 0, interactBarSize.x, interactBarSize.y), fullTex2);
+        //GUI.EndGroup();
         GUI.EndGroup();
-        GUI.EndGroup();
+        //End of Interact Bar code
 
     }
 
