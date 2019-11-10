@@ -109,7 +109,54 @@ class GameManager : MonoBehaviour
         GameObject obj = Instantiate((GameObject)Resources.Load("Prefabs/NetworkedPlayer"));
         obj.GetComponent<NetworkedPlayer>().playerID = playerID;
         m_Players.Add(obj.GetComponent<NetworkedPlayer>());
+        RealignPlayers();
         return obj.GetComponent<NetworkedPlayer>();
+    }
+
+    float realignWidth = 4.0f;
+    public void RealignPlayers()
+    {
+        List<string> names = new List<string>();
+        foreach(Player p in m_Players)
+        {
+            string playerName;
+            if (p is NetworkedPlayer)
+            {
+                playerName = (p as NetworkedPlayer).playerID;
+            }
+            else
+            {
+                playerName = m_PlayerUsername;
+            }
+            names.Add(name);
+        }
+        names.Sort(); //sort by name
+        List<Player> sortedPlayers = new List<Player>();
+        while(names.Count > 0)
+        {
+            for(int i = 0; i < m_Players.Count; i++)
+            {
+                string playerName;
+                if (m_Players[i] is NetworkedPlayer)
+                {
+                    playerName = (m_Players[i] as NetworkedPlayer).playerID;
+                }
+                else
+                {
+                    playerName = m_PlayerUsername;
+                }
+                if(playerName == names[0])
+                {
+                    sortedPlayers.Add(m_Players[i]);
+                    break;
+                }
+            }
+            names.RemoveAt(0);
+        }
+        for(int i = 0; i < sortedPlayers.Count; i++)
+        {
+            sortedPlayers[i].SetPosition(new Vector2((-realignWidth * 0.5f) + ((realignWidth / sortedPlayers.Count) * i), sortedPlayers[i].transform.position.y));
+        }
     }
 
     public void RemovePlayer(string playerID)

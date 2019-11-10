@@ -12,6 +12,7 @@ public class VHostBehavior : Networked
     private static VHostBehavior m_Instance;
     public Dictionary<uint, string> m_Connections = new Dictionary<uint, string>();
     public uint m_NetworkMessageConnectionSource = 0; //where the message came from
+    public KeyValuePair<uint, string>? m_ConnectionToAdd = null; //need to add after due to foreach on connections
 
     public override void OnDestroy()
     {
@@ -85,6 +86,18 @@ public class VHostBehavior : Networked
                 m_NetworkMessageConnectionSource = c.Key;
                 readNetworkMessages();
             }
+            if(m_ConnectionToAdd.HasValue)
+            {
+                if(m_ConnectionToAdd.Value.Value == "") //kick them out
+                {
+                    m_Server.CloseConnection(m_ConnectionToAdd.Value.Key);
+                }
+                else
+                {
+                    m_Connections[m_ConnectionToAdd.Value.Key] = m_ConnectionToAdd.Value.Value;
+                    m_ConnectionToAdd = null;
+                }
+            }
             
         }
     }
@@ -120,9 +133,16 @@ public class VHostBehavior : Networked
         if(msg is PlayerConnectedMessage) //player sends this once connected to send name
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
-            m_Connections[m_NetworkMessageConnectionSource] = nMsg.playerID; //add to array
-            GameManager.Instance.AddPlayer(nMsg.playerID);
-            SendMessageToAllExceptPlayer(nMsg.playerID, msg, SendType.Reliable);
+            if(GameManager.Instance.GetPlayer(nMsg.playerID) != null) //player name already used
+            {
+                m_ConnectionToAdd = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, "");
+            }
+            else
+            {
+                m_ConnectionToAdd = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, nMsg.playerID);
+                GameManager.Instance.AddPlayer(nMsg.playerID);
+                SendMessageToAllExceptPlayer(nMsg.playerID, msg, SendType.Reliable);
+            }
         }
         if (msg is PlayerUpdateMessage)
         {
