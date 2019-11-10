@@ -37,8 +37,6 @@ public class Obstacle : MonoBehaviour
                 {
                     p.StartSpin();
                 }
-
-                Debug.Log("ran spin");
             }
             else
             {

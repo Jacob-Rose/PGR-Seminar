@@ -158,27 +158,26 @@ public class Player : MonoBehaviour
                 }
             }
         }
-        Camera cam = Camera.main;
-        if(cam != null)
+        if(this is ClientPlayer)
         {
-            PostProcessVolume v = cam.GetComponent<PostProcessVolume>();
-            if (v != null)
+            Camera cam = Camera.main;
+            if (cam != null)
             {
-                ChromaticAberration ca;
-                v.profile.TryGetSettings(out ca);
-                if (drafting)
+                PostProcessVolume v = cam.GetComponent<PostProcessVolume>();
+                if (v != null)
                 {
-                    ca.intensity.value = Mathf.Lerp(ca.intensity.value, 1, 0.2f);
-                }
-                else
-                {
-                    ca.intensity.value = Mathf.Lerp(ca.intensity.value, 0, 0.2f);
+                    ChromaticAberration ca;
+                    v.profile.TryGetSettings(out ca);
+                    if (drafting)
+                    {
+                        ca.intensity.value = Mathf.Lerp(ca.intensity.value, 1, 0.2f);
+                    }
+                    else
+                    {
+                        ca.intensity.value = Mathf.Lerp(ca.intensity.value, 0, 0.2f);
+                    }
                 }
             }
         }
-        
-        
     }
-
-    
 }

@@ -9,6 +9,7 @@ public class ClientPlayer : Player
 {
     [SerializeField]
     public InputMaster controls;
+    public InputDevice m_LatestDevice = null;
     public float zRotAmount = 10.0f;
 
     public float m_InteractMaxDist = 4.0f;
@@ -98,6 +99,7 @@ public class ClientPlayer : Player
                 VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
             }
         }
+        m_LatestDevice = context.control.device;
     }
 
     public void PlayerAttack()
@@ -194,7 +196,6 @@ public class ClientPlayer : Player
         GUI.Box(new Rect(0, 0, dodgeBarSize.x, dodgeBarSize.y), fullTex);
         GUI.EndGroup();
         GUI.EndGroup();
-
     }
 
 }
