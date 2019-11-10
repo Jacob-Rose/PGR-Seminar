@@ -14,6 +14,9 @@ public class ClientPlayer : Player
     public float m_InteractMaxDist = 4.0f;
     public float m_DodgeTimeInAir = 1.5f;
 
+    public float m_DodgeBarDisplay; //current dodge bar progress
+
+
     private float m_TimeSinceDodge = 0.0f;
     private float m_AttackTimer = 0.0f;
     private float m_CurrentClosestDistance = 0.0f;
@@ -47,6 +50,7 @@ public class ClientPlayer : Player
             return;
 
         HandleInput(Time.deltaTime);
+        m_DodgeBarDisplay = m_TimeSinceDodge;
         FindClosestObstacle();
         
         base.Update();
@@ -175,6 +179,22 @@ public class ClientPlayer : Player
         GUI.Label(maxSpeedRect, "Max-Speed: " + MaxSpeed.ToString("F1"), speedStyle);
         GUI.Label(forwardSpeedRect, "F-Speed: " + (playerInfo.currentSpeed * transform.up.y).ToString("F1"), speedStyle);
         GUI.Label(speedRect, "C-Speed: " + playerInfo.currentSpeed.ToString("F1"), speedStyle);
+
+        Vector2 dodgeBarPos = new Vector2(20, 200);
+        Vector2 dodgeBarSize = new Vector2(90, 20);
+        Texture2D emptyTex = Texture2D.blackTexture;
+        Texture2D fullTex = Texture2D.whiteTexture;
+        Rect dodgeBarLabel = new Rect(-355, 140, (Screen.width / 2) - 10, 100);
+        GUI.Label(dodgeBarLabel, "Dodge " , scoreStyle);
+        GUI.BeginGroup(new Rect(dodgeBarPos.x, dodgeBarPos.y, dodgeBarSize.x, dodgeBarSize.y));
+        GUI.Box(new Rect(0, 0, dodgeBarSize.x, dodgeBarSize.y), emptyTex);
+
+        //draw the filled-in part:
+        GUI.BeginGroup(new Rect(0, 0, dodgeBarSize.x * m_DodgeBarDisplay, dodgeBarSize.y));
+        GUI.Box(new Rect(0, 0, dodgeBarSize.x, dodgeBarSize.y), fullTex);
+        GUI.EndGroup();
+        GUI.EndGroup();
+
     }
 
 }
