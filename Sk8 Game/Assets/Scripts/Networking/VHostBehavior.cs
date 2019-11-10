@@ -67,38 +67,47 @@ public class VHostBehavior : Networked
         SendMessageToAllPlayers(dMsg, SendType.Reliable);
         GameManager.Instance.RemovePlayer(playerID);
         m_Connections.Remove(connection);
+        Invoke("RealignPlayersAndSend", 0.1f); //need a delay for them to add the player
     }
 
+    //NOTE: CURRENTLY NO TESTING FOR ANY SECURITY, ONE PLAYER COULD SEND FAKE PACKETS IF THEY WERE SMART ENOUGH AND RIG THE GAME
     public override void Update()
     {
         if (m_Server != null && m_Status != null)
         {
             m_Server.DispatchCallback(m_Status); //check for new or changed connections
-            ClientPlayer cPlayer = GameManager.Instance.ClientPlayer;
-            if (cPlayer != null)
-            {
-                PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
-                SendMessageToAllPlayers(cPlayerUpdateMsg);
-            }
             foreach (var c in m_Connections)
             {
                 netMessageCount = m_Server.ReceiveMessagesOnConnection(c.Key, netMessages, maxMessages);
                 m_NetworkMessageConnectionSource = c.Key;
                 readNetworkMessages();
             }
-            if(m_ConnectionToAdd.HasValue)
+            HandleNewConnection(); //simple add to m_Connections if necessary
+            if(GameManager.Instance.HasGameStarted)
             {
-                if(m_ConnectionToAdd.Value.Value == "") //kick them out
+                ClientPlayer cPlayer = GameManager.Instance.ClientPlayer;
+                if (cPlayer != null)
                 {
-                    m_Server.CloseConnection(m_ConnectionToAdd.Value.Key);
-                }
-                else
-                {
-                    m_Connections[m_ConnectionToAdd.Value.Key] = m_ConnectionToAdd.Value.Value;
-                    m_ConnectionToAdd = null;
+                    PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
+                    SendMessageToAllPlayers(cPlayerUpdateMsg);
                 }
             }
-            
+        }
+    }
+
+    public void HandleNewConnection()
+    {
+        if (m_ConnectionToAdd.HasValue)
+        {
+            if (m_ConnectionToAdd.Value.Value == "") //kick them out
+            {
+                m_Server.CloseConnection(m_ConnectionToAdd.Value.Key);
+            }
+            else
+            {
+                m_Connections[m_ConnectionToAdd.Value.Key] = m_ConnectionToAdd.Value.Value;
+                m_ConnectionToAdd = null;
+            }
         }
     }
     public void StartGameInSeconds(float seconds)
@@ -127,13 +136,32 @@ public class VHostBehavior : Networked
             m_Server.SendMessageToConnection(pair.Key, msg.toBuffer(), type);
         }
     }
+    public float realignWidth = 8.0f;
+    protected void RealignPlayersAndSend()
+    {
+        List<Player> players = GameManager.Instance.m_Players;
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].SetPosition(new Vector2((-realignWidth * 0.25f) + ((realignWidth / players.Count) * i), players[i].transform.position.y));
+            string playerID;
+            if(players[i] is NetworkedPlayer)
+            {
+                playerID = (players[i] as NetworkedPlayer).playerID;
+            }
+            else
+            {
+                playerID = GameManager.Instance.m_PlayerUsername;
+            }
+            SendMessageToAllPlayers(new PlayerUpdateMessage(players[i].playerInfo, playerID), SendType.Reliable);
+        }
+    }
 
     protected override void HandleNetworkMessage(Message msg)
     {
         if(msg is PlayerConnectedMessage) //player sends this once connected to send name
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
-            if(GameManager.Instance.GetPlayer(nMsg.playerID) != null) //player name already used
+            if(GameManager.Instance.GetPlayer(nMsg.playerID) != null) //player name already used, prepare to kick
             {
                 m_ConnectionToAdd = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, "");
             }
@@ -142,6 +170,7 @@ public class VHostBehavior : Networked
                 m_ConnectionToAdd = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, nMsg.playerID);
                 GameManager.Instance.AddPlayer(nMsg.playerID);
                 SendMessageToAllExceptPlayer(nMsg.playerID, msg, SendType.Reliable);
+                Invoke("RealignPlayersAndSend", 0.1f); //need a delay for them to add the player
             }
         }
         if (msg is PlayerUpdateMessage)
@@ -155,7 +184,7 @@ public class VHostBehavior : Networked
             Debug.Log("Obstacle Modified Message");
             ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg, SendType.Reliable);
-            GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID].InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
+            (GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID] as IObstacle).InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
         }
         base.HandleNetworkMessage(msg);
     }

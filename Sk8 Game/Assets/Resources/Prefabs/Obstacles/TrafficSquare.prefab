@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 421345708782655136}
   - component: {fileID: 421345708782655137}
-  - component: {fileID: 7053574640658562327}
   - component: {fileID: 8357833464957769381}
+  - component: {fileID: 8960005998491354344}
   m_Layer: 0
   m_Name: TrafficSquare
   m_TagString: TrafficCone
@@ -82,25 +82,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7053574640658562327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 421345708782655166}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3ce52d9a506f5e4b89987ff8649e4ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  defaultSprite: {fileID: 21300000, guid: a698ee468456e7944a177bbec289e91c, type: 3}
-  interactedSprite: {fileID: 21300000, guid: dff5c86c34625e646891382574a891ac, type: 3}
-  id: 0
-  speedMultiplier: 0.65
-  spinPlayer: 0
-  scoreIncreaseOnInteract: 5
-  m_InteractedWith: 0
 --- !u!58 &8357833464957769381
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -117,3 +98,22 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 2
+--- !u!114 &8960005998491354344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 421345708782655166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c97b9cab6293c4e83306bb2b6ba984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultSprite: {fileID: 21300000, guid: a698ee468456e7944a177bbec289e91c, type: 3}
+  id: 0
+  speedMultiplier: 0.8
+  m_ShouldSpinPlayer: 1
+  m_InteractedWith: 0
+  scoreIncreaseOnInteract: 5
+  interactedSprite: {fileID: 21300000, guid: dff5c86c34625e646891382574a891ac, type: 3}

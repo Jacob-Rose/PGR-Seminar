@@ -17,7 +17,7 @@ public class ClientPlayer : Player
     private float m_TimeSinceDodge = 0.0f;
     private float m_AttackTimer = 0.0f;
     private float m_CurrentClosestDistance = 0.0f;
-    private Obstacle m_ClosestObstacle = null;
+    private IObstacle m_ClosestObstacle = null;
 
     public void Awake()
     {
@@ -78,11 +78,12 @@ public class ClientPlayer : Player
 
     public void InteractButtonPressed(InputAction.CallbackContext context)
     {
-        if (m_ClosestObstacle != null && !m_ClosestObstacle.m_InteractedWith && !m_IsSpinning && !m_IsDodging)
+        if (m_ClosestObstacle != null && !m_IsSpinning && !m_IsDodging)
         {
             //Interact with the obstacle
-            m_ClosestObstacle.HandleInteraction(this);
             m_ClosestObstacle.GetComponent<SpriteRenderer>().color = Color.white;
+            m_ClosestObstacle.HandleInteraction(this);
+
             ObstacleModifiedMessage msg = new ObstacleModifiedMessage(GameManager.Instance.m_PlayerUsername, m_ClosestObstacle.id);
             if (VHostBehavior.Instance != null)
             {
@@ -126,12 +127,13 @@ public class ClientPlayer : Player
         m_ClosestObstacle = null;
         for (int i = 0; i < GameManager.Instance.getAllObstacleCount(); i++)
         {
-            if(GameManager.Instance.m_AllObstacles[i] != null && !GameManager.Instance.m_AllObstacles[i].m_InteractedWith)
+            if(GameManager.Instance.m_AllObstacles[i] != null && GameManager.Instance.m_AllObstacles[i] is IObstacle 
+                && (GameManager.Instance.m_AllObstacles[i] as IObstacle).m_CanBeInteractedWith)
             {
                 float oDist = Vector2.Distance(playerInfo.position, GameManager.Instance.m_AllObstacles[i].transform.position);
                 if (oDist < m_CurrentClosestDistance)
                 {
-                    m_ClosestObstacle = GameManager.Instance.m_AllObstacles[i];
+                    m_ClosestObstacle = GameManager.Instance.m_AllObstacles[i] as IObstacle;
                     m_CurrentClosestDistance = oDist;
                 }
                 GameManager.Instance.m_AllObstacles[i].GetComponent<SpriteRenderer>().color = Color.white;

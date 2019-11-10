@@ -95,12 +95,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultSprite: {fileID: 21300000, guid: 84633536fd13f0b459041df466ea9abc, type: 3}
-  interactedSprite: {fileID: 21300000, guid: de58a89db4ee45448b89a94285c593dd, type: 3}
   id: 0
   speedMultiplier: 0.8
-  spinPlayer: 0
-  scoreIncreaseOnInteract: 5
-  m_InteractedWith: 0
+  m_ShouldSpinPlayer: 1
 --- !u!61 &504967043
 BoxCollider2D:
   m_ObjectHideFlags: 0

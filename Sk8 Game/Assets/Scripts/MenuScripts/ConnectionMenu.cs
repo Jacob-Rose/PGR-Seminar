@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class ConnectionMenu : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class ConnectionMenu : MonoBehaviour
     void Start()
     {
         submitButton.onClick.AddListener(ConnectToIP);
+        SceneManager.LoadScene("facade_park", LoadSceneMode.Additive);
     }
 
     // Update is called once per frame

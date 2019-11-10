@@ -60,8 +60,12 @@ public class VOnlinePlayer : Networked
             m_Server.DispatchCallback(m_Status);
             netMessageCount = m_Server.ReceiveMessagesOnConnection(m_Connection, netMessages, maxMessages);
             readNetworkMessages();
-            ClientPlayer player = FindObjectOfType<ClientPlayer>();
-            m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.playerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
+            
+            if(GameManager.Instance.HasGameStarted)
+            {
+                ClientPlayer player = FindObjectOfType<ClientPlayer>();
+                m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.playerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
+            }
         }
     }
 
@@ -96,7 +100,7 @@ public class VOnlinePlayer : Networked
         else if(msg is ObstacleModifiedMessage)
         {
             ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
-            GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID].InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
+            (GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID] as IObstacle).InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
         }
         else if(msg is PlayerFellBehindMessage)
         {
