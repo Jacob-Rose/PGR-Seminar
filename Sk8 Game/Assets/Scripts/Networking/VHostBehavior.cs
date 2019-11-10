@@ -58,7 +58,6 @@ public class VHostBehavior : Networked
     public void PlayerConnected(uint connection)
     {
         m_Connections.Add(connection, null);
-        m_Server.SendMessageToConnection(connection, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
     }
 
     public void PlayerDisconnected(uint connection, string playerID)
@@ -168,8 +167,26 @@ public class VHostBehavior : Networked
             else
             {
                 m_ConnectionToAdd = new KeyValuePair<uint, string>(m_NetworkMessageConnectionSource, nMsg.playerID);
+                //Send the player connected info to everyone
+                ClientPlayer cP = GameManager.Instance.ClientPlayer;
+                if(cP != null)
+                {
+                    SendMessageToAllExceptPlayer(nMsg.playerID, new PlayerConnectedMessage(nMsg.playerID), SendType.Reliable);
+                }
+                //send current players to the connected player
+                List<Player> players = GameManager.Instance.m_Players;
+                for (int i = 0; i < players.Count; i++)
+                {
+                    if(players[i] is ClientPlayer)
+                    {
+                        m_Server.SendMessageToConnection(m_NetworkMessageConnectionSource, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
+                    }
+                    else
+                    {
+                        m_Server.SendMessageToConnection(m_NetworkMessageConnectionSource, new PlayerConnectedMessage((players[i] as NetworkedPlayer).playerID).toBuffer(), SendType.Reliable);
+                    }  
+                }
                 GameManager.Instance.AddPlayer(nMsg.playerID);
-                SendMessageToAllExceptPlayer(nMsg.playerID, msg, SendType.Reliable);
                 Invoke("RealignPlayersAndSend", 0.1f); //need a delay for them to add the player
             }
         }

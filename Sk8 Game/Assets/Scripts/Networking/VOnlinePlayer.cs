@@ -63,8 +63,11 @@ public class VOnlinePlayer : Networked
             
             if(GameManager.Instance.HasGameStarted)
             {
-                ClientPlayer player = FindObjectOfType<ClientPlayer>();
-                m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.playerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
+                ClientPlayer player = GameManager.Instance.ClientPlayer;
+                if(player != null)
+                {
+                    m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.playerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
+                }
             }
         }
     }
