@@ -52,6 +52,7 @@ public class ClientPlayer : Player
             return;
 
         HandleInput(Time.deltaTime);
+        m_InteractTimer += Time.deltaTime;
         FindClosestObstacle();
         
         base.Update();
@@ -87,7 +88,6 @@ public class ClientPlayer : Player
 
     public void InteractButtonPressed(InputAction.CallbackContext context)
     {
-        m_InteractTimer += Time.deltaTime;
         if (m_ClosestObstacle != null && !m_IsSpinning && !m_IsDodging && m_InteractTimer >= m_InteractLimit)
         {
             //Interact with the obstacle
@@ -189,35 +189,36 @@ public class ClientPlayer : Player
         GUI.Label(speedRect, "C-Speed: " + playerInfo.currentSpeed.ToString("F1"), speedStyle);
 
         //Start of Dodge Bar code
-        Vector2 dodgeBarPos = new Vector2(20, 200);
         Vector2 dodgeBarSize = new Vector2(Screen.width * 0.1f, 20);
-        Texture2D emptyTex = Texture2D.blackTexture;
-        Texture2D fullTex = Texture2D.blackTexture;
+        Texture2D emptyTex = Texture2D.blackTexture;//Resources.Load<Texture2D>("Sprites/yellow");
+        Texture2D fullTex = Resources.Load<Texture2D>("Sprites/blue");
 
         Rect dodgeBarRect = new Rect(10, Screen.height * 0.4f, dodgeBarSize.x, dodgeBarSize.y);
         GUI.BeginGroup(dodgeBarRect);
-        GUI.Label(new Rect(0,0,dodgeBarRect.width, dodgeBarRect.height), "Dodge " , scoreStyle);
         GUI.Box(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), emptyTex);
-        GUI.Box(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(m_TimeSinceDodge, 0, m_TimeUntilDodge) / m_TimeUntilDodge), dodgeBarSize.y), fullTex);
+        GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(m_TimeSinceDodge, 0, m_TimeUntilDodge) / m_TimeUntilDodge), dodgeBarSize.y), fullTex);
+        GUI.color = Color.black;
+        GUI.Label(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), "Dodge ", scoreStyle);
+        GUI.color = Color.white;
         GUI.EndGroup();
+        //end of dodge bar
 
-
-
+         
         //Start of Interact Bar code
-        Vector2 interactBarPos = new Vector2(20, 300);
-        Vector2 interactBarSize = new Vector2(60, 20);
+        Vector2 interactBarSize = new Vector2(Screen.width * 0.1f, 20);
         Texture2D emptyTex2 = Texture2D.blackTexture;
-        Texture2D fullTex2 = Texture2D.blackTexture;
-        Rect interactBarLabel = new Rect(-355, 240, (Screen.width / 2) - 10, 100);
-        GUI.Label(interactBarLabel, "Interact", scoreStyle);
-        GUI.BeginGroup(new Rect(interactBarPos.x, interactBarPos.y, interactBarSize.x, interactBarSize.y));
-        GUI.Box(new Rect(0, 0, interactBarSize.x, interactBarSize.y), emptyTex2);
+        Texture2D fullTex2 = Resources.Load<Texture2D>("Sprites/yellow");
 
-        //draw the filled-in part:
-        //GUI.BeginGroup(new Rect(0, 0, interactBarSize.x * m_DodgeBarDisplay, interactBarSize.y));
-        //GUI.Box(new Rect(0, 0, interactBarSize.x, interactBarSize.y), fullTex2);
-        //GUI.EndGroup();
+        Rect interactBarRect = new Rect(10, Screen.height * 0.6f, interactBarSize.x, interactBarSize.y);
+        GUI.BeginGroup(interactBarRect);
+        GUI.Box(new Rect(0, 0, interactBarRect.width, interactBarRect.height), emptyTex2);
+        GUI.DrawTexture(new Rect(0, 0, interactBarSize.x * (Mathf.Clamp(m_InteractTimer, 0, m_InteractLimit) / m_InteractLimit), interactBarSize.y), fullTex2);
+        GUI.color = Color.black;
+        GUI.Label(new Rect(0, 0, interactBarRect.width, interactBarRect.height), "Interact ", scoreStyle);
+        GUI.color = Color.white;
         GUI.EndGroup();
+        //end of interact bar
+
     }
 
 }
