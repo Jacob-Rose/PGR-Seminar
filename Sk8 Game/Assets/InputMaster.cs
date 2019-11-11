@@ -134,6 +134,17 @@ public class InputMaster : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""7aeda70f-a696-4ea0-b5e0-b28f21575199"",
+                    ""path"": ""<Touchscreen>/position/x"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Touch"",
+                    ""action"": ""Turn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""8174b060-1156-4926-8bcc-b5be3cc1d6df"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
@@ -346,6 +357,17 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""isOR"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Touch"",
+            ""bindingGroup"": ""Touch"",
+            ""devices"": [
+                {
+                    ""devicePath"": ""<Touchscreen>"",
+                    ""isOptional"": false,
+                    ""isOR"": false
+                }
+            ]
         }
     ]
 }");
@@ -518,6 +540,15 @@ public class InputMaster : IInputActionCollection, IDisposable
         {
             if (m_PS4ControllerSchemeIndex == -1) m_PS4ControllerSchemeIndex = asset.FindControlSchemeIndex("PS4Controller");
             return asset.controlSchemes[m_PS4ControllerSchemeIndex];
+        }
+    }
+    private int m_TouchSchemeIndex = -1;
+    public InputControlScheme TouchScheme
+    {
+        get
+        {
+            if (m_TouchSchemeIndex == -1) m_TouchSchemeIndex = asset.FindControlSchemeIndex("Touch");
+            return asset.controlSchemes[m_TouchSchemeIndex];
         }
     }
     public interface IPlayerActions

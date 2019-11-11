@@ -121,6 +121,17 @@
                 },
                 {
                     "name": "",
+                    "id": "7aeda70f-a696-4ea0-b5e0-b28f21575199",
+                    "path": "<Touchscreen>/position/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Touch",
+                    "action": "Turn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "8174b060-1156-4926-8bcc-b5be3cc1d6df",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -329,6 +340,17 @@
             "devices": [
                 {
                     "devicePath": "<DualShockGamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Touch",
+            "bindingGroup": "Touch",
+            "devices": [
+                {
+                    "devicePath": "<Touchscreen>",
                     "isOptional": false,
                     "isOR": false
                 }
