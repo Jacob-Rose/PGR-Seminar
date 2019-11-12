@@ -14,7 +14,6 @@ public class NetworkedPlayer : Player
     public override void Start()
     {
         base.Start();
-        GetComponentInChildren<TextMeshProUGUI>().text = playerID;
     }
 
     public void updatePlayerInfo(PlayerInfo info)

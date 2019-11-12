@@ -47,7 +47,6 @@ public class ClientPlayer : Player
 
     public override void Update()
     {
-        GetComponentInChildren<TextMeshProUGUI>().text = GameManager.Instance.m_PlayerUsername;
         if (!GameManager.Instance.HasGameStarted)
             return;
 

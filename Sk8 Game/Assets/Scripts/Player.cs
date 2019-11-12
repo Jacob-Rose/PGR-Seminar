@@ -38,9 +38,6 @@ public class Player : MonoBehaviour
     protected float startSpeed;
 
     [SerializeField]
-    protected float speedDecreaseAmount;
-
-    [SerializeField]
     protected float speedMod; //used for max speed calculation
 
     [SerializeField]
@@ -50,13 +47,18 @@ public class Player : MonoBehaviour
     public PlayerInfo playerInfo;
 
     protected Rigidbody2D m_Rigidbody;
-
     protected SpriteRenderer m_SpriteRenderer;
 
+    public Vector2 m_DraftBounds = new Vector2(2.5f, 10.0f);
     public float m_BackDraftMultiplier = 1.1f;
 
     public bool m_IsDodging = false;
     public bool m_IsSpinning = false;
+
+    public int m_SpinCount = 2;
+    public float m_SpinDuration = 1.0f;
+
+
 
 
     public float MaxSpeed
@@ -98,7 +100,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            sr.transform.localScale = Vector3.Lerp(sr.transform.localScale, new Vector3(1.3f, 1.3f, 1.3f), 0.2f);
+            sr.transform.localScale = Vector3.Lerp(sr.transform.localScale, new Vector3(1.3f, 1.3f, 1.3f), 0.2f); //could make a variable but who cares really
         }
     }
 
@@ -114,11 +116,11 @@ public class Player : MonoBehaviour
         playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed, (deltaTime / timeToMaxSpeed));
         playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
-        transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.75f); //in case the update is off from current position
+        transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.6f); //in case the update is off from current position
         playerInfo.position = transform.position;
     }
 
-    public int m_SpinCount = 2;
+
     public IEnumerator SpinPlayerDuration(float duration)
     {
         m_IsSpinning = true;
@@ -138,7 +140,7 @@ public class Player : MonoBehaviour
     {
         if(!m_IsSpinning)
         {
-            StartCoroutine(SpinPlayerDuration(1.0f));
+            StartCoroutine(SpinPlayerDuration(m_SpinDuration));
         }
     }
 
@@ -150,7 +152,7 @@ public class Player : MonoBehaviour
             Player oPlayer = GameManager.Instance.m_Players[i];
             if(oPlayer != this)
             {
-                Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, 5.0f), new Vector2(2.0f, 10.0f));
+                Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, m_DraftBounds.y * 0.5f), m_DraftBounds);
                 if (draftBounds.Contains(playerInfo.position))
                 {
                     playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * m_BackDraftMultiplier, deltaTime);
