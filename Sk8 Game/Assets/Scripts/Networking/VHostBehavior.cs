@@ -47,7 +47,6 @@ public class VHostBehavior : Networked
                     PlayerConnected(info.connection);
                     break;
                 case ConnectionState.ClosedByPeer:
-                    m_Server.CloseConnection(info.connection);
                     Debug.Log("Client disconnected - ID: " + info.connection + ", IP: " + info.connectionInfo.address.GetIP());
                     PlayerDisconnected(info.connection, m_Connections[info.connection]);
                     break;
@@ -67,6 +66,7 @@ public class VHostBehavior : Networked
         GameManager.Instance.RemovePlayer(playerID);
         m_Connections.Remove(connection);
         Invoke("RealignPlayersAndSend", 0.1f); //need a delay for them to add the player
+        m_Server.CloseConnection(connection);
     }
 
     //NOTE: CURRENTLY NO TESTING FOR ANY SECURITY, ONE PLAYER COULD SEND FAKE PACKETS IF THEY WERE SMART ENOUGH AND RIG THE GAME
