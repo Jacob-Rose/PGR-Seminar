@@ -324,11 +324,35 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   m_WallPrefab: {fileID: 4000147995785073723, guid: 947b82f43e08d83469dd5da40cef77ad,
     type: 3}
-  roadCount: 300
+  roadCount: 30
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
   m_WallWidth: 2
   obstaclesPerTile: 2
+  roadWidthOverTime:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.010215759
+      value: 1.02594
+      inSlope: -0.3817578
+      outSlope: -0.3817578
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0153198
+      value: 0.63443375
+      inSlope: -0.3817578
+      outSlope: -0.3817578
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   m_CurrentRoadCount: 0
 --- !u!1 &1368724442
 GameObject:
@@ -455,8 +479,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be4317c1ede129b4abd20a82978a3e6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPos: {fileID: 1368724443}
-  startWidth: 6
 --- !u!4 &1528374279
 Transform:
   m_ObjectHideFlags: 0

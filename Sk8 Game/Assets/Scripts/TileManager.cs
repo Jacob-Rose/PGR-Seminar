@@ -22,6 +22,8 @@ public class TileManager : MonoBehaviour
     //private Vector2 roadTileSize;
     public int obstaclesPerTile = 2;
 
+    public AnimationCurve roadWidthOverTime;
+
     public static TileManager Instance { get { return m_Instance; } }
 
     private static TileManager m_Instance;
@@ -96,8 +98,9 @@ public class TileManager : MonoBehaviour
     public int m_CurrentRoadCount = 0;
     public void SpawnRoad()
     {
-        Bounds spawnBounds = new Bounds(new Vector3(0,(m_CurrentRoadCount -1) * desiredRoadTileSize.y,0) + m_StartTransform.position, new Vector3(desiredRoadTileSize.x, desiredRoadTileSize.y, 0));
+        Bounds spawnBounds = new Bounds(new Vector3(0,(m_CurrentRoadCount -1) * desiredRoadTileSize.y,0) + m_StartTransform.position, new Vector3(desiredRoadTileSize.x /*roadWidthOverTime.Evaluate(((float)m_CurrentRoadCount) / roadCount)*/, desiredRoadTileSize.y, 0));
         //Spawn Road Item
+
         GameObject newRoad = Instantiate(m_RoadPrefab, spawnBounds.center, Quaternion.identity, transform);
         GameObject grassLeft = Instantiate(m_GrassPrefab, spawnBounds.center + new Vector3((spawnBounds.size.x + m_GrassWidth)* 0.5f , 0,0), Quaternion.identity, transform);
         GameObject grassRight = Instantiate(m_GrassPrefab, spawnBounds.center - new Vector3((spawnBounds.size.x + m_GrassWidth) * 0.5f, 0, 0), Quaternion.identity, transform);
