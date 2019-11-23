@@ -1,4 +1,5 @@
 ﻿using AOT;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +19,7 @@ public abstract class Networked : MonoBehaviour
     protected const int maxMessages = 20;
     protected int netMessageCount = 0;
     protected NetworkingMessage[] netMessages = new NetworkingMessage[maxMessages];
+    protected float uniformTimeOffset;
 
     byte[] messageDataBuffer = new byte[256];
     
@@ -61,12 +63,8 @@ public abstract class Networked : MonoBehaviour
         }
     }
 
-    protected virtual void HandleNetworkMessage(Message msg)
+    protected virtual void HandleNetworkMessage(Message msg) //index used if more detail needed, such as ping
     {
-        if (msg is PlayerConnectedMessage) //reposition players for both
-        {
-            List<Player> players = GameManager.Instance.m_Players;
-        }
     }
 
     public static IPAddress GetIP()

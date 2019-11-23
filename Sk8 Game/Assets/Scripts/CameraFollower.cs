@@ -13,7 +13,7 @@ public class CameraFollower : MonoBehaviour
     public float zoomOffset = 0.0f; //additional or less zoom to add from start
     public float zoomMultiplier = 1.0f; //how much to zoom out or in
 
-    public float maxDistance = 10.0f;
+
 
     private Vector3 velocity;
     // Start is called before the first frame update
@@ -53,26 +53,14 @@ public class CameraFollower : MonoBehaviour
         if(GameManager.Instance.ClientPlayer != null)
         {
             float distFromFirst = firstPlace.transform.position.y - GameManager.Instance.ClientPlayer.transform.position.y;
-            vig.intensity.value = distFromFirst / maxDistance;
+            vig.intensity.value = distFromFirst / GameManager.Instance.maxDistanceToDQ;
         }
         else
         {
             vig.intensity.value = 0.0f;
         }
         
-        string playerID;
-        if(lastPlace is ClientPlayer)
-        {
-            playerID = GameManager.Instance.m_PlayerUsername;
-        }
-        else
-        {
-            playerID = (lastPlace as NetworkedPlayer).playerID;
-        }
-        if (newPos.extents.y > maxDistance)
-        {
-            GameManager.Instance.PlayerFellBehind(playerID);
-        }
+        
     }
 
     Bounds getEncapsulatingBounds()

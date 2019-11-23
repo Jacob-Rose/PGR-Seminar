@@ -81,6 +81,11 @@ public class Player : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
     public virtual void Update()
     {
         if (!GameManager.Instance.HasGameStarted)
@@ -125,7 +130,7 @@ public class Player : MonoBehaviour
     {
         m_IsSpinning = true;
         float time = 0.0f;
-        while (time <= duration)
+        while (time < duration)
         {
             time += Time.deltaTime;
             float rotAmount = 360.0f * ((time / duration) * m_SpinCount); //two full spins before done

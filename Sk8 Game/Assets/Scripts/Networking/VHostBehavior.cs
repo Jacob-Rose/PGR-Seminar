@@ -91,7 +91,50 @@ public class VHostBehavior : Networked
                     SendMessageToAllPlayers(cPlayerUpdateMsg);
                 }
             }
+            if(GameManager.Instance.HasGameStarted)
+            {
+                CheckForBoundsLoss(); //check if any player fallen behind
+            }
         }
+    }
+
+    public void CheckForBoundsLoss()
+    {
+        List<Player> m_Targets = GameManager.Instance.GetPlayers();
+        Player lastPlace = null;
+        Player firstPlace = null;
+        for (int i = 0; i < m_Targets.Count; i++)
+        {
+            if (lastPlace == null || m_Targets[i].transform.position.y < lastPlace.transform.position.y)
+            {
+                lastPlace = m_Targets[i];
+            }
+            if (firstPlace == null || m_Targets[i].transform.position.y > firstPlace.transform.position.y)
+            {
+                firstPlace = m_Targets[i];
+            }
+        }
+
+        string playerID;
+        if (lastPlace is ClientPlayer)
+        {
+            playerID = GameManager.Instance.m_PlayerUsername;
+        }
+        else
+        {
+            playerID = (lastPlace as NetworkedPlayer).playerID;
+        }
+        if (firstPlace.transform.position.y- lastPlace.transform.position.y > GameManager.Instance.maxDistanceToDQ)
+        {
+            PlayerFellBehind(playerID);
+        }
+    }
+
+    public void PlayerFellBehind(string playerID)
+    {
+        SendMessageToAllPlayers(new PlayerFellBehindMessage(playerID));
+        GameManager.Instance.PlayerFellBehind(playerID);
+        
     }
 
     public void HandleNewConnection()
@@ -111,9 +154,8 @@ public class VHostBehavior : Networked
     }
     public void StartGameInSeconds(float seconds)
     {
-        DateTime timeToStart = DateTime.Now.AddSeconds(seconds);
         GameManager.Instance.StartGameInSeconds(seconds);
-        GameStartMessage msg = new GameStartMessage(timeToStart.Ticks);
+        GameStartMessage msg = new GameStartMessage(DateTime.Now.Ticks, seconds);
         SendMessageToAllPlayers(msg);
     }
 
@@ -157,7 +199,8 @@ public class VHostBehavior : Networked
 
     protected override void HandleNetworkMessage(Message msg)
     {
-        if(msg is PlayerConnectedMessage) //player sends this once connected to send name
+        base.HandleNetworkMessage(msg);
+        if (msg is PlayerConnectedMessage) //player sends this once connected to send name
         {
             PlayerConnectedMessage nMsg = msg as PlayerConnectedMessage;
             if(GameManager.Instance.GetPlayer(nMsg.playerID) != null) //player name already used, prepare to kick
@@ -196,14 +239,14 @@ public class VHostBehavior : Networked
             GameManager.Instance.UpdatePlayerInformation(ref nMsg.info, nMsg.playerID);
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg);
         }
-        if(msg is ObstacleModifiedMessage)
+        if (msg is ObstacleModifiedMessage)
         {
             Debug.Log("Obstacle Modified Message");
             ObstacleModifiedMessage nMsg = msg as ObstacleModifiedMessage;
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg, SendType.Reliable);
             (GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID] as IObstacle).InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
         }
-        base.HandleNetworkMessage(msg);
+        
     }
 
     

@@ -8,9 +8,12 @@ class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; } = null;
     public string m_PlayerUsername;
+    public Color m_PlayerColor = Color.white;
 
+    public float maxDistanceToDQ = 10.0f;
     public List<Player> m_Players = new List<Player>();
     public List<Obstacle> m_AllObstacles = new List<Obstacle>();
+    public Dictionary<string, long> m_DeletedPlayers = new Dictionary<string, long>(); //stores the tick when player was deleted, easy for ranking
 
     public bool HasGameStarted { get; private set; } = false;
     public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
@@ -29,6 +32,12 @@ class GameManager : MonoBehaviour
     public int getAllObstacleCount()
     {
         return m_AllObstacles.Count;
+    }
+
+    public bool HasPlayerExisted(string playerID)
+    {
+        long ticks;
+        return m_DeletedPlayers.TryGetValue(playerID, out ticks);
     }
 
     public void Start()
@@ -71,10 +80,6 @@ class GameManager : MonoBehaviour
     public void PlayerFellBehind(string playerID)
     {
         RemovePlayer(playerID);
-        if(VHostBehavior.Instance != null)
-        {
-            VHostBehavior.Instance.SendMessageToAllPlayers(new PlayerFellBehindMessage(playerID));
-        }
     }
 
     public void SpawnClientPlayer()
@@ -94,6 +99,8 @@ class GameManager : MonoBehaviour
     public void PlayerHasWonGame(Player p)
     {
         //TODO
+        //show places on new screen
+
     }
 
     public void StartGameInSeconds(float seconds)
@@ -112,12 +119,23 @@ class GameManager : MonoBehaviour
         return obj.GetComponent<NetworkedPlayer>();
     }
 
+    public NetworkedPlayer AddPlayer(string playerID, Color c)
+    {
+        GameObject obj = Instantiate((GameObject)Resources.Load("Prefabs/NetworkedPlayer"));
+        obj.GetComponent<NetworkedPlayer>().playerID = playerID;
+        obj.GetComponent<NetworkedPlayer>().color = c;
+        m_Players.Add(obj.GetComponent<NetworkedPlayer>());
+        return obj.GetComponent<NetworkedPlayer>();
+    }
+
     public void RemovePlayer(string playerID)
     {
+        bool destroyed = false;
         if(playerID == this.m_PlayerUsername)
         {
             Destroy(m_Players[0].gameObject);
             m_Players.RemoveAt(0);
+            destroyed = true;
         }
         else
         {
@@ -128,9 +146,14 @@ class GameManager : MonoBehaviour
                 {
                     Destroy(m_Players[i].gameObject);
                     m_Players.RemoveAt(i);
+                    destroyed = true;
                     break;
                 }
             }
+        }
+        if(destroyed)
+        {
+            m_DeletedPlayers.Add(playerID, DateTime.Now.Ticks);
         }
         if(m_Players.Count == 1)
         {

@@ -6,11 +6,8 @@ using UnityEngine;
 public class NetworkedPlayer : Player
 {
     public string playerID = "";
+    public Color color = Color.white; 
 
-    public NetworkedPlayer(string id)
-    {
-        playerID = id;
-    }
     public override void Start()
     {
         base.Start();
