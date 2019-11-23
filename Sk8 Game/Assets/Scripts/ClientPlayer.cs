@@ -11,6 +11,7 @@ public class ClientPlayer : Player
     public InputMaster controls;
     public InputDevice m_LatestDevice = null;
     public float zRotAmount = 10.0f;
+    public float m_SpeedDecreaseAmount = 0.1f;
 
     public float m_InteractMaxDist = 4.0f;
     public float m_DodgeTimeInAir = 1.5f;
@@ -47,7 +48,6 @@ public class ClientPlayer : Player
 
     public override void Update()
     {
-        GetComponentInChildren<TextMeshProUGUI>().text = GameManager.Instance.m_PlayerUsername;
         if (!GameManager.Instance.HasGameStarted)
             return;
 
@@ -78,7 +78,7 @@ public class ClientPlayer : Player
         if (Mathf.Abs(turnValue) > 0.05f)
         {
             playerInfo.zRot -= zRotAmount * deltaTime * turnValue;
-            playerInfo.currentSpeed -= speedDecreaseAmount * deltaTime * turnValue;
+            playerInfo.currentSpeed -= m_SpeedDecreaseAmount * deltaTime * turnValue;
         }
         else
         {
