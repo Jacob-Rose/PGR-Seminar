@@ -15,6 +15,9 @@ public class TileManager : MonoBehaviour
     public Gradient m_WallGradient;
     public GameObject m_WallPrefab;
 
+    public Vector2 dynamicSpawnPoint;
+    public Vector2 previousSpawnPoint;
+
     public int roadCount = 300;
     public Vector2 desiredRoadTileSize = new Vector2(8.0f, 12.0f);
     public float m_GrassWidth = 4.0f;
@@ -32,6 +35,8 @@ public class TileManager : MonoBehaviour
         {
             m_Instance = this;
         }
+        dynamicSpawnPoint.y = GameManager.Instance.ClientPlayer.playerInfo.position.y + 50.0f;
+        previousSpawnPoint = dynamicSpawnPoint;
         m_RoadPrefab.transform.localScale = Vector2.one;
         m_GrassPrefab.transform.localScale = Vector2.one;
         Bounds spriteBounds = m_RoadPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
@@ -45,7 +50,12 @@ public class TileManager : MonoBehaviour
         PopulateRoads(); //to replace
         
     }
-    
+
+    private void Update()
+    {
+        //PopulateRoadsTwo();
+    }
+
     public struct ObstInfo
     {
         public Vector3 spawnedPos;
@@ -86,11 +96,28 @@ public class TileManager : MonoBehaviour
     //populate roads using GetObsStatsSpawn, is based on roads
     public void PopulateRoads()
     {
+        //Will be used to generate initial roads
         //todo replace with not all at once spawn
         for (int i = 0; i < roadCount; i++)
         {
             SpawnRoad();
         }
+    }
+
+    public void PopulateRoadsTwo()
+    {
+        //will be used to generate dynamic roads
+        dynamicSpawnPoint.y = GameManager.Instance.ClientPlayer.playerInfo.position.y + 50.0f;
+        if(dynamicSpawnPoint.y > previousSpawnPoint.y + desiredRoadTileSize.y)
+        {
+            SpawnRoad(); // create overload with input value being dynamic spawn point
+            previousSpawnPoint = dynamicSpawnPoint;
+        }
+        else
+        {
+
+        }
+
     }
 
     public int m_CurrentRoadCount = 0;
