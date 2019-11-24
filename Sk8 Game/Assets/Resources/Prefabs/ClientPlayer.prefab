@@ -423,14 +423,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSpeed: 10
-  speedDecreaseAmount: 0.1
-  speedMod: 0.01
+  speedMod: 0.025
   timeToMaxSpeed: 3
-  m_BackDraftMultiplier: 1.1
+  m_DraftBounds: {x: 2, y: 8}
+  m_BackDraftMultiplier: 1.05
   m_IsDodging: 0
   m_IsSpinning: 0
   m_SpinCount: 2
+  m_SpinDuration: 1
   zRotAmount: 50
+  m_SpeedDecreaseAmount: 0.1
   m_InteractMaxDist: 4
   m_DodgeTimeInAir: 1.5
 --- !u!50 &5769516655359432254

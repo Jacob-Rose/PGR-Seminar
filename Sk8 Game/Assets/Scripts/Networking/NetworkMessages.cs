@@ -12,8 +12,7 @@ enum NetworkEvent
     PlayerUpdateInfo,
     PlayerFellBehind,
     PlayerHitObstacle,
-    PlayerDodgeActivated,
-    PlayerFinishedRace,
+    PlayerWonRace,
     ObstacleGenerated,
     ObstacleModified
 }
@@ -56,8 +55,8 @@ public abstract class Message
             case NetworkEvent.ObstacleModified:
                 msg = new ObstacleModifiedMessage(msgBytes);
                 break;
-            case NetworkEvent.PlayerDodgeActivated:
-                msg = new PlayerDodgeActivatedMessage(msgBytes);
+            case NetworkEvent.PlayerWonRace:
+                msg = new PlayerWonMessage(msgBytes);
                 break;
             default:
                 throw new Exception("oops");
@@ -468,43 +467,38 @@ public class ObstacleMovedMessage : Message
     }
 }
 
-public class PlayerDodgeActivatedMessage : Message
+public class PlayerWonMessage : Message
 {
     public string playerID;
-    public PlayerDodgeActivatedMessage(byte[] buffer)
+    public PlayerWonMessage(byte[] buffer)
     {
-        byte[] eventTypeBuffer = new byte[sizeof(ushort)];
-        byte[] playerIDLengthBuffer = new byte[sizeof(ushort)];
-        int currentIndex = 0;
-        Buffer.BlockCopy(buffer, currentIndex, eventTypeBuffer, 0, eventTypeBuffer.Length);
-        currentIndex += eventTypeBuffer.Length;
-        Buffer.BlockCopy(buffer, currentIndex, playerIDLengthBuffer, 0, playerIDLengthBuffer.Length);
-        currentIndex += playerIDLengthBuffer.Length;
-        int playerIDBufferCount = BitConverter.ToUInt16(playerIDLengthBuffer, 0);
-        byte[] playerIDBuffer = new byte[playerIDBufferCount]; //we know length of string now (in bytes)
-        Buffer.BlockCopy(buffer, currentIndex, playerIDBuffer, 0, playerIDBuffer.Length);
-        playerID = Encoding.ASCII.GetString(playerIDBuffer);
+        int currentByteIndex = 0;
+        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        playerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            playerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        currentByteIndex += playerID.Length * sizeof(char);
     }
 
-    public PlayerDodgeActivatedMessage(string playerID)
+    public PlayerWonMessage(string playerID)
     {
-        eventType = (ushort)NetworkEvent.PlayerConnected;
+        eventType = (ushort)NetworkEvent.PlayerWonRace;
         this.playerID = playerID;
     }
-
     public override byte[] toBuffer()
     {
-        byte[] eventTypeBuffer = BitConverter.GetBytes(eventType);
-        byte[] playerIDBuffer = Encoding.ASCII.GetBytes(playerID);
-        byte[] playerIDLengthBuffer = BitConverter.GetBytes((ushort)playerIDBuffer.Length);
-        byte[] buffer = new byte[eventTypeBuffer.Length + playerIDLengthBuffer.Length + playerIDBuffer.Length];
-        int currentIndex = 0;
-        Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
-        currentIndex += eventTypeBuffer.Length;
-        Buffer.BlockCopy(playerIDLengthBuffer, 0, buffer, currentIndex, playerIDLengthBuffer.Length);
-        currentIndex += playerIDLengthBuffer.Length;
-        Buffer.BlockCopy(playerIDBuffer, 0, buffer, currentIndex, playerIDBuffer.Length);
-        currentIndex += playerIDBuffer.Length;
+        byte[] buffer = new byte[4 + (playerID.Length * sizeof(char))];
+        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
+        Buffer.BlockCopy(BitConverter.GetBytes(playerID.Length), 0, buffer, 2, 4);
+        for (int i = 0; i < playerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(playerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+        }
         return buffer;
     }
 }

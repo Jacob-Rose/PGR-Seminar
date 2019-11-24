@@ -26,6 +26,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/facade_park.unity
     guid: d67a448f81f5fc148ad76f1691a24188
+  - enabled: 1
+    path: Assets/Scenes/Leaderboards.unity
+    guid: ed088bbc56060744f9cbd423c96c1f13
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: bd0d48743a817e248959dc25f2b2e10d,
       type: 2}

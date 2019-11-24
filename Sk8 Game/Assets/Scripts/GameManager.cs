@@ -9,6 +9,7 @@ class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; } = null;
     public string m_PlayerUsername;
     public Color m_PlayerColor = Color.white;
+    public bool isDebug = false;
 
     public float maxDistanceToDQ = 10.0f;
     public List<Player> m_Players = new List<Player>();
@@ -94,13 +95,18 @@ class GameManager : MonoBehaviour
         {
             HasGameStarted = true;
             m_GameIsStarting = false;
+            if(m_Players.Count == 1)
+            {
+                isDebug = true;
+            }
         }
     }
     public void PlayerHasWonGame(Player p)
     {
-        //TODO
-        //show places on new screen
-
+        if(!isDebug)
+        {
+            SceneManager.LoadScene("Leaderboards");
+        }
     }
 
     public void StartGameInSeconds(float seconds)

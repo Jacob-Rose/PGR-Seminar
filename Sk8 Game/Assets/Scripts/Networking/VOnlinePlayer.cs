@@ -74,7 +74,8 @@ public class VOnlinePlayer : Networked
 
     protected override void HandleNetworkMessage(Message msg)
     {
-        if(msg is GameStartMessage)
+        base.HandleNetworkMessage(msg);
+        if (msg is GameStartMessage)
         {
             GameStartMessage nMsg = msg as GameStartMessage;
             ConnectionStatus cStat = new ConnectionStatus();
@@ -113,7 +114,11 @@ public class VOnlinePlayer : Networked
             PlayerFellBehindMessage nMsg = msg as PlayerFellBehindMessage;
             GameManager.Instance.PlayerFellBehind(nMsg.playerID);
         }
-        base.HandleNetworkMessage(msg);
+        else if (msg is PlayerWonMessage)
+        {
+            PlayerWonMessage nMsg = msg as PlayerWonMessage;
+            GameManager.Instance.PlayerHasWonGame(GameManager.Instance.GetPlayer(nMsg.playerID));
+        }
     }
 
     public void SendMessage(Message m, SendType type = SendType.NoDelay)

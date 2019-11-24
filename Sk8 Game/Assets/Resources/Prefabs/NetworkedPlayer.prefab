@@ -287,15 +287,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startSpeed: 10
-  speedMod: 0.01
+  speedMod: 0.025
   timeToMaxSpeed: 3
-  m_DraftBounds: {x: 0, y: 0}
-  m_BackDraftMultiplier: 0
+  m_DraftBounds: {x: 2, y: 8}
+  m_BackDraftMultiplier: 1.05
   m_IsDodging: 0
   m_IsSpinning: 0
   m_SpinCount: 2
   m_SpinDuration: 1
   playerID: 3
+  color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!50 &5577072124538956677
 Rigidbody2D:
   serializedVersion: 4
