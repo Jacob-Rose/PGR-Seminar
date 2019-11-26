@@ -17,6 +17,7 @@ class GameManager : MonoBehaviour
     public Dictionary<string, long> m_DeletedPlayers = new Dictionary<string, long>(); //stores the tick when player was deleted, easy for ranking
 
     public bool HasGameStarted { get; private set; } = false;
+    public bool HasGameEnded { get; private set; } = false;
     public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
 
     public ClientPlayer ClientPlayer { get { return m_ClientPlayer; } }
@@ -106,6 +107,7 @@ class GameManager : MonoBehaviour
         if(!isDebug)
         {
             SceneManager.LoadScene("Leaderboards");
+            HasGameEnded = true;
         }
     }
 
@@ -157,13 +159,16 @@ class GameManager : MonoBehaviour
                 }
             }
         }
-        if(destroyed)
+        if(HasGameStarted)
         {
-            m_DeletedPlayers.Add(playerID, DateTime.Now.Ticks);
-        }
-        if(m_Players.Count == 1)
-        {
-            PlayerHasWonGame(m_Players[0]);
+            if (destroyed)
+            {
+                m_DeletedPlayers.Add(playerID, DateTime.Now.Ticks);
+            }
+            if (m_Players.Count == 1)
+            {
+                PlayerHasWonGame(m_Players[0]);
+            }
         }
     }
 
@@ -195,6 +200,30 @@ class GameManager : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public void ResetGame()
+    {
+        SceneManager.LoadScene("MainMenu");
+        if(VHostBehavior.Instance != null)
+        {
+            Destroy(VHostBehavior.Instance.gameObject);
+        }
+        if (VOnlinePlayer.Instance != null)
+        {
+            Destroy(VOnlinePlayer.Instance.gameObject);
+        }
+        HasGameStarted = false;
+        HasGameEnded = false;
+        m_AllObstacles.Clear();
+        Player[] players = FindObjectsOfType<Player>();
+        for(int i =0; i < players.Length; i++)
+        {
+            Destroy(players[i].gameObject);
+        }
+        m_Players.Clear();
+        m_DeletedPlayers.Clear();
+        Destroy(gameObject);
     }
 
 }

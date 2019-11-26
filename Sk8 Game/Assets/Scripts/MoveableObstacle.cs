@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MoveableObstacle : IObstacle
 {
+    public Sprite interactedSprite = null;
     public override void HandleInteraction(Player p)
     {
         if (p is ClientPlayer)
@@ -24,6 +25,7 @@ public class MoveableObstacle : IObstacle
     {
         m_SpriteRenderer.sprite = interactedSprite;
         m_CanBeInteractedWith = false;
+        GetComponent<Collider2D>().enabled = false;
         p.playerInfo.currentScore += scoreIncreaseOnInteract;
     }
 }

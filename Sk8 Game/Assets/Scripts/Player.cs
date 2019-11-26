@@ -32,7 +32,7 @@ public enum PlayerMove //possible actions (limited to what buttosn the player co
     //add more, clean up options
 }
 
-public class Player : MonoBehaviour
+public abstract class Player : MonoBehaviour
 {
     [SerializeField]
     protected float startSpeed;
@@ -59,8 +59,6 @@ public class Player : MonoBehaviour
     public float m_SpinDuration = 1.0f;
 
 
-
-
     public float MaxSpeed
     {
         get
@@ -81,6 +79,7 @@ public class Player : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
+    public abstract string GetUsername();
     private void OnDestroy()
     {
         StopAllCoroutines();

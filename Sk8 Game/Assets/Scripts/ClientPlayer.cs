@@ -221,4 +221,8 @@ public class ClientPlayer : Player
 
     }
 
+    public override string GetUsername()
+    {
+        return GameManager.Instance.m_PlayerUsername;
+    }
 }

@@ -6,7 +6,12 @@ using UnityEngine;
 public class NetworkedPlayer : Player
 {
     public string playerID = "";
-    public Color color = Color.white; 
+    public Color color = Color.white;
+
+    public override string GetUsername()
+    {
+        return playerID;
+    }
 
     public override void Start()
     {

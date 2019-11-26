@@ -284,8 +284,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ObstacleList:
-  - {fileID: 421345708782655166, guid: 6b4bfd82888223544b6f7e41325aa375, type: 3}
   - {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0, type: 3}
+  - {fileID: 421345708782655166, guid: 6b4bfd82888223544b6f7e41325aa375, type: 3}
   m_StartTransform: {fileID: 1368724443}
   m_EndPrefab: {fileID: 5568872276589035682, guid: f9756aaa45bd48e46b6b71cefb861e9d,
     type: 3}
@@ -324,11 +324,12 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   m_WallPrefab: {fileID: 4000147995785073723, guid: 947b82f43e08d83469dd5da40cef77ad,
     type: 3}
-  roadCount: 30
+  spawnAheadDistance: 50
+  m_RoadsToSpawn: 100
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
   m_WallWidth: 2
-  obstaclesPerTile: 2
+  obstaclesPerTile: 4
   roadWidthOverTime:
     serializedVersion: 2
     m_Curve:
@@ -353,7 +354,6 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  m_CurrentRoadCount: 0
 --- !u!1 &1368724442
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,7 +594,6 @@ MonoBehaviour:
   lerpAmount: 0.6
   zoomOffset: 8
   zoomMultiplier: 1
-  maxDistance: 10
 --- !u!114 &1961854996
 MonoBehaviour:
   m_ObjectHideFlags: 0

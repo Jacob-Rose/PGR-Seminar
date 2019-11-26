@@ -3,14 +3,17 @@ using TMPro;
 using System.Net;
 using System;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class HostMenuManager : MonoBehaviour
 {
     public TextMeshProUGUI ipText;
+    public Button mainMenuButton;
 
     private void Start()
     {
         SceneManager.LoadScene("facade_park", LoadSceneMode.Additive);
+        mainMenuButton.onClick.AddListener(GameManager.Instance.ResetGame);
     }
     public string GetLocalIPAddress()
     {

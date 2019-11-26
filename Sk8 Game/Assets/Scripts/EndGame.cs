@@ -10,19 +10,19 @@ public class EndGame : MonoBehaviour
         {
             if (collision.gameObject.CompareTag("Player"))
             {
-                Player p = collision.gameObject.GetComponent<ClientPlayer>();
-                string playerID;
-                if (p == null)
+                Player p = collision.gameObject.GetComponent<Player>();
+                Player[] players = FindObjectsOfType<Player>();
+                for(int i = 0; i < players.Length; i++) //remove all players except the winner for leaderboards
                 {
-                    p = collision.gameObject.GetComponent<NetworkedPlayer>();
-                    playerID = (p as NetworkedPlayer).playerID;
+                    if(players[i] != p)
+                    {
+                        GameManager.Instance.RemovePlayer(players[i].GetUsername());
+                    }
                 }
-                else
-                {
-                    playerID = GameManager.Instance.m_PlayerUsername;
-                }
+                
                 GameManager.Instance.PlayerHasWonGame(p);
-                PlayerWonMessage message = new PlayerWonMessage(playerID);
+                PlayerWonMessage message = new PlayerWonMessage(p.GetUsername());
+                VHostBehavior.Instance.SendMessageToAllPlayers(message);
             }
         }
     }

@@ -203,8 +203,9 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: name
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9cfc247b4c5f4fd408f95d3afbbbc97c, type: 2}
+  m_sharedMaterial: {fileID: -6927537238037054282, guid: 9cfc247b4c5f4fd408f95d3afbbbc97c,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -432,7 +433,7 @@ MonoBehaviour:
   m_SpinCount: 2
   m_SpinDuration: 1
   zRotAmount: 50
-  m_SpeedDecreaseAmount: 0.1
+  m_SpeedDecreaseAmount: 0.6
   m_InteractMaxDist: 4
   m_DodgeTimeInAir: 1.5
 --- !u!50 &5769516655359432254
@@ -541,8 +542,9 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 9cfc247b4c5f4fd408f95d3afbbbc97c, type: 2}
+  m_sharedMaterial: {fileID: -6927537238037054282, guid: 9cfc247b4c5f4fd408f95d3afbbbc97c,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -14,6 +14,8 @@ public class VOnlinePlayer : Networked
 
     public static VOnlinePlayer Instance { get { return m_Instance; } }
     private static VOnlinePlayer m_Instance;
+
+    public bool Connected { get { return m_Connection != uint.MaxValue; } }
     public override void Start()
     {
         m_Instance = this;

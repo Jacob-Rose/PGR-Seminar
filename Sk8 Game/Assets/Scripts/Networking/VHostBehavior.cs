@@ -57,6 +57,7 @@ public class VHostBehavior : Networked
     public void PlayerConnected(uint connection)
     {
         m_Connections.Add(connection, null);
+        //rest is handleled when playerconnectedmessage recieved
     }
 
     public void PlayerDisconnected(uint connection, string playerID)
@@ -65,8 +66,9 @@ public class VHostBehavior : Networked
         SendMessageToAllPlayers(dMsg, SendType.Reliable);
         GameManager.Instance.RemovePlayer(playerID);
         m_Connections.Remove(connection);
-        Invoke("RealignPlayersAndSend", 0.1f); //need a delay for them to add the player
         m_Server.CloseConnection(connection);
+
+        RealignPlayersAndSend();
     }
 
     //NOTE: CURRENTLY NO TESTING FOR ANY SECURITY, ONE PLAYER COULD SEND FAKE PACKETS IF THEY WERE SMART ENOUGH AND RIG THE GAME
@@ -91,7 +93,7 @@ public class VHostBehavior : Networked
                     SendMessageToAllPlayers(cPlayerUpdateMsg);
                 }
             }
-            if(GameManager.Instance.HasGameStarted)
+            if(GameManager.Instance.HasGameStarted && !GameManager.Instance.HasGameEnded)
             {
                 CheckForBoundsLoss(); //check if any player fallen behind
             }
@@ -114,19 +116,13 @@ public class VHostBehavior : Networked
                 firstPlace = m_Targets[i];
             }
         }
-
-        string playerID;
-        if (lastPlace is ClientPlayer)
+        if(lastPlace != null) //occurs when game ends sometimes
         {
-            playerID = GameManager.Instance.m_PlayerUsername;
-        }
-        else
-        {
-            playerID = (lastPlace as NetworkedPlayer).playerID;
-        }
-        if (firstPlace.transform.position.y- lastPlace.transform.position.y > GameManager.Instance.maxDistanceToDQ)
-        {
-            PlayerFellBehind(playerID);
+            string playerID = lastPlace.GetUsername();
+            if (firstPlace.transform.position.y - lastPlace.transform.position.y > GameManager.Instance.maxDistanceToDQ)
+            {
+                PlayerFellBehind(playerID);
+            }
         }
     }
 
@@ -154,6 +150,7 @@ public class VHostBehavior : Networked
     }
     public void StartGameInSeconds(float seconds)
     {
+        RealignPlayersAndSend();
         GameManager.Instance.StartGameInSeconds(seconds);
         GameStartMessage msg = new GameStartMessage(DateTime.Now.Ticks, seconds);
         SendMessageToAllPlayers(msg);

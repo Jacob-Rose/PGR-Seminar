@@ -499,6 +499,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PlayerUsername: 
+  m_PlayerColor: {r: 1, g: 1, b: 1, a: 1}
+  isDebug: 0
+  maxDistanceToDQ: 10
   m_Players: []
   m_AllObstacles: []
 --- !u!4 &751423855
