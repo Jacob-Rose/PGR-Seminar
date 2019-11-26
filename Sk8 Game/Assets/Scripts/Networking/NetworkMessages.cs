@@ -11,7 +11,7 @@ enum NetworkEvent
     PlayerDisconnected,
     PlayerUpdateInfo,
     PlayerFellBehind,
-    PlayerHitObstacle,
+    //PlayerHitObstacle,
     PlayerWonRace,
     ObstacleGenerated,
     ObstacleModified
@@ -46,6 +46,9 @@ public abstract class Message
             case NetworkEvent.PlayerConnected:
                 msg = new PlayerConnectedMessage(msgBytes);
                 break;
+            case NetworkEvent.PlayerDisconnected:
+                msg = new PlayerDisconnectedMessage(msgBytes);
+                break;
             case NetworkEvent.ObstacleGenerated:
                 msg = new ObstacleGeneratedMessage(msgBytes);
                 break;
@@ -59,7 +62,7 @@ public abstract class Message
                 msg = new PlayerWonMessage(msgBytes);
                 break;
             default:
-                throw new Exception("oops");
+                throw new Exception("oops " + eventType);
         }
         return msg;
     }
@@ -416,7 +419,6 @@ public class ObstacleModifiedMessage : Message
 
 }
 
-//TODO
 public class ObstacleMovedMessage : Message
 {
     public uint obstacleID;

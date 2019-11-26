@@ -25,7 +25,6 @@ public class VOnlinePlayer : Networked
             {
                 case ConnectionState.None:
                     print("no connection exist, reset?");
-
                     break;
 
                 case ConnectionState.Connected:
