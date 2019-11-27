@@ -18,7 +18,7 @@ class GameManager : MonoBehaviour
 
     public bool HasGameStarted { get; private set; } = false;
     public bool HasGameEnded { get; private set; } = false;
-    public float SecondsTillStart { get { return (float)(timeToStart - DateTime.Now).TotalSeconds; } }
+    public float SecondsTillStart { get { return (float)(timeToStart - DateTime.UtcNow).TotalSeconds; } }
 
     public ClientPlayer ClientPlayer { get { return m_ClientPlayer; } }
 
@@ -114,7 +114,7 @@ class GameManager : MonoBehaviour
     public void StartGameInSeconds(float seconds)
     {
         SceneManager.LoadScene("thepark");
-        timeToStart = DateTime.Now.AddSeconds(seconds);
+        timeToStart = DateTime.UtcNow.AddSeconds(seconds);
         m_GameIsStarting = true;
         Invoke("StartGame", seconds);
     }
@@ -163,7 +163,7 @@ class GameManager : MonoBehaviour
         {
             if (destroyed)
             {
-                m_DeletedPlayers.Add(playerID, DateTime.Now.Ticks);
+                m_DeletedPlayers.Add(playerID, DateTime.UtcNow.Ticks);
             }
             if (m_Players.Count == 1)
             {

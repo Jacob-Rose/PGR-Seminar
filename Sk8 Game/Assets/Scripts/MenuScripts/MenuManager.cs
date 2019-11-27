@@ -7,6 +7,7 @@ using TMPro;
 public class MenuManager : MonoBehaviour
 {
     public TextMeshProUGUI usernameText;
+    public int usernameCharLimit = 16;
     // Start is called before the first frame update
 
     public void LoadLevel(string name)
@@ -14,6 +15,10 @@ public class MenuManager : MonoBehaviour
         string username = usernameText.text.Trim(new char[] { (char)8203 });
         if (username != "")
         {
+            if(username.Length > usernameCharLimit)
+            {
+                username.Substring(0, usernameCharLimit);
+            }
             GameManager.Instance.m_PlayerUsername = username;
             SceneManager.LoadScene(name);
         }

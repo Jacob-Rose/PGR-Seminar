@@ -82,7 +82,7 @@ public class VOnlinePlayer : Networked
             GameStartMessage nMsg = msg as GameStartMessage;
             ConnectionStatus cStat = new ConnectionStatus();
             m_Server.GetQuickConnectionStatus(m_Connection, cStat);
-            uniformTimeOffset = ((nMsg.uniformTime.Ticks / TimeSpan.TicksPerSecond) + (((float)cStat.ping) * 0.01f)) - (DateTime.Now.Ticks / TimeSpan.TicksPerSecond);
+            uniformTimeOffset = ((nMsg.uniformTime.Ticks / TimeSpan.TicksPerSecond) + (((float)cStat.ping) * 0.01f)) - (DateTime.UtcNow.Ticks / TimeSpan.TicksPerSecond);
             GameManager.Instance.StartGameInSeconds(nMsg.timeAfterToSpawn + uniformTimeOffset);
         }
         if(msg is PlayerConnectedMessage)

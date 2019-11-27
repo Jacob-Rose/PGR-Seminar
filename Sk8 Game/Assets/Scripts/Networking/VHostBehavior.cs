@@ -152,7 +152,7 @@ public class VHostBehavior : Networked
     {
         RealignPlayersAndSend();
         GameManager.Instance.StartGameInSeconds(seconds);
-        GameStartMessage msg = new GameStartMessage(DateTime.Now.Ticks, seconds);
+        GameStartMessage msg = new GameStartMessage(DateTime.UtcNow.Ticks, seconds);
         SendMessageToAllPlayers(msg);
     }
 
