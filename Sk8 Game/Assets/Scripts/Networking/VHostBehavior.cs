@@ -174,21 +174,27 @@ public class VHostBehavior : Networked
             m_Server.SendMessageToConnection(pair.Key, msg.toBuffer(), type);
         }
     }
-    public float realignWidth = 8.0f;
+    public float realignWidth = 4.0f;
     protected void RealignPlayersAndSend()
     {
         List<Player> players = GameManager.Instance.m_Players;
+        float currentPos = 0;
+        float increment = realignWidth / (players.Count / 2);
+        if(players.Count % 2 == 0) //if even
+        {
+            currentPos += increment; //skip the center pos
+        }
         for (int i = 0; i < players.Count; i++)
         {
-            players[i].SetPosition(new Vector2((-realignWidth * 0.25f) + ((realignWidth / players.Count) * i), players[i].transform.position.y));
-            string playerID;
-            if(players[i] is NetworkedPlayer)
+            players[i].SetPosition(new Vector2(currentPos, players[i].transform.position.y));
+            string playerID = players[i].GetUsername();
+            if(currentPos <= 0.0f)
             {
-                playerID = (players[i] as NetworkedPlayer).playerID;
+                currentPos = Mathf.Abs(currentPos) + increment;
             }
             else
             {
-                playerID = GameManager.Instance.m_PlayerUsername;
+                currentPos = -currentPos;
             }
             SendMessageToAllPlayers(new PlayerUpdateMessage(players[i].playerInfo, playerID), SendType.Reliable);
         }

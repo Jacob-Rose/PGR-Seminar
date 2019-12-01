@@ -57,7 +57,6 @@ public class ConnectionMenu : MonoBehaviour
 
     private void OnGUI()
     {
-        
         if(ConnectionAttempted)
         {
             GUIStyle textStyle = GUI.skin.label;
@@ -73,6 +72,11 @@ public class ConnectionMenu : MonoBehaviour
             {
                 GUI.Label(new Rect(Screen.width * 0.25f, Screen.height * 0.25f, Screen.width * 0.5f, Screen.height * 0.2f),
                     "Connection Failed", textStyle);
+            }
+            else if (!VOnlinePlayer.Instance.Connecting)
+            {
+                GUI.Label(new Rect(Screen.width * 0.25f, Screen.height * 0.25f, Screen.width * 0.5f, Screen.height * 0.2f),
+                    "Attempting Connection", textStyle);
             }
         }
         

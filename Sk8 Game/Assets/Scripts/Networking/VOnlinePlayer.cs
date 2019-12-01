@@ -11,11 +11,13 @@ using Valve.Sockets;
 public class VOnlinePlayer : Networked
 {
     protected uint m_Connection = uint.MaxValue;
+    protected bool m_ConnectionApproved = false;
 
     public static VOnlinePlayer Instance { get { return m_Instance; } }
     private static VOnlinePlayer m_Instance;
 
-    public bool Connected { get { return m_Connection != uint.MaxValue; } }
+    public bool Connected { get { return m_Connection != uint.MaxValue && m_ConnectionApproved; } }
+    public bool Connecting { get { return !m_ConnectionApproved && m_Connection != uint.MaxValue; } }
     public override void Start()
     {
         m_Instance = this;
@@ -25,11 +27,14 @@ public class VOnlinePlayer : Networked
             {
                 case ConnectionState.None:
                     print("no connection exist, reset?");
+                    m_Connection = uint.MaxValue;
+                    m_ConnectionApproved = false;
                     break;
 
                 case ConnectionState.Connected:
                     Debug.Log("I, the Client, connected to server - ID: " + info.connection);
                     m_Connection = info.connection;
+                    m_ConnectionApproved = true;
                     m_Server.SendMessageToConnection(m_Connection, new PlayerConnectedMessage(GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.Reliable);
                     break;
 
