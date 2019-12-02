@@ -122,6 +122,8 @@ public abstract class Player : MonoBehaviour
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.6f); //in case the update is off from current position
         playerInfo.position = transform.position;
+
+
     }
 
 

@@ -16,12 +16,18 @@ public class ClientPlayer : Player
     public float m_InteractMaxDist = 4.0f;
     public float m_DodgeTimeInAir = 1.5f;
 
+    public float m_PlayerXBoundsRight = 7.0f;
+    public float m_PlayerXBoundsLeft = -7.0f;
 
     private float m_TimeSinceDodge = 0.0f;
     private float m_TimeUntilDodge = 3.0f;
     private float m_AttackTimer = 0.0f;
     private float m_InteractTimer = 0.0f;
     private float m_InteractLimit = 1.0f;
+    private float m_CollisionMinimum = 0.3f;
+    private float m_WallCollisionSpeedReduce = 0.90f;
+    private float m_PlayerCollisionSpeedReduce = 0.95f;
+    private float m_AttackRange = 0.5f;
     private float m_CurrentClosestDistance = 0.0f;
     private IObstacle m_ClosestObstacle = null;
 
@@ -54,7 +60,8 @@ public class ClientPlayer : Player
         HandleInput(Time.deltaTime);
         m_InteractTimer += Time.deltaTime;
         FindClosestObstacle();
-        
+        PlayerCollision();
+        PlayerAttack();
         base.Update();
     }
 
@@ -108,26 +115,81 @@ public class ClientPlayer : Player
         m_LatestDevice = context.control.device;
     }
 
+    public void PlayerCollision()
+    {
+        Player closestPlayer = null;
+        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
+        {
+            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) && GameManager.Instance.m_Players[i] != this)
+            {
+                closestPlayer = GameManager.Instance.m_Players[i];
+            }
+        }
+        if(closestPlayer != null || playerInfo.position.x <= m_PlayerXBoundsLeft || playerInfo.position.x >= m_PlayerXBoundsRight)
+        {
+            if(playerInfo.position.x <= m_PlayerXBoundsLeft)
+            {
+                playerInfo.zRot = -playerInfo.zRot;
+                playerInfo.position.x = m_PlayerXBoundsLeft + 0.1f;
+                playerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
+
+            }
+            else if(playerInfo.position.x >= m_PlayerXBoundsRight)
+            {
+                playerInfo.zRot = -playerInfo.zRot;
+                playerInfo.position.x = m_PlayerXBoundsRight - 0.1f;
+                playerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
+
+            }
+            else if(closestPlayer != null)
+            {
+                if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
+                {
+                    if(playerInfo.position.x <= closestPlayer.playerInfo.position.x)
+                    {
+                        playerInfo.zRot = -playerInfo.zRot;
+                        playerInfo.position.x = closestPlayer.playerInfo.position.x - 0.2f;
+                        playerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
+
+                    }
+                    else if(playerInfo.position.x >= closestPlayer.playerInfo.position.x)
+                    {
+                        playerInfo.zRot = -playerInfo.zRot;
+                        playerInfo.position.x = closestPlayer.playerInfo.position.x + 0.2f;
+                        playerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
+
+                    }
+                }
+            }
+
+        }
+    }
+
     public void PlayerAttack()
     {
         Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            /*if (Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) < )
+            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_AttackRange) && GameManager.Instance.m_Players[i] != this)
             {
                 closestPlayer = GameManager.Instance.m_Players[i];
-            }*/
+            }
         }
         if(closestPlayer != null)
         {
-            if (Input.GetKeyDown(KeyCode.LeftControl))
+            if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
             {
-                if (m_AttackTimer > 3.0f)
+                if (Input.GetKeyDown(KeyCode.LeftControl))
                 {
-                    m_TimeSinceDodge = 0.0f;
-                    //Run crash animation
-                    playerInfo.currentSpeed *= 0.85f;
+                    if (m_AttackTimer > 3.0f)
+                    {
+                        m_TimeSinceDodge = 0.0f;
+                        m_AttackTimer = 0.0f;
+                        //Run crash animation
+                        closestPlayer.StartSpin();
+                        closestPlayer.playerInfo.currentScore -= 5;
 
+                    }
                 }
             }
         }
