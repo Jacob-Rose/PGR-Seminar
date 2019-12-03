@@ -11,6 +11,7 @@ class GameManager : MonoBehaviour
     public Color m_PlayerColor = Color.white;
     public bool isDebug = false;
     public Player leadPlayer;
+    public Player lastPlace;
     public float maxDistanceToDQ = 10.0f;
     public List<Player> m_Players = new List<Player>();
     public List<Obstacle> m_AllObstacles = new List<Obstacle>();
@@ -44,6 +45,8 @@ class GameManager : MonoBehaviour
 
     public void Start()
     {
+        lastPlace = null;
+        leadPlayer = null;
         DontDestroyOnLoad(this);
         SpawnClientPlayer();
     }
@@ -60,11 +63,13 @@ class GameManager : MonoBehaviour
 
         for (int i = 0; i < m_Players.Count; i++)
         {
-            Player currentPlayerCheck;
-            currentPlayerCheck = m_Players[i];
-            if(currentPlayerCheck.playerInfo.position.y > leadPlayer.playerInfo.position.y)
+            if (lastPlace == null || m_Players[i].transform.position.y < lastPlace.transform.position.y)
             {
-                leadPlayer = currentPlayerCheck;
+                lastPlace = m_Players[i];
+            }
+            if (leadPlayer == null || m_Players[i].transform.position.y > leadPlayer.transform.position.y)
+            {
+                leadPlayer = m_Players[i];
             }
         }
     }

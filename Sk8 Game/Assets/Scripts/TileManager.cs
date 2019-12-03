@@ -48,7 +48,7 @@ public class TileManager : MonoBehaviour
         previousSpawnPoint = dynamicSpawnPoint;
         m_RoadPrefab.transform.localScale = Vector2.one;
         m_GrassPrefab.transform.localScale = Vector2.one;
-        m_SceneryPrefab.transform.localScale = Vector2.one;
+
 
         Bounds spriteBounds = m_RoadPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
         m_RoadPrefab.transform.localScale = new Vector3(desiredRoadTileSize.x / spriteBounds.size.x, desiredRoadTileSize.y / spriteBounds.size.y, 1);
