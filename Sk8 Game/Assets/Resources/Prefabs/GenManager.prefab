@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5584042098120884688
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5584042098120884691}
+  - component: {fileID: 5584042098120884685}
+  m_Layer: 0
+  m_Name: GenManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5584042098120884691
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5584042098120884688}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5584042098120884685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5584042098120884688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f5695ca236857c478ed8b398bc56317, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ObstacleList:
+  - {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0, type: 3}
+  - {fileID: 421345708782655166, guid: 6b4bfd82888223544b6f7e41325aa375, type: 3}
+  - {fileID: 2848318007832950990, guid: 8a537a9c51d1e044e8dbde3bc6c756fd, type: 3}
+  m_StartTransform: {fileID: 0}
+  m_EndPrefab: {fileID: 5568872276589035682, guid: f9756aaa45bd48e46b6b71cefb861e9d,
+    type: 3}
+  m_RoadPrefab: {fileID: 676402263228062703, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
+    type: 3}
+  m_GrassPrefab: {fileID: 415194785571114761, guid: cc440f852f738134d8e2d527ecab32db,
+    type: 3}
+  m_WallGradient:
+    serializedVersion: 2
+    key0: {r: 0.19136095, g: 1, b: 0, a: 1}
+    key1: {r: 1, g: 0, b: 0, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
+  m_WallPrefab: {fileID: 4000147995785073723, guid: 947b82f43e08d83469dd5da40cef77ad,
+    type: 3}
+  m_SceneryPrefab: {fileID: 2600609460895546931, guid: f0dd6ab6e9b9c9a4b9fe299ab113bde6,
+    type: 3}
+  m_SceneryTiles:
+  - {fileID: 21300000, guid: cb54196c19bf50c48a695630a352a6d5, type: 3}
+  spawnAheadDistance: 50
+  leadPlayerPos: {x: 0, y: 0}
+  m_RoadsToSpawn: 100
+  desiredRoadTileSize: {x: 10, y: 12}
+  m_GrassWidth: 2
+  m_WallWidth: 2
+  m_SceneryWidth: 4
+  obstaclesPerTile: 4

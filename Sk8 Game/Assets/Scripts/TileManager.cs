@@ -15,6 +15,7 @@ public class TileManager : MonoBehaviour
     public Gradient m_WallGradient;
     public GameObject m_WallPrefab;
     public GameObject m_SceneryPrefab;
+    public Sprite[] m_SceneryTiles; //all need to be the same size
 
     public float spawnAheadDistance = 50.0f;
 
@@ -144,7 +145,9 @@ public class TileManager : MonoBehaviour
         wallLeft.GetComponent<SpriteRenderer>().color = m_WallGradient.Evaluate(((float)m_CurrentRoad) / m_RoadsToSpawn);
         GameObject wallRight = Instantiate(m_WallPrefab, spawnBounds.center + new Vector3((spawnBounds.size.x + (m_GrassWidth * 2) + m_WallWidth) * 0.5f, 0, 0), Quaternion.identity, transform);
         wallRight.GetComponent<SpriteRenderer>().color = m_WallGradient.Evaluate(((float)m_CurrentRoad) / m_RoadsToSpawn);
+        m_SceneryPrefab.GetComponent<SpriteRenderer>().sprite = m_SceneryTiles[Random.Range(0, m_SceneryTiles.Length)];
         GameObject sceneryLeft = Instantiate(m_SceneryPrefab, spawnBounds.center - new Vector3(((spawnBounds.size.x * 0.5f) + (m_GrassWidth) + (m_WallWidth) + (m_SceneryWidth * 0.5f)), 0, 0), Quaternion.identity, transform);
+        m_SceneryPrefab.GetComponent<SpriteRenderer>().sprite = m_SceneryTiles[Random.Range(0, m_SceneryTiles.Length)];
         GameObject sceneryRight = Instantiate(m_SceneryPrefab, spawnBounds.center + new Vector3(((spawnBounds.size.x * 0.5f) + (m_GrassWidth) + (m_WallWidth) + (m_SceneryWidth * 0.5f)), 0, 0), Quaternion.identity, transform);
         if (m_CurrentRoad >= m_RoadsToSpawn - 3) //spawn end for the last three roads
         {
