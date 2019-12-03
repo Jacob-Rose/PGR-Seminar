@@ -363,7 +363,7 @@ MonoBehaviour:
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
   m_WallWidth: 2
-  m_SceneryWidth: 6
+  m_SceneryWidth: 4
   obstaclesPerTile: 4
 --- !u!1 &1368724442
 GameObject:
