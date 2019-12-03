@@ -494,6 +494,7 @@ MonoBehaviour:
   m_PlayerColor: {r: 1, g: 1, b: 1, a: 1}
   isDebug: 0
   leadPlayer: {fileID: 0}
+  lastPlace: {fileID: 0}
   maxDistanceToDQ: 10
   m_Players: []
   m_AllObstacles: []

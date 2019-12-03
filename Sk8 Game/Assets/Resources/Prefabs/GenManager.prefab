@@ -97,6 +97,6 @@ MonoBehaviour:
   m_RoadsToSpawn: 100
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
-  m_WallWidth: 2
+  m_WallWidth: 1
   m_SceneryWidth: 8
   obstaclesPerTile: 4

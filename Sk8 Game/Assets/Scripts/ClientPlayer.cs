@@ -24,7 +24,7 @@ public class ClientPlayer : Player
     private float m_InteractTimer = 0.0f;
     private float m_InteractLimit = 1.0f;
     private float m_CollisionMinimum = 0.3f;
-    private float m_WallCollisionSpeedReduce = 0.90f;
+    private float m_WallCollisionSpeedReduce = 0.80f;
     private float m_PlayerCollisionSpeedReduce = 0.95f;
     private float m_AttackRange = 1.5f;
     private float m_CurrentClosestDistance = 0.0f;
@@ -63,7 +63,7 @@ public class ClientPlayer : Player
         m_InteractTimer += Time.deltaTime;
         FindClosestObstacle();
         PlayerCollision();
-        PlayerAttack();
+        //PlayerAttack();
         CheckPlayerSound();
         base.Update();
     }
@@ -82,10 +82,12 @@ public class ClientPlayer : Player
                 TryPlayRollingSound();
             }
         }
+        /*
         if(aux.isPlaying)
         {
             Debug.LogError("audio is playing");
         }
+        */
     }
 
     public void TryPlayRollingSound()
@@ -249,9 +251,7 @@ public class ClientPlayer : Player
                         m_TimeSinceDodge = 0.0f;
                         m_InteractTimer = 0.0f;
                         //Run crash animation
-                        closestPlayer.StartSpin();
-                        closestPlayer.playerInfo.currentScore -= 5;
-                        Debug.Log("Attack work");
+                        GameManager.Instance.PlayerAttackedByPlayer(this, closestPlayer);
                     }
                 }
             }
@@ -298,6 +298,7 @@ public class ClientPlayer : Player
 
     public IEnumerator Attack(float duration)
     {
+        playerInfo.attacking = true;
         m_IsAttacking = true;
         float time = 0.0f;
         while (time <= duration)
@@ -305,13 +306,12 @@ public class ClientPlayer : Player
             time += Time.deltaTime;
             yield return 0;
         }
+        playerInfo.attacking = false;
         m_IsAttacking = false;
     }
 
     private void OnGUI()
     {
-
-        
         Rect maxSpeedRect = new Rect(Screen.width / 2, 0, (Screen.width / 2) - 10, 40);
         Rect forwardSpeedRect = new Rect(Screen.width / 2, 40, (Screen.width / 2) - 10, 40);
         Rect speedRect = new Rect(Screen.width / 2, 80, (Screen.width / 2)- 10, 40);

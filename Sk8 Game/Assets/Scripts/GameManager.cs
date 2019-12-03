@@ -37,6 +37,19 @@ class GameManager : MonoBehaviour
         return m_AllObstacles.Count;
     }
 
+    public void PlayerAttackedByPlayer(Player attacking, Player attacked)
+    {
+        /*
+        if(VHostBehavior.Instance != null)
+        {
+
+        }
+        else
+        {
+            VOnlinePlayer.Instance.SendMessage()
+        }
+        */
+    }
     public bool HasPlayerExisted(string playerID)
     {
         long ticks;

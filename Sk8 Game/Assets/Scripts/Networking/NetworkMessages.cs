@@ -504,3 +504,60 @@ public class PlayerWonMessage : Message
         return buffer;
     }
 }
+
+public class PlayerAttackedByPlayer : Message
+{
+    public string attackedPlayerID;
+    public string attackeePlayerID;
+    public PlayerAttackedByPlayer(byte[] buffer)
+    {
+        int currentByteIndex = 0;
+        eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        int playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        attackedPlayerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            attackedPlayerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+        playerIDCount = BitConverter.ToUInt16(buffer, currentByteIndex);
+        currentByteIndex += sizeof(ushort);
+        attackeePlayerID = "";
+        for (int i = 0; i < playerIDCount; i++)
+        {
+            attackeePlayerID += BitConverter.ToChar(buffer, currentByteIndex);
+            currentByteIndex += sizeof(char);
+        }
+    }
+
+    public PlayerAttackedByPlayer(string attackedPlayerID, string attackeePlayerID)
+    {
+        eventType = (ushort)NetworkEvent.PlayerWonRace;
+        this.attackedPlayerID = attackedPlayerID;
+        this.attackeePlayerID = attackeePlayerID;
+    }
+    public override byte[] toBuffer()
+    {
+        byte[] buffer = new byte[4 + ((attackedPlayerID.Length + attackeePlayerID.Length) * sizeof(char))];
+        int currentBufferIndex = 0;
+        Buffer.BlockCopy(BitConverter.GetBytes(eventType), 0, buffer, 0, 2);
+        currentBufferIndex += 2;
+        Buffer.BlockCopy(BitConverter.GetBytes(attackedPlayerID.Length), 0, buffer, 2, 4);
+        currentBufferIndex += 4;
+        for (int i = 0; i < attackedPlayerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(attackedPlayerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+            currentBufferIndex += sizeof(char);
+        }
+        Buffer.BlockCopy(BitConverter.GetBytes(attackeePlayerID.Length), 0, buffer, 2, 4);
+        currentBufferIndex += 4;
+        for (int i = 0; i < attackeePlayerID.Length; i++)
+        {
+            Buffer.BlockCopy(BitConverter.GetBytes(attackeePlayerID[i]), 0, buffer, 4 + i * sizeof(char), sizeof(char));
+            currentBufferIndex += sizeof(char);
+        }
+        return buffer;
+    }
+}

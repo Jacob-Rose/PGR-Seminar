@@ -20,6 +20,8 @@ public struct PlayerInfo //sent from server to
     public int currentScore;
     [SerializeField]
     public bool collidable;
+    [SerializeField]
+    public bool attacking;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
