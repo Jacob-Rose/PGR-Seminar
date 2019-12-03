@@ -25,7 +25,7 @@ public class TileManager : MonoBehaviour
     public Vector2 desiredRoadTileSize = new Vector2(8.0f, 12.0f);
     public float m_GrassWidth = 4.0f;
     public float m_WallWidth = 2.0f;
-    public float m_SceneryWidth = 6.0f;
+    public float m_SceneryWidth = 12.0f;
     //private Vector2 roadTileSize;
     public int obstaclesPerTile = 2;
 
