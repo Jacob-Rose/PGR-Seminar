@@ -88,7 +88,8 @@ MonoBehaviour:
   m_SceneryPrefab: {fileID: 2600609460895546931, guid: f0dd6ab6e9b9c9a4b9fe299ab113bde6,
     type: 3}
   m_SceneryTiles:
-  - {fileID: 21300000, guid: cb54196c19bf50c48a695630a352a6d5, type: 3}
+  - {fileID: 21300000, guid: e8315a5b0d9d28b4f8f6bbccf99e9010, type: 3}
+  - {fileID: 21300000, guid: 8570759265c3ef24482aeb47d3bfea52, type: 3}
   spawnAheadDistance: 50
   leadPlayerPos: {x: 0, y: 0}
   m_RoadsToSpawn: 100

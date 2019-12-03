@@ -41,6 +41,14 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8f5625e-40a5-4a49-827d-bd72fa560e0d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -206,6 +214,39 @@ public class InputMaster : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
                     ""action"": ""Jump"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2d85f633-8220-41f9-bdac-20760eb9c2ed"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2f6c893b-915a-434c-9f21-c868f07cdd79"",
+                    ""path"": ""<DualShockGamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PS4Controller"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""00055f4c-e771-4e0e-99a0-c87280769ee5"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""XboxController"",
+                    ""action"": ""Attack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -376,6 +417,7 @@ public class InputMaster : IInputActionCollection, IDisposable
         m_Player_Turn = m_Player.FindAction("Turn", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Move = m_UI.FindAction("Move", throwIfNotFound: true);
@@ -432,6 +474,7 @@ public class InputMaster : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Turn;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_Attack;
     public struct PlayerActions
     {
         private InputMaster m_Wrapper;
@@ -439,6 +482,7 @@ public class InputMaster : IInputActionCollection, IDisposable
         public InputAction @Turn => m_Wrapper.m_Player_Turn;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -457,6 +501,9 @@ public class InputMaster : IInputActionCollection, IDisposable
                 Jump.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 Jump.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
                 Jump.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnJump;
+                Attack.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                Attack.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
+                Attack.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -470,6 +517,9 @@ public class InputMaster : IInputActionCollection, IDisposable
                 Jump.started += instance.OnJump;
                 Jump.performed += instance.OnJump;
                 Jump.canceled += instance.OnJump;
+                Attack.started += instance.OnAttack;
+                Attack.performed += instance.OnAttack;
+                Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -556,6 +606,7 @@ public class InputMaster : IInputActionCollection, IDisposable
         void OnTurn(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -21,8 +21,6 @@ public class ClientPlayer : Player
 
     private float m_TimeSinceDodge = 0.0f;
     private float m_TimeUntilDodge = 3.0f;
-    private float m_AttackTimer = 0.0f;
-    private float m_AttackLimit = 3.0f;
     private float m_InteractTimer = 0.0f;
     private float m_InteractLimit = 1.0f;
     private float m_CollisionMinimum = 0.3f;
@@ -60,7 +58,6 @@ public class ClientPlayer : Player
 
         HandleInput(Time.deltaTime);
         m_InteractTimer += Time.deltaTime;
-        m_AttackTimer += Time.deltaTime;
         FindClosestObstacle();
         PlayerCollision();
         PlayerAttack();
@@ -122,7 +119,9 @@ public class ClientPlayer : Player
         Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) && GameManager.Instance.m_Players[i] != this)
+            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) 
+                /*&& closestPlayer == null || (Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= Vector2.Distance(playerInfo.position, closestPlayer.transform.position))*/
+                && GameManager.Instance.m_Players[i] != this)
             {
                 closestPlayer = GameManager.Instance.m_Players[i];
             }
@@ -182,7 +181,7 @@ public class ClientPlayer : Player
         {
             if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
             {
-                if (Input.GetKeyDown(KeyCode.LeftControl))
+                if (controls.Player.Attack.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
                 {
                     //run punch animation
                     if(closestPlayer.playerInfo.position.x > playerInfo.position.x)
@@ -195,10 +194,10 @@ public class ClientPlayer : Player
                     }
                     StartCoroutine(Attack(m_AttackDuration));
                     Debug.Log("attack happen)");
-                    if (m_AttackTimer > m_AttackLimit)
+                    if (m_InteractTimer > m_InteractLimit)
                     {
                         m_TimeSinceDodge = 0.0f;
-                        m_AttackTimer = 0.0f;
+                        m_InteractTimer = 0.0f;
                         //Run crash animation
                         closestPlayer.StartSpin();
                         closestPlayer.playerInfo.currentScore -= 5;
@@ -293,7 +292,7 @@ public class ClientPlayer : Player
 
          
         //Start of Interact Bar code
-        Vector2 interactBarSize = new Vector2(Screen.width * 0.1f, 20);
+        Vector2 interactBarSize = new Vector2(Screen.width * 0.2f, 20);
         Texture2D emptyTex2 = Texture2D.blackTexture;
         Texture2D fullTex2 = Resources.Load<Texture2D>("Sprites/yellow");
 
@@ -302,26 +301,11 @@ public class ClientPlayer : Player
         GUI.Box(new Rect(0, 0, interactBarRect.width, interactBarRect.height), emptyTex2);
         GUI.DrawTexture(new Rect(0, 0, interactBarSize.x * (Mathf.Clamp(m_InteractTimer, 0, m_InteractLimit) / m_InteractLimit), interactBarSize.y), fullTex2);
         GUI.color = Color.black;
-        GUI.Label(new Rect(0, 0, interactBarRect.width, interactBarRect.height), "Interact ", scoreStyle);
+        GUI.Label(new Rect(0, 0, interactBarRect.width, interactBarRect.height), "Interact/Attack ", scoreStyle);
         GUI.color = Color.white;
         GUI.EndGroup();
         //end of interact bar
 
-
-        //Start of Attack Bar
-        Vector2 attackBarSize = new Vector2(Screen.width * 0.1f, 20);
-        Texture2D emptyTex3 = Texture2D.blackTexture;
-        Texture2D fullTex3 = Resources.Load<Texture2D>("Sprites/red");
-
-        Rect attackBarRect = new Rect(10, Screen.height * 0.8f, attackBarSize.x, attackBarSize.y);
-        GUI.BeginGroup(attackBarRect);
-        GUI.Box(new Rect(0, 0, attackBarRect.width, attackBarRect.height), emptyTex3);
-        GUI.DrawTexture(new Rect(0, 0, attackBarSize.x * (Mathf.Clamp(m_AttackTimer, 0, m_AttackLimit) / m_AttackLimit), attackBarSize.y), fullTex3);
-        GUI.color = Color.black;
-        GUI.Label(new Rect(0, 0, attackBarRect.width, attackBarRect.height), "Attack ", scoreStyle);
-        GUI.color = Color.white;
-        GUI.EndGroup();
-        //end of attack bar
 
     }
 
