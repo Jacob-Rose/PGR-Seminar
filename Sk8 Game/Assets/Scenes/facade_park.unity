@@ -300,12 +300,16 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   m_WallPrefab: {fileID: 4000147995785073723, guid: 947b82f43e08d83469dd5da40cef77ad,
     type: 3}
-  roadCount: 300
+  m_SceneryPrefab: {fileID: 2600609460895546931, guid: f0dd6ab6e9b9c9a4b9fe299ab113bde6,
+    type: 3}
+  spawnAheadDistance: 50
+  leadPlayerPos: {x: 0, y: 0}
+  m_RoadsToSpawn: 300
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
   m_WallWidth: 2
+  m_SceneryWidth: 4
   obstaclesPerTile: 2
-  m_CurrentRoadCount: 0
 --- !u!4 &1961027559
 Transform:
   m_ObjectHideFlags: 0

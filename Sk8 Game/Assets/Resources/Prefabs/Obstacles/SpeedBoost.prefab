@@ -96,7 +96,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultSprite: {fileID: 21300000, guid: 97e05e5ae0c4bf8429d8a0af0741654a, type: 3}
   id: 0
-  speedMultiplier: 1.2
+  speedMultiplier: 1.05
   m_ShouldSpinPlayer: 0
 --- !u!61 &5164184807660808167
 BoxCollider2D:
