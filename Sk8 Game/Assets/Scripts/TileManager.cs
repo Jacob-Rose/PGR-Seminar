@@ -77,7 +77,6 @@ public class TileManager : MonoBehaviour
     int obsCount = 0;
     ObstInfo SpawnObstaclesOnTile(Bounds tileBounds)
     {
-
         ObstInfo returnVal = new ObstInfo();
         Vector3 obstaclePos = CreateObstaclePoint(tileBounds);
         float obstListNum = (float)m_ObstacleList.Length;
