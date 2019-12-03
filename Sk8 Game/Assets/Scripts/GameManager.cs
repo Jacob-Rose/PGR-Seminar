@@ -60,11 +60,11 @@ class GameManager : MonoBehaviour
 
         for (int i = 0; i < m_Players.Count; i++)
         {
-            Player currentPlayer = null;
-            currentPlayer = m_Players[i];
-            if(currentPlayer.playerInfo.position.y > leadPlayer.playerInfo.position.y)
+            Player currentPlayerCheck;
+            currentPlayerCheck = m_Players[i];
+            if(currentPlayerCheck.playerInfo.position.y > leadPlayer.playerInfo.position.y)
             {
-                leadPlayer = currentPlayer;
+                leadPlayer = currentPlayerCheck;
             }
         }
     }

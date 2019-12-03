@@ -120,6 +120,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &372190711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 372190712}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &372190712
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 372190711}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -13.818915, y: 26.057482, z: -334.9488}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &822214937
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -170,7 +200,7 @@ PrefabInstance:
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 676402263228062705, guid: 0fd5a185887b17546a8d2e309c8e6aa9,
         type: 3}
@@ -269,7 +299,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1033165296
 MonoBehaviour:
@@ -286,6 +316,7 @@ MonoBehaviour:
   m_ObstacleList:
   - {fileID: 6930367594099994794, guid: bdb1a57ebc95ea045843add109c2b5f0, type: 3}
   - {fileID: 421345708782655166, guid: 6b4bfd82888223544b6f7e41325aa375, type: 3}
+  - {fileID: 2848318007832950990, guid: 8a537a9c51d1e044e8dbde3bc6c756fd, type: 3}
   m_StartTransform: {fileID: 1368724443}
   m_EndPrefab: {fileID: 5568872276589035682, guid: f9756aaa45bd48e46b6b71cefb861e9d,
     type: 3}
@@ -324,14 +355,15 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   m_WallPrefab: {fileID: 4000147995785073723, guid: 947b82f43e08d83469dd5da40cef77ad,
     type: 3}
-  m_SceneryPrefab: {fileID: 221927300866773607, guid: f0dd6ab6e9b9c9a4b9fe299ab113bde6,
+  m_SceneryPrefab: {fileID: 2600609460895546931, guid: f0dd6ab6e9b9c9a4b9fe299ab113bde6,
     type: 3}
   spawnAheadDistance: 50
+  leadPlayerPos: {x: 0, y: 0}
   m_RoadsToSpawn: 100
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
   m_WallWidth: 2
-  m_SceneryWidth: 4
+  m_SceneryWidth: 6
   obstaclesPerTile: 4
 --- !u!1 &1368724442
 GameObject:
