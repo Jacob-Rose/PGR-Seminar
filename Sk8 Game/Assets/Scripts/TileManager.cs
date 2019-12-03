@@ -14,13 +14,17 @@ public class TileManager : MonoBehaviour
     public GameObject m_GrassPrefab;
     public Gradient m_WallGradient;
     public GameObject m_WallPrefab;
+    //public GameObject m_SceneryPrefab;
 
     public float spawnAheadDistance = 50.0f;
+
+    public Vector2 leadPlayerPos;
 
     public int m_RoadsToSpawn = 300;
     public Vector2 desiredRoadTileSize = new Vector2(8.0f, 12.0f);
     public float m_GrassWidth = 4.0f;
     public float m_WallWidth = 2.0f;
+    //public float m_SceneryWidth = 4.0f;
     //private Vector2 roadTileSize;
     public int obstaclesPerTile = 2;
 
@@ -44,6 +48,8 @@ public class TileManager : MonoBehaviour
         previousSpawnPoint = dynamicSpawnPoint;
         m_RoadPrefab.transform.localScale = Vector2.one;
         m_GrassPrefab.transform.localScale = Vector2.one;
+        //m_SceneryPrefab.transform.localScale = Vector2.one;
+
         Bounds spriteBounds = m_RoadPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
         m_RoadPrefab.transform.localScale = new Vector3(desiredRoadTileSize.x / spriteBounds.size.x, desiredRoadTileSize.y / spriteBounds.size.y, 1);
         spriteBounds = m_GrassPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
@@ -52,6 +58,8 @@ public class TileManager : MonoBehaviour
         m_EndPrefab.transform.localScale = new Vector3(desiredRoadTileSize.x / spriteBounds.size.x, 6.0f / spriteBounds.size.y, 1);
         spriteBounds = m_WallPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
         m_WallPrefab.transform.localScale = new Vector3(m_WallWidth/ spriteBounds.size.x, desiredRoadTileSize.y / spriteBounds.size.y, 1);
+        //spriteBounds = m_SceneryPrefab.GetComponent<SpriteRenderer>().sprite.bounds;
+       // m_SceneryPrefab.transform.localScale = new Vector3(m_SceneryWidth / spriteBounds.size.x, desiredRoadTileSize.y / spriteBounds.size.y, 1);
         PopulateRoads(); //to replace
         
     }
@@ -112,10 +120,12 @@ public class TileManager : MonoBehaviour
     public void PopulateRoadsTwo()
     {
         //will be used to generate dynamic roads
-        dynamicSpawnPoint.y = GameManager.Instance.ClientPlayer.playerInfo.position.y + spawnAheadDistance;
+        leadPlayerPos = GameManager.Instance.leadPlayer.playerInfo.position;
+        dynamicSpawnPoint.y = leadPlayerPos.y;
         if(dynamicSpawnPoint.y > previousSpawnPoint.y + desiredRoadTileSize.y)
         {
-            SpawnNextRoad(); // create overload with input value being dynamic spawn point
+            Bounds spawnBounds = new Bounds(new Vector3(0, (leadPlayerPos.y + spawnAheadDistance) * desiredRoadTileSize.y, 0), new Vector3(desiredRoadTileSize.x /*roadWidthOverTime.Evaluate(((float)m_Currentm_RoadsToSpawn) / m_RoadsToSpawn)*/, desiredRoadTileSize.y, 0));
+            SpawnNextRoad2(spawnBounds); // create overload with input value being dynamic spawn point
             previousSpawnPoint = dynamicSpawnPoint;
         }
         else
@@ -151,5 +161,28 @@ public class TileManager : MonoBehaviour
             }
         }
         m_CurrentRoad++;
+    }
+
+    public void SpawnNextRoad2(Bounds spawnBounds)
+    {
+        GameObject newRoad = Instantiate(m_RoadPrefab, spawnBounds.center, Quaternion.identity, transform);
+        GameObject grassLeft = Instantiate(m_GrassPrefab, spawnBounds.center + new Vector3((spawnBounds.size.x + m_GrassWidth) * 0.5f, 0, 0), Quaternion.identity, transform);
+        GameObject grassRight = Instantiate(m_GrassPrefab, spawnBounds.center - new Vector3((spawnBounds.size.x + m_GrassWidth) * 0.5f, 0, 0), Quaternion.identity, transform);
+        GameObject wallLeft = Instantiate(m_WallPrefab, spawnBounds.center - new Vector3((spawnBounds.size.x + (m_GrassWidth * 2) + m_WallWidth) * 0.5f, 0, 0), Quaternion.identity, transform);
+        wallLeft.GetComponent<SpriteRenderer>().color = m_WallGradient.Evaluate(((float)m_CurrentRoad) / m_RoadsToSpawn);
+        GameObject wallRight = Instantiate(m_WallPrefab, spawnBounds.center + new Vector3((spawnBounds.size.x + (m_GrassWidth * 2) + m_WallWidth) * 0.5f, 0, 0), Quaternion.identity, transform);
+        wallRight.GetComponent<SpriteRenderer>().color = m_WallGradient.Evaluate(((float)m_CurrentRoad) / m_RoadsToSpawn);
+        if (m_CurrentRoad >= m_RoadsToSpawn - 3) //spawn end for the last three roads
+        {
+            Instantiate(m_EndPrefab, spawnBounds.center, Quaternion.identity, transform);
+        }
+        //Only host spawns obstacle, and dont spawn on first tile
+        if (VHostBehavior.Instance != null && m_CurrentRoad > 1)
+        {
+            for (int j = 0; j < obstaclesPerTile; j++)
+            {
+                SpawnObstaclesOnTile(spawnBounds);
+            }
+        }
     }
 }

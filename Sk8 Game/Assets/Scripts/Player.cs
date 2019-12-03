@@ -54,9 +54,11 @@ public abstract class Player : MonoBehaviour
 
     public bool m_IsDodging = false;
     public bool m_IsSpinning = false;
-
+    public bool m_IsAttacking = false;
+    public bool m_EnemyisRight = true;
     public int m_SpinCount = 2;
     public float m_SpinDuration = 1.0f;
+    public float m_AttackDuration = 1.0f;
 
 
     public float MaxSpeed
@@ -92,6 +94,7 @@ public abstract class Player : MonoBehaviour
         MovePlayer(Time.deltaTime);
         CheckBackDraft(Time.deltaTime);
         CheckDodgeSprite(Time.deltaTime);
+        CheckAttackSprite(Time.deltaTime);
     }
 
     private void CheckDodgeSprite(float deltaTime)
@@ -108,6 +111,29 @@ public abstract class Player : MonoBehaviour
         }
     }
 
+    private void CheckAttackSprite(float deltaTime)
+    {
+        GameObject spriteChild = transform.GetChild(0).gameObject;
+        SpriteRenderer sr = spriteChild.GetComponent<SpriteRenderer>();
+
+        if (m_IsAttacking)
+        {
+            if (m_EnemyisRight)
+            {
+                sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch");
+                sr.flipX = false;
+            }
+            else
+            {
+                sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch");
+                sr.flipX = true;
+            }
+        }
+        else
+        {
+            sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBig");
+        }
+    }
     public void SetPosition(Vector2 pos)
     {
         transform.position = new Vector3(pos.x, pos.y, 0);

@@ -27,7 +27,7 @@ public class ClientPlayer : Player
     private float m_CollisionMinimum = 0.3f;
     private float m_WallCollisionSpeedReduce = 0.90f;
     private float m_PlayerCollisionSpeedReduce = 0.95f;
-    private float m_AttackRange = 0.5f;
+    private float m_AttackRange = 1.5f;
     private float m_CurrentClosestDistance = 0.0f;
     private IObstacle m_ClosestObstacle = null;
 
@@ -59,6 +59,7 @@ public class ClientPlayer : Player
 
         HandleInput(Time.deltaTime);
         m_InteractTimer += Time.deltaTime;
+        m_AttackTimer += Time.deltaTime;
         FindClosestObstacle();
         PlayerCollision();
         PlayerAttack();
@@ -148,14 +149,14 @@ public class ClientPlayer : Player
                     if(playerInfo.position.x <= closestPlayer.playerInfo.position.x)
                     {
                         playerInfo.zRot = -playerInfo.zRot;
-                        playerInfo.position.x = closestPlayer.playerInfo.position.x - 0.2f;
+                        playerInfo.position.x = closestPlayer.playerInfo.position.x - 0.4f;
                         playerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
 
                     }
                     else if(playerInfo.position.x >= closestPlayer.playerInfo.position.x)
                     {
                         playerInfo.zRot = -playerInfo.zRot;
-                        playerInfo.position.x = closestPlayer.playerInfo.position.x + 0.2f;
+                        playerInfo.position.x = closestPlayer.playerInfo.position.x + 0.4f;
                         playerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
 
                     }
@@ -175,12 +176,24 @@ public class ClientPlayer : Player
                 closestPlayer = GameManager.Instance.m_Players[i];
             }
         }
+        Debug.Log(closestPlayer);
         if(closestPlayer != null)
         {
             if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
             {
                 if (Input.GetKeyDown(KeyCode.LeftControl))
                 {
+                    //run punch animation
+                    if(closestPlayer.playerInfo.position.x > playerInfo.position.x)
+                    {
+                        m_EnemyisRight = true;
+                    }
+                    else
+                    {
+                        m_EnemyisRight = false;
+                    }
+                    StartCoroutine(Attack(m_AttackDuration));
+                    Debug.Log("attack happen)");
                     if (m_AttackTimer > 3.0f)
                     {
                         m_TimeSinceDodge = 0.0f;
@@ -188,7 +201,7 @@ public class ClientPlayer : Player
                         //Run crash animation
                         closestPlayer.StartSpin();
                         closestPlayer.playerInfo.currentScore -= 5;
-
+                        Debug.Log("Attack work");
                     }
                 }
             }
@@ -231,6 +244,18 @@ public class ClientPlayer : Player
         }
         playerInfo.collidable = true;
         m_IsDodging = false;
+    }
+
+    public IEnumerator Attack(float duration)
+    {
+        m_IsAttacking = true;
+        float time = 0.0f;
+        while (time <= duration)
+        {
+            time += Time.deltaTime;
+            yield return 0;
+        }
+        m_IsAttacking = false;
     }
 
     private void OnGUI()

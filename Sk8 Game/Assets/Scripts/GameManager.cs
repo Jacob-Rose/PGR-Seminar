@@ -10,7 +10,7 @@ class GameManager : MonoBehaviour
     public string m_PlayerUsername;
     public Color m_PlayerColor = Color.white;
     public bool isDebug = false;
-
+    public Player leadPlayer;
     public float maxDistanceToDQ = 10.0f;
     public List<Player> m_Players = new List<Player>();
     public List<Obstacle> m_AllObstacles = new List<Obstacle>();
@@ -55,6 +55,16 @@ class GameManager : MonoBehaviour
             if(SecondsTillStart < 0.0f)
             {
                 StartGame();
+            }
+        }
+
+        for (int i = 0; i < m_Players.Count; i++)
+        {
+            Player currentPlayer = null;
+            currentPlayer = m_Players[i];
+            if(currentPlayer.playerInfo.position.y > leadPlayer.playerInfo.position.y)
+            {
+                leadPlayer = currentPlayer;
             }
         }
     }
