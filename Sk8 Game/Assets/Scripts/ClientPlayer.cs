@@ -16,8 +16,8 @@ public class ClientPlayer : Player
     public float m_InteractMaxDist = 4.0f;
     public float m_DodgeTimeInAir = 1.5f;
 
-    public float m_PlayerXBoundsRight = 7.0f;
-    public float m_PlayerXBoundsLeft = -7.0f;
+    public float m_PlayerXBounds = 7.0f;
+
 
     private float m_TimeSinceDodge = 0.0f;
     private float m_TimeUntilDodge = 3.0f;
@@ -29,6 +29,9 @@ public class ClientPlayer : Player
     private float m_AttackRange = 1.5f;
     private float m_CurrentClosestDistance = 0.0f;
     private IObstacle m_ClosestObstacle = null;
+
+    public AudioClip ollieClip;
+    public AudioClip rollingClip;
 
     public void Awake()
     {
@@ -61,7 +64,54 @@ public class ClientPlayer : Player
         FindClosestObstacle();
         PlayerCollision();
         PlayerAttack();
+        CheckPlayerSound();
         base.Update();
+    }
+
+    public void CheckPlayerSound()
+    {
+        AudioSource aux = GetComponent<AudioSource>();
+        if(aux != null)
+        {
+            if(!playerInfo.collidable)
+            {
+                TryPlayOllieSound();
+            }
+            else
+            {
+                TryPlayRollingSound();
+            }
+        }
+        if(aux.isPlaying)
+        {
+            Debug.LogError("audio is playing");
+        }
+    }
+
+    public void TryPlayRollingSound()
+    {
+        AudioSource aux = GetComponent<AudioSource>();
+        if(aux.clip != rollingClip)
+        {
+            aux.Stop();
+            aux.clip = rollingClip;
+            aux.time = 0.0f;
+            aux.loop = true;
+            aux.Play();
+        }
+    }
+
+    public void TryPlayOllieSound()
+    {
+        AudioSource aux = GetComponent<AudioSource>();
+        if (aux.clip != ollieClip)
+        {
+            aux.Stop();
+            aux.clip = ollieClip;
+            aux.loop = false;
+            aux.time = 0;
+            aux.Play();
+        }
     }
 
     public void HandleInput(float deltaTime)
@@ -126,19 +176,19 @@ public class ClientPlayer : Player
                 closestPlayer = GameManager.Instance.m_Players[i];
             }
         }
-        if(closestPlayer != null || playerInfo.position.x <= m_PlayerXBoundsLeft || playerInfo.position.x >= m_PlayerXBoundsRight)
+        if(closestPlayer != null || playerInfo.position.x <= -m_PlayerXBounds || playerInfo.position.x >= m_PlayerXBounds)
         {
-            if(playerInfo.position.x <= m_PlayerXBoundsLeft)
+            if(playerInfo.position.x <= -m_PlayerXBounds)
             {
                 playerInfo.zRot = -playerInfo.zRot;
-                playerInfo.position.x = m_PlayerXBoundsLeft + 0.1f;
+                playerInfo.position.x = -m_PlayerXBounds + 0.1f;
                 playerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
 
             }
-            else if(playerInfo.position.x >= m_PlayerXBoundsRight)
+            else if(playerInfo.position.x >= m_PlayerXBounds)
             {
                 playerInfo.zRot = -playerInfo.zRot;
-                playerInfo.position.x = m_PlayerXBoundsRight - 0.1f;
+                playerInfo.position.x = m_PlayerXBounds - 0.1f;
                 playerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
 
             }
@@ -260,20 +310,30 @@ public class ClientPlayer : Player
 
     private void OnGUI()
     {
-        GUIStyle scoreStyle = GUI.skin.label;
-        scoreStyle.fontSize = 22;
-        scoreStyle.alignment = TextAnchor.MiddleLeft;
-        Rect scoreRect = new Rect(10, 0, (Screen.width /2) - 10, 100);
-        GUI.Label(scoreRect, "Score: " + playerInfo.currentScore.ToString(), scoreStyle);
-        GUIStyle speedStyle = GUI.skin.label;
-        speedStyle.alignment = TextAnchor.MiddleRight;
-        speedStyle.fontSize = 20;
+
+        
         Rect maxSpeedRect = new Rect(Screen.width / 2, 0, (Screen.width / 2) - 10, 40);
         Rect forwardSpeedRect = new Rect(Screen.width / 2, 40, (Screen.width / 2) - 10, 40);
         Rect speedRect = new Rect(Screen.width / 2, 80, (Screen.width / 2)- 10, 40);
+        GUI.color = Color.black;
+        Rect bgBounds = new Rect((Screen.width / 5) * 4, 0, Screen.width / 5, 120);
+        GUI.Box(bgBounds, "");
+        bgBounds = new Rect(0, 0, Screen.width / 6, 60);
+        GUI.Box(bgBounds, "");
+
+        GUI.color = Color.white;
+        GUIStyle speedStyle = GUI.skin.label;
+        speedStyle.alignment = TextAnchor.MiddleRight;
+        speedStyle.fontSize = 20;
         GUI.Label(maxSpeedRect, "Max-Speed: " + MaxSpeed.ToString("F1"), speedStyle);
         GUI.Label(forwardSpeedRect, "F-Speed: " + (playerInfo.currentSpeed * transform.up.y).ToString("F1"), speedStyle);
         GUI.Label(speedRect, "C-Speed: " + playerInfo.currentSpeed.ToString("F1"), speedStyle);
+
+        GUIStyle scoreStyle = GUI.skin.label;
+        scoreStyle.fontSize = 22;
+        scoreStyle.alignment = TextAnchor.MiddleLeft;
+        Rect scoreRect = new Rect(10, 0, (Screen.width / 5), 60);
+        GUI.Label(scoreRect, "Score: " + playerInfo.currentScore.ToString(), scoreStyle);
 
         //Start of Dodge Bar code
         Vector2 dodgeBarSize = new Vector2(Screen.width * 0.1f, 20);
