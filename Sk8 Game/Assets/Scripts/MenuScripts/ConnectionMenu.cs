@@ -8,7 +8,6 @@ using UnityEngine.SceneManagement;
 public class ConnectionMenu : MonoBehaviour
 {
     public TextMeshProUGUI ipText;
-    public TextMeshProUGUI usernameText;
     public Button submitButton;
     public Button mainMenuButton;
 

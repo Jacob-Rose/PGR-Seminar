@@ -19,10 +19,9 @@ public class EndGame : MonoBehaviour
                         GameManager.Instance.RemovePlayer(players[i].GetUsername());
                     }
                 }
-                
-                GameManager.Instance.PlayerHasWonGame(p);
                 PlayerWonMessage message = new PlayerWonMessage(p.GetUsername());
                 VHostBehavior.Instance.SendMessageToAllPlayers(message);
+                GameManager.Instance.PlayerHasWonGame(p);
             }
         }
     }

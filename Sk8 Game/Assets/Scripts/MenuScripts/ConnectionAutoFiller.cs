@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public class ConnectionAutoFiller : MonoBehaviour
 {
     public string[] lastIPs = new string[5];
-    public TextMeshProUGUI textBox;
+    public TMP_InputField textBox;
     public Button connectButton;
     public string autofillString = "";
     // Start is called before the first frame update
@@ -74,7 +74,7 @@ public class ConnectionAutoFiller : MonoBehaviour
             {
                 if (GUI.Button(new Rect(Screen.width * (((float)i) / validCount), Screen.height * 0.8f, 150, 40), lastIPs[i]))
                 {
-                    textBox.SetText(lastIPs[i], true);
+                    textBox.text = lastIPs[i];
                 }
             }
             else

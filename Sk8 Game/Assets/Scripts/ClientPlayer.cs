@@ -119,7 +119,9 @@ public class ClientPlayer : Player
         Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) && GameManager.Instance.m_Players[i] != this)
+            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) 
+                /*&& closestPlayer == null || (Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= Vector2.Distance(playerInfo.position, closestPlayer.transform.position))*/
+                && GameManager.Instance.m_Players[i] != this)
             {
                 closestPlayer = GameManager.Instance.m_Players[i];
             }
@@ -179,7 +181,7 @@ public class ClientPlayer : Player
         {
             if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
             {
-                if (Input.GetKeyDown(KeyCode.LeftControl))
+                if (controls.Player.Attack.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
                 {
                     //run punch animation
                     if(closestPlayer.playerInfo.position.x > playerInfo.position.x)
