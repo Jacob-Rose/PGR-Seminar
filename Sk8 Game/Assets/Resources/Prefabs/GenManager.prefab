@@ -88,13 +88,15 @@ MonoBehaviour:
   m_SceneryPrefab: {fileID: 2600609460895546931, guid: f0dd6ab6e9b9c9a4b9fe299ab113bde6,
     type: 3}
   m_SceneryTiles:
-  - {fileID: 21300000, guid: e8315a5b0d9d28b4f8f6bbccf99e9010, type: 3}
-  - {fileID: 21300000, guid: 8570759265c3ef24482aeb47d3bfea52, type: 3}
+  - {fileID: 21300000, guid: 987d24690d325ca4ab106884cce76749, type: 3}
+  - {fileID: 21300000, guid: 87fae29c2ecba224daf4620cad1f6b6e, type: 3}
+  - {fileID: 21300000, guid: 4d4bc77eca9499640a47a969d9ab8e34, type: 3}
+  - {fileID: 21300000, guid: 03bd886dfbba8da41b65f6c4c9909d14, type: 3}
   spawnAheadDistance: 50
   leadPlayerPos: {x: 0, y: 0}
   m_RoadsToSpawn: 100
   desiredRoadTileSize: {x: 10, y: 12}
   m_GrassWidth: 2
   m_WallWidth: 2
-  m_SceneryWidth: 4
+  m_SceneryWidth: 8
   obstaclesPerTile: 4
