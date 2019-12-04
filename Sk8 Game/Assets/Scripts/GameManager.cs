@@ -51,6 +51,14 @@ class GameManager : MonoBehaviour
         SpawnClientPlayer();
     }
 
+    public void PlayerAttacked(string playerID)
+    {
+        Player p = GetPlayer(playerID);
+        p.playerInfo.currentScore -= 5;
+        p.playerInfo.currentSpeed *= 0.95f;
+        p.StartSpin();
+    }
+
     public void Update()
     {
         if(m_GameIsStarting)

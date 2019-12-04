@@ -126,6 +126,11 @@ public class VOnlinePlayer : Networked
             PlayerWonMessage nMsg = msg as PlayerWonMessage;
             GameManager.Instance.PlayerHasWonGame(GameManager.Instance.GetPlayer(nMsg.playerID));
         }
+        else if(msg is PlayerAttackedPlayerMessage)
+        {
+            PlayerAttackedPlayerMessage nMsg = msg as PlayerAttackedPlayerMessage;
+            GameManager.Instance.PlayerAttacked(nMsg.attackedPlayerID);
+        }
     }
 
     public void SendMessage(Message m, SendType type = SendType.NoDelay)

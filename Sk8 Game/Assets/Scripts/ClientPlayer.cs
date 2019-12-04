@@ -18,13 +18,12 @@ public class ClientPlayer : Player
 
     public float m_PlayerXBounds = 7.0f;
 
-    public float m_AttackStaminaCost;
+    public float m_AttackStaminaCost = 1.0f;
+    public float m_DodgeStaminaCost = 1.0f;
+    public float m_InteractStaminaCost = 1.0f;
 
 
     private float m_TimeSinceDodge = 0.0f;
-    private float m_TimeUntilDodge = 3.0f;
-    private float m_InteractTimer = 0.0f;
-    private float m_InteractLimit = 1.0f;
     private float m_CollisionMinimum = 0.3f;
     private float m_WallCollisionSpeedReduce = 0.80f;
     private float m_PlayerCollisionSpeedReduce = 0.95f;
@@ -57,11 +56,12 @@ public class ClientPlayer : Player
 
     public override void Update()
     {
+        float deltaTime = Time.deltaTime;
         if (!GameManager.Instance.HasGameStarted)
             return;
 
-        HandleInput(Time.deltaTime);
-        m_InteractTimer += Time.deltaTime;
+        HandleInput(deltaTime);
+        playerInfo.stamina += m_StaminaRefillPerSecond * deltaTime;
         FindClosestObstacle();
         PlayerCollision();
         //PlayerAttack();
@@ -76,13 +76,10 @@ public class ClientPlayer : Player
         }
 
         //attackTimer += deltaTime;
-        if (controls.Player.Jump.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
+        if (controls.Player.Jump.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging && m_DodgeStaminaCost <= playerInfo.stamina)
         {
-            if (m_TimeSinceDodge > m_TimeUntilDodge)
-            {
-                m_TimeSinceDodge = 0.0f;
-                StartCoroutine(Dodge(m_DodgeTimeInAir));
-            }
+            playerInfo.stamina -= m_DodgeStaminaCost;
+            StartCoroutine(Dodge(m_DodgeTimeInAir));
         }
         float turnValue = controls.Player.Turn.ReadValue<float>();
         if (Mathf.Abs(turnValue) > 0.05f)
@@ -98,10 +95,13 @@ public class ClientPlayer : Player
 
     public void InteractButtonPressed(InputAction.CallbackContext context)
     {
-        if (m_ClosestObstacle != null && !m_IsSpinning && !m_IsDodging && m_InteractTimer >= m_InteractLimit)
+        if (m_ClosestObstacle != null 
+            && !m_IsSpinning 
+            && !m_IsDodging 
+            && m_InteractStaminaCost <= playerInfo.stamina)
         {
             //Interact with the obstacle
-            m_InteractTimer = 0.0f;
+            playerInfo.stamina -= m_InteractStaminaCost;
             m_ClosestObstacle.GetComponent<SpriteRenderer>().color = Color.white;
             m_ClosestObstacle.HandleInteraction(this);
 
@@ -186,19 +186,14 @@ public class ClientPlayer : Player
             {
                 if (controls.Player.Attack.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
                 {
-                    StartCoroutine(Attack(m_AttackDuration));
+                    StartAttack();
                     Debug.Log("attack happen)");
-                    if (m_InteractTimer > m_InteractLimit)
+                    if (m_AttackStaminaCost <= playerInfo.stamina)
                     {
-                        m_TimeSinceDodge = 0.0f;
-                        m_InteractTimer = 0.0f;
-                        //Run crash animation
-                        PlayerInfo newPlayerInfo = closestPlayer.playerInfo;
-                        newPlayerInfo.currentScore -= 5;
-                        newPlayerInfo.currentSpeed *= 0.8f;
                         playerInfo.stamina -= m_AttackStaminaCost;
+                        //Run crash animation
                         
-                        PlayerUpdateMessage msg = new PlayerUpdateMessage(newPlayerInfo, closestPlayer.GetUsername());
+                        PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage(GetUsername(), closestPlayer.GetUsername());
                         if(VOnlinePlayer.Instance == null)
                         {
                             VHostBehavior.Instance.SendMessageToAllPlayers(msg, Valve.Sockets.SendType.Reliable);
@@ -211,6 +206,11 @@ public class ClientPlayer : Player
                 }
             }
         }
+    }
+
+    public void StartAttack()
+    {
+        StartCoroutine(Attack(m_AttackDuration));
     }
 
     public void FindClosestObstacle()
@@ -265,6 +265,8 @@ public class ClientPlayer : Player
         m_IsAttacking = false;
     }
 
+
+
     private void OnGUI()
     {
         Rect maxSpeedRect = new Rect(Screen.width / 2, 0, (Screen.width / 2) - 10, 40);
@@ -298,30 +300,12 @@ public class ClientPlayer : Player
         Rect dodgeBarRect = new Rect(10, Screen.height * 0.4f, dodgeBarSize.x, dodgeBarSize.y);
         GUI.BeginGroup(dodgeBarRect);
         GUI.Box(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), emptyTex);
-        GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(m_TimeSinceDodge, 0, m_TimeUntilDodge) / m_TimeUntilDodge), dodgeBarSize.y), fullTex);
+        GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(playerInfo.stamina, 0, m_MaxStamina) / m_MaxStamina), dodgeBarSize.y), fullTex);
         GUI.color = Color.black;
         GUI.Label(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), "Dodge ", scoreStyle);
         GUI.color = Color.white;
         GUI.EndGroup();
         //end of dodge bar
-
-         
-        //Start of Interact Bar code
-        Vector2 interactBarSize = new Vector2(Screen.width * 0.2f, 20);
-        Texture2D emptyTex2 = Texture2D.blackTexture;
-        Texture2D fullTex2 = Resources.Load<Texture2D>("Sprites/yellow");
-
-        Rect interactBarRect = new Rect(10, Screen.height * 0.6f, interactBarSize.x, interactBarSize.y);
-        GUI.BeginGroup(interactBarRect);
-        GUI.Box(new Rect(0, 0, interactBarRect.width, interactBarRect.height), emptyTex2);
-        GUI.DrawTexture(new Rect(0, 0, interactBarSize.x * (Mathf.Clamp(m_InteractTimer, 0, m_InteractLimit) / m_InteractLimit), interactBarSize.y), fullTex2);
-        GUI.color = Color.black;
-        GUI.Label(new Rect(0, 0, interactBarRect.width, interactBarRect.height), "Interact/Attack ", scoreStyle);
-        GUI.color = Color.white;
-        GUI.EndGroup();
-        //end of interact bar
-
-
     }
 
     public override string GetUsername()

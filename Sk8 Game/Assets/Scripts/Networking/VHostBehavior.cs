@@ -249,6 +249,13 @@ public class VHostBehavior : Networked
             SendMessageToAllExceptPlayer(nMsg.playerID, nMsg, SendType.Reliable);
             (GameManager.Instance.m_AllObstacles[(int)nMsg.obstacleID] as IObstacle).InteractedWith(GameManager.Instance.GetPlayer(nMsg.playerID));
         }
+
+        if(msg is PlayerAttackedPlayerMessage)
+        {
+            PlayerAttackedPlayerMessage nMsg = msg as PlayerAttackedPlayerMessage;
+            SendMessageToAllExceptPlayer(nMsg.attackeePlayerID, nMsg, SendType.Reliable);
+            GameManager.Instance.PlayerAttacked(nMsg.attackedPlayerID);
+        }
         
     }
 
