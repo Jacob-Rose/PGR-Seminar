@@ -18,6 +18,8 @@ public class ClientPlayer : Player
 
     public float m_PlayerXBounds = 7.0f;
 
+    public float m_AttackStaminaCost;
+
 
     private float m_TimeSinceDodge = 0.0f;
     private float m_TimeUntilDodge = 3.0f;
@@ -30,8 +32,6 @@ public class ClientPlayer : Player
     private float m_CurrentClosestDistance = 0.0f;
     private IObstacle m_ClosestObstacle = null;
 
-    public AudioClip ollieClip;
-    public AudioClip rollingClip;
 
     public void Awake()
     {
@@ -42,6 +42,7 @@ public class ClientPlayer : Player
     {
         controls.Enable();
         controls.Player.Interact.performed += InteractButtonPressed;
+        //controls.Player.Attack.performed +=
     }
 
     private void OnDisable()
@@ -64,56 +65,7 @@ public class ClientPlayer : Player
         FindClosestObstacle();
         PlayerCollision();
         //PlayerAttack();
-        CheckPlayerSound();
         base.Update();
-    }
-
-    public void CheckPlayerSound()
-    {
-        AudioSource aux = GetComponent<AudioSource>();
-        if(aux != null)
-        {
-            if(!playerInfo.collidable)
-            {
-                TryPlayOllieSound();
-            }
-            else
-            {
-                TryPlayRollingSound();
-            }
-        }
-        /*
-        if(aux.isPlaying)
-        {
-            Debug.LogError("audio is playing");
-        }
-        */
-    }
-
-    public void TryPlayRollingSound()
-    {
-        AudioSource aux = GetComponent<AudioSource>();
-        if(aux.clip != rollingClip)
-        {
-            aux.Stop();
-            aux.clip = rollingClip;
-            aux.time = 0.0f;
-            aux.loop = true;
-            aux.Play();
-        }
-    }
-
-    public void TryPlayOllieSound()
-    {
-        AudioSource aux = GetComponent<AudioSource>();
-        if (aux.clip != ollieClip)
-        {
-            aux.Stop();
-            aux.clip = ollieClip;
-            aux.loop = false;
-            aux.time = 0;
-            aux.Play();
-        }
     }
 
     public void HandleInput(float deltaTime)
@@ -214,7 +166,6 @@ public class ClientPlayer : Player
                     }
                 }
             }
-
         }
     }
 
@@ -235,15 +186,6 @@ public class ClientPlayer : Player
             {
                 if (controls.Player.Attack.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
                 {
-                    //run punch animation
-                    if(closestPlayer.playerInfo.position.x > playerInfo.position.x)
-                    {
-                        m_EnemyisRight = true;
-                    }
-                    else
-                    {
-                        m_EnemyisRight = false;
-                    }
                     StartCoroutine(Attack(m_AttackDuration));
                     Debug.Log("attack happen)");
                     if (m_InteractTimer > m_InteractLimit)
@@ -251,7 +193,20 @@ public class ClientPlayer : Player
                         m_TimeSinceDodge = 0.0f;
                         m_InteractTimer = 0.0f;
                         //Run crash animation
-                        GameManager.Instance.PlayerAttackedByPlayer(this, closestPlayer);
+                        PlayerInfo newPlayerInfo = closestPlayer.playerInfo;
+                        newPlayerInfo.currentScore -= 5;
+                        newPlayerInfo.currentSpeed *= 0.8f;
+                        playerInfo.stamina -= m_AttackStaminaCost;
+                        
+                        PlayerUpdateMessage msg = new PlayerUpdateMessage(newPlayerInfo, closestPlayer.GetUsername());
+                        if(VOnlinePlayer.Instance == null)
+                        {
+                            VHostBehavior.Instance.SendMessageToAllPlayers(msg, Valve.Sockets.SendType.Reliable);
+                        }
+                        else
+                        {
+                            VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
+                        }
                     }
                 }
             }

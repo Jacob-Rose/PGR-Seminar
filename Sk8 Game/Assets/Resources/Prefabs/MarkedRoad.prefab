@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 676402263228062705}
   - component: {fileID: 676402263228062702}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: MarkedRoad
   m_TagString: Untagged
   m_Icon: {fileID: 0}

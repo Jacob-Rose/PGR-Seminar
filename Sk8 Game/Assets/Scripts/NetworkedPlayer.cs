@@ -17,9 +17,4 @@ public class NetworkedPlayer : Player
     {
         base.Start();
     }
-
-    public void updatePlayerInfo(PlayerInfo info)
-    {
-        playerInfo = info;
-    }
 }

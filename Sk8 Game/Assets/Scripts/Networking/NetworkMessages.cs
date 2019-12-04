@@ -11,7 +11,7 @@ enum NetworkEvent
     PlayerDisconnected,
     PlayerUpdateInfo,
     PlayerFellBehind,
-    //PlayerHitObstacle,
+    PlayerAttackPlayer,
     PlayerWonRace,
     ObstacleGenerated,
     ObstacleModified
@@ -60,6 +60,9 @@ public abstract class Message
                 break;
             case NetworkEvent.PlayerWonRace:
                 msg = new PlayerWonMessage(msgBytes);
+                break;
+            case NetworkEvent.PlayerAttackPlayer:
+                msg = new PlayerAttackedPlayerMessage(msgBytes);
                 break;
             default:
                 throw new Exception("oops " + eventType);
@@ -136,6 +139,12 @@ public class PlayerUpdateMessage : Message
         byte[] scoreBuffer = new byte[sizeof(int)];
         Buffer.BlockCopy(buffer, currentIndex, scoreBuffer, 0, scoreBuffer.Length);
         currentIndex += scoreBuffer.Length;
+        byte[] attackingBuffer = new byte[sizeof(bool)];
+        Buffer.BlockCopy(buffer, currentIndex, attackingBuffer, 0, attackingBuffer.Length);
+        currentIndex += attackingBuffer.Length;
+        byte[] staminaBuffer = new byte[sizeof(float)];
+        Buffer.BlockCopy(buffer, currentIndex, staminaBuffer, 0, staminaBuffer.Length);
+        currentIndex += staminaBuffer.Length;
 
         playerID = Encoding.ASCII.GetString(playerIDBuffer);
         Player p = GameManager.Instance.GetPlayer(playerID);
@@ -148,6 +157,8 @@ public class PlayerUpdateMessage : Message
             info.currentSpeed = BitConverter.ToSingle(speedBuffer, 0);
             info.collidable = BitConverter.ToBoolean(colliderBuffer, 0);
             info.currentScore = BitConverter.ToInt32(scoreBuffer, 0);
+            info.attacking = BitConverter.ToBoolean(attackingBuffer, 0);
+            info.stamina = BitConverter.ToSingle(staminaBuffer, 0);
         }
         else
         {
@@ -181,6 +192,8 @@ public class PlayerUpdateMessage : Message
         byte[] speedBuffer = BitConverter.GetBytes(info.currentSpeed);
         byte[] colliderBuffer = BitConverter.GetBytes(info.collidable);
         byte[] scoreBuffer = BitConverter.GetBytes(info.currentScore);
+        byte[] attackBuffer = BitConverter.GetBytes(info.attacking);
+        byte[] staminaBuffer = BitConverter.GetBytes(info.stamina);
         byte[] buffer = new byte[eventTypeBuffer.Length 
             + playerIDLengthBuffer.Length
             + playerIDBuffer.Length 
@@ -189,7 +202,9 @@ public class PlayerUpdateMessage : Message
             + yPosBuffer.Length 
             + speedBuffer.Length
             + colliderBuffer.Length
-            + scoreBuffer.Length];
+            + scoreBuffer.Length
+            + attackBuffer.Length 
+            + staminaBuffer.Length];
         int currentIndex = 0;
         Buffer.BlockCopy(eventTypeBuffer, 0, buffer, currentIndex, eventTypeBuffer.Length);
         currentIndex += eventTypeBuffer.Length;
@@ -209,6 +224,10 @@ public class PlayerUpdateMessage : Message
         currentIndex += colliderBuffer.Length;
         Buffer.BlockCopy(scoreBuffer, 0, buffer, currentIndex, scoreBuffer.Length);
         currentIndex += scoreBuffer.Length;
+        Buffer.BlockCopy(attackBuffer, 0, buffer, currentIndex, attackBuffer.Length);
+        currentIndex += attackBuffer.Length;
+        Buffer.BlockCopy(staminaBuffer, 0, buffer, currentIndex, staminaBuffer.Length);
+        currentIndex += staminaBuffer.Length;
         return buffer;
     }
 }
@@ -505,11 +524,11 @@ public class PlayerWonMessage : Message
     }
 }
 
-public class PlayerAttackedByPlayer : Message
+public class PlayerAttackedPlayerMessage : Message
 {
     public string attackedPlayerID;
     public string attackeePlayerID;
-    public PlayerAttackedByPlayer(byte[] buffer)
+    public PlayerAttackedPlayerMessage(byte[] buffer)
     {
         int currentByteIndex = 0;
         eventType = BitConverter.ToUInt16(buffer, currentByteIndex);
@@ -532,7 +551,7 @@ public class PlayerAttackedByPlayer : Message
         }
     }
 
-    public PlayerAttackedByPlayer(string attackedPlayerID, string attackeePlayerID)
+    public PlayerAttackedPlayerMessage(string attackedPlayerID, string attackeePlayerID)
     {
         eventType = (ushort)NetworkEvent.PlayerWonRace;
         this.attackedPlayerID = attackedPlayerID;

@@ -63,7 +63,7 @@ public abstract class Networked : MonoBehaviour
         }
     }
 
-    protected virtual void HandleNetworkMessage(Message msg) //index used if more detail needed, such as ping
+    public virtual void HandleNetworkMessage(Message msg) //index used if more detail needed, such as ping
     {
     }
 

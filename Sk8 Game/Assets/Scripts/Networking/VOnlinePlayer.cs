@@ -79,7 +79,7 @@ public class VOnlinePlayer : Networked
         }
     }
 
-    protected override void HandleNetworkMessage(Message msg)
+    public override void HandleNetworkMessage(Message msg)
     {
         base.HandleNetworkMessage(msg);
         if (msg is GameStartMessage)

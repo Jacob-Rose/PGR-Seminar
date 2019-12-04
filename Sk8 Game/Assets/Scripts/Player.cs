@@ -22,6 +22,8 @@ public struct PlayerInfo //sent from server to
     public bool collidable;
     [SerializeField]
     public bool attacking;
+    [SerializeField]
+    public float stamina;
 }
 
 public enum PlayerMove //possible actions (limited to what buttosn the player could hit
@@ -43,7 +45,11 @@ public abstract class Player : MonoBehaviour
     protected float speedMod; //used for max speed calculation
 
     [SerializeField]
-    protected float timeToMaxSpeed; //modifier for the acceleration when the player speed rises in Update
+    protected float m_TimeToMaxSpeed; //modifier for the acceleration when the player speed rises in Update
+    [SerializeField]
+    protected float m_MaxStamina = 5.0f;
+    [SerializeField]
+    protected float m_StaminaRefillPerSecond = 1.0f;
 
     [SerializeField]
     public PlayerInfo playerInfo;
@@ -57,10 +63,12 @@ public abstract class Player : MonoBehaviour
     public bool m_IsDodging = false;
     public bool m_IsSpinning = false;
     public bool m_IsAttacking = false;
-    public bool m_EnemyisRight = true;
     public int m_SpinCount = 2;
     public float m_SpinDuration = 1.0f;
     public float m_AttackDuration = 1.0f;
+
+    public AudioClip ollieClip;
+    public AudioClip rollingClip;
 
 
     public float MaxSpeed
@@ -77,7 +85,6 @@ public abstract class Player : MonoBehaviour
         playerInfo.collidable = true;
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        //m_SpriteRenderer.sprite = sprites[1];
         playerInfo.currentSpeed = MaxSpeed;
         playerInfo.position = transform.position;
         DontDestroyOnLoad(this);
@@ -97,6 +104,7 @@ public abstract class Player : MonoBehaviour
         CheckBackDraft(Time.deltaTime);
         CheckDodgeSprite(Time.deltaTime);
         CheckAttackSprite(Time.deltaTime);
+        CheckPlayerSound();
     }
 
     private void CheckDodgeSprite(float deltaTime)
@@ -113,23 +121,57 @@ public abstract class Player : MonoBehaviour
         }
     }
 
+    public void CheckPlayerSound()
+    {
+        AudioSource aux = GetComponent<AudioSource>();
+        if (aux != null)
+        {
+            if (!playerInfo.collidable)
+            {
+                TryPlayOllieSound();
+            }
+            else
+            {
+                TryPlayRollingSound();
+            }
+        }
+    }
+
+    public void TryPlayOllieSound()
+    {
+        AudioSource aux = GetComponent<AudioSource>();
+        if (aux.clip != ollieClip)
+        {
+            aux.Stop();
+            aux.clip = ollieClip;
+            aux.loop = false;
+            aux.time = 0;
+            aux.Play();
+        }
+    }
+
+    public void TryPlayRollingSound()
+    {
+        AudioSource aux = GetComponent<AudioSource>();
+        if (aux.clip != rollingClip)
+        {
+            aux.Stop();
+            aux.clip = rollingClip;
+            aux.time = 0.0f;
+            aux.loop = true;
+            aux.Play();
+        }
+    }
+
     private void CheckAttackSprite(float deltaTime)
     {
         GameObject spriteChild = transform.GetChild(0).gameObject;
         SpriteRenderer sr = spriteChild.GetComponent<SpriteRenderer>();
 
-        if (m_IsAttacking)
+        if (playerInfo.attacking)
         {
-            if (m_EnemyisRight)
-            {
-                sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch");
-                sr.flipX = false;
-            }
-            else
-            {
-                sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch");
-                sr.flipX = true;
-            }
+            sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch");
+            sr.flipX = true;
         }
         else
         {
@@ -145,13 +187,11 @@ public abstract class Player : MonoBehaviour
     public void MovePlayer(float deltaTime)
     {
         transform.position = playerInfo.position;
-        playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed, (deltaTime / timeToMaxSpeed));
+        playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed, (deltaTime / m_TimeToMaxSpeed));
         playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
         transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
         transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.6f); //in case the update is off from current position
         playerInfo.position = transform.position;
-
-
     }
 
 
@@ -172,10 +212,15 @@ public abstract class Player : MonoBehaviour
     }
     public void StartSpin()
     {
-        if(!m_IsSpinning)
+        if(!m_IsSpinning && !m_IsDodging)
         {
             StartCoroutine(SpinPlayerDuration(m_SpinDuration));
         }
+    }
+
+    public void updatePlayerInfo(PlayerInfo info)
+    {
+        playerInfo = info;
     }
 
     public void CheckBackDraft(float deltaTime)
