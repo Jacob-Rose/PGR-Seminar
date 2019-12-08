@@ -29,6 +29,8 @@ public class VHostBehavior : Networked
         m_Address.SetAddress("::0", m_Port);
         m_ListenSocket = m_Server.CreateListenSocket(ref m_Address);
         SetupStatusDelegate();
+        PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage("help", "me");
+        Message nMsg = Message.decipherMessage(msg.toBuffer());
         base.Start();
     }
 

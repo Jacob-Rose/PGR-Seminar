@@ -56,7 +56,7 @@ class GameManager : MonoBehaviour
     {
         Player p = GetPlayer(playerID);
         p.m_PlayerInfo.currentScore -= 5;
-        p.m_PlayerInfo.currentSpeed *= 0.95f;
+        p.m_PlayerInfo.currentSpeed *= 0.90f;
         p.StartSpin();
     }
 
