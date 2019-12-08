@@ -553,7 +553,7 @@ public class PlayerAttackedPlayerMessage : Message
 
     public PlayerAttackedPlayerMessage(string attackedPlayerID, string attackeePlayerID)
     {
-        eventType = (ushort)NetworkEvent.PlayerWonRace;
+        eventType = (ushort)NetworkEvent.PlayerAttackPlayer;
         this.attackedPlayerID = attackedPlayerID;
         this.attackeePlayerID = attackeePlayerID;
     }

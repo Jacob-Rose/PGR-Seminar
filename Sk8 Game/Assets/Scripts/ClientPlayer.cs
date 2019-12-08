@@ -67,7 +67,7 @@ public class ClientPlayer : Player
         }
         FindClosestObstacle();
         PlayerCollision();
-        //PlayerAttack();
+        PlayerAttack();
         base.Update();
     }
 

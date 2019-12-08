@@ -80,6 +80,10 @@ class GameManager : MonoBehaviour
                 leadPlayer = m_Players[i];
             }
         }
+        /*if(Input.GetKeyDown(KeyCode.P))
+        {
+            SceneManager.LoadScene("Leaderboards");
+        }*/
     }
 
     public void OnGUI()

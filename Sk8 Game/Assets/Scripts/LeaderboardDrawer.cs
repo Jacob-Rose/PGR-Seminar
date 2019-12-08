@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class LeaderboardDrawer : MonoBehaviour
 {
+    Texture2D emptyTex = Texture2D.blackTexture;
     public Button mainMenuButton;
     void Start()
     {
@@ -52,6 +53,7 @@ public class LeaderboardDrawer : MonoBehaviour
         for(int i = 0; i < playersInOrder.Count; i++)
         {
             GUI.BeginGroup(new Rect(0, (height / playerCount) * i, width, height / playerCount));
+            GUI.Box(new Rect(0, 0, width / 2, height / playerCount),emptyTex);
             GUI.Label(new Rect(0, 0, width / 2, height / playerCount), (i+1).ToString() + " " + playersInOrder[i]);
             GUI.EndGroup();
         }

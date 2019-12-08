@@ -51,6 +51,9 @@ public class VOnlinePlayer : Networked
                     break;
             }
         };
+
+        PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage("bunny", "rabbit");
+        Message nMsg = Message.decipherMessage(msg.toBuffer());
         base.Start();
     }
 
