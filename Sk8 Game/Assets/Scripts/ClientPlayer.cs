@@ -146,7 +146,7 @@ public class ClientPlayer : Player
                 if (m_AttackStaminaCost <= m_PlayerInfo.stamina)
                 {
                     m_PlayerInfo.stamina -= m_AttackStaminaCost;
-                    PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage(GetUsername(), closestPlayer.GetUsername());
+                    PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage(closestPlayer.GetUsername(), GetUsername());
                     if (VOnlinePlayer.Instance == null)
                     {
                         VHostBehavior.Instance.SendMessageToAllPlayers(msg, Valve.Sockets.SendType.Reliable);

@@ -168,25 +168,12 @@ class GameManager : MonoBehaviour
     public void RemovePlayer(string playerID)
     {
         bool destroyed = false;
-        if(playerID == this.m_PlayerUsername)
+        Player p = GetPlayer(playerID);
+        if(p != null)
         {
-            Destroy(m_Players[0].gameObject);
-            m_Players.RemoveAt(0);
+            m_Players.Remove(p);
+            Destroy(p.gameObject);
             destroyed = true;
-        }
-        else
-        {
-            for (int i = 0; i < m_Players.Count; i++)
-            {
-                NetworkedPlayer nPlayer = m_Players[i].GetComponent<NetworkedPlayer>();
-                if (nPlayer != null && nPlayer.playerID == playerID)
-                {
-                    Destroy(m_Players[i].gameObject);
-                    m_Players.RemoveAt(i);
-                    destroyed = true;
-                    break;
-                }
-            }
         }
         if(HasGameStarted)
         {
