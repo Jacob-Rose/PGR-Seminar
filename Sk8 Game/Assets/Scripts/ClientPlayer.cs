@@ -61,7 +61,10 @@ public class ClientPlayer : Player
             return;
 
         HandleInput(deltaTime);
-        playerInfo.stamina += m_StaminaRefillPerSecond * deltaTime;
+        if (playerInfo.stamina < m_MaxStamina && !m_IsDodging && !m_IsSpinning)
+        {
+            playerInfo.stamina += m_StaminaRefillPerSecond * deltaTime;
+        }
         FindClosestObstacle();
         PlayerCollision();
         //PlayerAttack();
@@ -292,19 +295,30 @@ public class ClientPlayer : Player
         Rect scoreRect = new Rect(10, 0, (Screen.width / 5), 60);
         GUI.Label(scoreRect, "Score: " + playerInfo.currentScore.ToString(), scoreStyle);
 
-        //Start of Dodge Bar code
-        Vector2 dodgeBarSize = new Vector2(Screen.width * 0.1f, 20);
+        //Start of stam bar code
+        Vector2 dodgeBarSize = new Vector2(Screen.width * 0.3f, 20);
         Texture2D emptyTex = Texture2D.blackTexture;//Resources.Load<Texture2D>("Sprites/yellow");
         Texture2D fullTex = Resources.Load<Texture2D>("Sprites/blue");
 
-        Rect dodgeBarRect = new Rect(10, Screen.height * 0.4f, dodgeBarSize.x, dodgeBarSize.y);
+        Rect boxSegment = new Rect(Screen.width * 0.2f, Screen.height * 0.9f, dodgeBarSize.x/4, dodgeBarSize.y/4);
+
+        Rect dodgeBarRect = new Rect(Screen.width * 0.35f, Screen.height * 0.9f, dodgeBarSize.x, dodgeBarSize.y);
         GUI.BeginGroup(dodgeBarRect);
         GUI.Box(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), emptyTex);
+
+        GUIStyle stamStyle = GUI.skin.label;
+        stamStyle.fontSize = 22;
+        stamStyle.alignment = TextAnchor.MiddleCenter;
         GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(playerInfo.stamina, 0, m_MaxStamina) / m_MaxStamina), dodgeBarSize.y), fullTex);
         GUI.color = Color.black;
-        GUI.Label(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), "Dodge ", scoreStyle);
+        GUI.Label(new Rect(Screen.width * 0.005f, 0, dodgeBarRect.width, dodgeBarRect.height), "Stamina ",stamStyle);
         GUI.color = Color.white;
+        GUI.Box(new Rect(Screen.width * 0.06f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
+        GUI.Box(new Rect(Screen.width * 0.12f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
+        GUI.Box(new Rect(Screen.width * 0.18f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
+        GUI.Box(new Rect(Screen.width * 0.24f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
         GUI.EndGroup();
+
         //end of dodge bar
     }
 

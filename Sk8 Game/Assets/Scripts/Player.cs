@@ -170,7 +170,7 @@ public abstract class Player : MonoBehaviour
 
         if (playerInfo.attacking)
         {
-            sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch");
+            sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch2");
             sr.flipX = true;
         }
         else
