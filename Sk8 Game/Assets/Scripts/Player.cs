@@ -72,6 +72,7 @@ public abstract class Player : MonoBehaviour
     public AudioClip ollieStartClip;
     public AudioClip ollieEndClip;
     public AudioClip rollingClip;
+    public AudioClip hurtNoiseClip;
 
 
     public float MaxSpeed
