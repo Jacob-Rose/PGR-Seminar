@@ -8,7 +8,7 @@ public class LeaderboardDrawer : MonoBehaviour
 {
     Texture2D emptyTex;
     public Button mainMenuButton;
-    List<string> playersInOrder;
+    List<string> playersInOrder = new List<string>();
 
     public TextMeshProUGUI[] positionTextBars;
     public string[] minecraftSpashTextOptions;
