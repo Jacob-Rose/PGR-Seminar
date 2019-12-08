@@ -41,7 +41,7 @@ public class ClientPlayer : Player
     {
         controls.Enable();
         controls.Player.Interact.performed += InteractButtonPressed;
-        //controls.Player.Attack.performed +=
+        controls.Player.Attack.performed += AttackButtonPressed;
     }
 
     private void OnDisable()
@@ -63,11 +63,10 @@ public class ClientPlayer : Player
         HandleInput(deltaTime);
         if (playerInfo.stamina < m_MaxStamina && !m_IsDodging && !m_IsSpinning)
         {
-            playerInfo.stamina += m_StaminaRefillPerSecond * deltaTime;
+            playerInfo.stamina = Mathf.Clamp(playerInfo.stamina + m_StaminaRefillPerSecond * deltaTime, 0, m_MaxStamina);
         }
         FindClosestObstacle();
         PlayerCollision();
-        PlayerAttack();
         base.Update();
     }
 
@@ -121,6 +120,39 @@ public class ClientPlayer : Player
         m_LatestDevice = context.control.device;
     }
 
+    public void AttackButtonPressed(InputAction.CallbackContext context)
+    {
+        Player closestPlayer = null;
+        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
+        {
+            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_AttackRange) && GameManager.Instance.m_Players[i] != this)
+            {
+                closestPlayer = GameManager.Instance.m_Players[i];
+            }
+        }
+        Debug.Log(closestPlayer);
+        if (closestPlayer != null)
+        {
+            if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
+            {
+                StartCoroutine(Attack(m_AttackDuration));
+                Debug.Log("attack happen)");
+                if (m_AttackStaminaCost <= playerInfo.stamina)
+                {
+                    playerInfo.stamina -= m_AttackStaminaCost;
+                    PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage(GetUsername(), closestPlayer.GetUsername());
+                    if (VOnlinePlayer.Instance == null)
+                    {
+                        VHostBehavior.Instance.SendMessageToAllPlayers(msg, Valve.Sockets.SendType.Reliable);
+                    }
+                    else
+                    {
+                        VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
+                    }
+                }
+            }
+        }
+    }
     public void PlayerCollision()
     {
         Player closestPlayer = null;
@@ -170,50 +202,6 @@ public class ClientPlayer : Player
                 }
             }
         }
-    }
-
-    public void PlayerAttack()
-    {
-        Player closestPlayer = null;
-        for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
-        {
-            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_AttackRange) && GameManager.Instance.m_Players[i] != this)
-            {
-                closestPlayer = GameManager.Instance.m_Players[i];
-            }
-        }
-        Debug.Log(closestPlayer);
-        if(closestPlayer != null)
-        {
-            if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
-            {
-                if (controls.Player.Attack.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging)
-                {
-                    StartAttack();
-                    Debug.Log("attack happen)");
-                    if (m_AttackStaminaCost <= playerInfo.stamina)
-                    {
-                        playerInfo.stamina -= m_AttackStaminaCost;
-                        //Run crash animation
-                        
-                        PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage(GetUsername(), closestPlayer.GetUsername());
-                        if(VOnlinePlayer.Instance == null)
-                        {
-                            VHostBehavior.Instance.SendMessageToAllPlayers(msg, Valve.Sockets.SendType.Reliable);
-                        }
-                        else
-                        {
-                            VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public void StartAttack()
-    {
-        StartCoroutine(Attack(m_AttackDuration));
     }
 
     public void FindClosestObstacle()
@@ -300,23 +288,23 @@ public class ClientPlayer : Player
         Texture2D emptyTex = Texture2D.blackTexture;//Resources.Load<Texture2D>("Sprites/yellow");
         Texture2D fullTex = Resources.Load<Texture2D>("Sprites/blue");
 
-        Rect boxSegment = new Rect(Screen.width * 0.2f, Screen.height * 0.9f, dodgeBarSize.x/4, dodgeBarSize.y/4);
+        Rect boxSegment = new Rect(Screen.width * 0.2f, Screen.height * 0.9f, dodgeBarSize.x/4, dodgeBarSize.y);
 
         Rect dodgeBarRect = new Rect(Screen.width * 0.35f, Screen.height * 0.9f, dodgeBarSize.x, dodgeBarSize.y);
         GUI.BeginGroup(dodgeBarRect);
         GUI.Box(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), emptyTex);
 
         GUIStyle stamStyle = GUI.skin.label;
-        stamStyle.fontSize = 22;
+        stamStyle.fontSize = 14;
         stamStyle.alignment = TextAnchor.MiddleCenter;
         GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(playerInfo.stamina, 0, m_MaxStamina) / m_MaxStamina), dodgeBarSize.y), fullTex);
         GUI.color = Color.black;
-        GUI.Label(new Rect(Screen.width * 0.005f, 0, dodgeBarRect.width, dodgeBarRect.height), "Stamina ",stamStyle);
+        GUI.Box(new Rect(boxSegment.width, boxSegment.height * 0.25f, boxSegment.width / 20, boxSegment.height * 0.5f), emptyTex);
+        GUI.Box(new Rect(boxSegment.width * 2, boxSegment.height * 0.25f, boxSegment.width / 20, boxSegment.height * 0.5f), emptyTex);
+        GUI.Box(new Rect(boxSegment.width * 3, boxSegment.height * 0.25f, boxSegment.width / 20, boxSegment.height * 0.5f), emptyTex);
+        GUI.Box(new Rect(boxSegment.width * 4, boxSegment.height * 0.25f, boxSegment.width / 20, boxSegment.height * 0.5f), emptyTex);
         GUI.color = Color.white;
-        GUI.Box(new Rect(Screen.width * 0.06f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
-        GUI.Box(new Rect(Screen.width * 0.12f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
-        GUI.Box(new Rect(Screen.width * 0.18f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
-        GUI.Box(new Rect(Screen.width * 0.24f, 0, boxSegment.width / 20, boxSegment.height * 4), emptyTex);
+        GUI.Label(new Rect(0, 0, dodgeBarRect.width, dodgeBarRect.height), "Stamina ", stamStyle);
         GUI.EndGroup();
 
         //end of dodge bar
