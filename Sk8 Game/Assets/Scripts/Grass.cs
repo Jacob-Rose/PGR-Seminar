@@ -11,7 +11,7 @@ public class Grass : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             Player p = collision.gameObject.GetComponent<Player>();
-            p.playerInfo.currentSpeed = Mathf.Lerp(p.playerInfo.currentSpeed, p.MaxSpeed * speedMultiplier, (1.0f - Time.deltaTime));
+            p.m_PlayerInfo.currentSpeed = Mathf.Lerp(p.m_PlayerInfo.currentSpeed, p.MaxSpeed * speedMultiplier, (1.0f - Time.deltaTime));
         }
     }
 }

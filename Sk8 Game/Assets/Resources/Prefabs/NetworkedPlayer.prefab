@@ -291,15 +291,18 @@ MonoBehaviour:
   m_TimeToMaxSpeed: 0
   m_MaxStamina: 0
   m_StaminaRefillPerSecond: 0
+  m_DodgeTimeInAir: 1.5
   m_DraftBounds: {x: 2, y: 8}
   m_BackDraftMultiplier: 1.05
   m_IsDodging: 0
   m_IsSpinning: 0
   m_IsAttacking: 0
-  m_EnemyisRight: 1
   m_SpinCount: 2
   m_SpinDuration: 1
   m_AttackDuration: 1
+  ollieStartClip: {fileID: 8300000, guid: ad76c6189bed4be4696027bde440fc3e, type: 3}
+  ollieEndClip: {fileID: 8300000, guid: b44f95c80cdcaa942bdf3e471def01d0, type: 3}
+  rollingClip: {fileID: 8300000, guid: 67b9c8d9909cf9d4da71783a5937bb36, type: 3}
   playerID: 3
   color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!50 &5577072124538956677

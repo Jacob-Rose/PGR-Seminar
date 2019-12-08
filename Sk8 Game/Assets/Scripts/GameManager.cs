@@ -12,6 +12,7 @@ class GameManager : MonoBehaviour
     public bool isDebug = false;
     public Player leadPlayer;
     public Player lastPlace;
+    public float m_MusicVolumeOnPlay = 0.5f;
     public float maxDistanceToDQ = 10.0f;
     public List<Player> m_Players = new List<Player>();
     public List<Obstacle> m_AllObstacles = new List<Obstacle>();
@@ -54,8 +55,8 @@ class GameManager : MonoBehaviour
     public void PlayerAttacked(string playerID)
     {
         Player p = GetPlayer(playerID);
-        p.playerInfo.currentScore -= 5;
-        p.playerInfo.currentSpeed *= 0.95f;
+        p.m_PlayerInfo.currentScore -= 5;
+        p.m_PlayerInfo.currentSpeed *= 0.95f;
         p.StartSpin();
     }
 
@@ -141,6 +142,7 @@ class GameManager : MonoBehaviour
     public void StartGameInSeconds(float seconds)
     {
         SceneManager.LoadScene("thepark");
+        GetComponent<AudioSource>().volume = m_MusicVolumeOnPlay;
         timeToStart = DateTime.UtcNow.AddSeconds(seconds);
         m_GameIsStarting = true;
         Invoke("StartGame", seconds);
@@ -206,7 +208,7 @@ class GameManager : MonoBehaviour
             if (m_Players[i] is NetworkedPlayer && (m_Players[i] as NetworkedPlayer).playerID == playerID ||
                 m_Players[i] is ClientPlayer && playerID == m_PlayerUsername)
             {
-                m_Players[i].playerInfo = info;
+                m_Players[i].m_PlayerInfo = info;
                 m_Players[i].SetPosition(info.position);
             }
         }

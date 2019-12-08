@@ -150,7 +150,7 @@ public class PlayerUpdateMessage : Message
         Player p = GameManager.Instance.GetPlayer(playerID);
         if(p != null)
         {
-            info = p.playerInfo;
+            info = p.m_PlayerInfo;
             info.position.x = BitConverter.ToSingle(xPosBuffer, 0);
             info.position.y = BitConverter.ToSingle(yPosBuffer, 0);
             info.zRot = BitConverter.ToSingle(zRotBuffer, 0);

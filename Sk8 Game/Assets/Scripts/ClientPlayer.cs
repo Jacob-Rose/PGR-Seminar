@@ -9,12 +9,11 @@ public class ClientPlayer : Player
 {
     [SerializeField]
     public InputMaster controls;
-    public InputDevice m_LatestDevice = null;
+
     public float zRotAmount = 10.0f;
     public float m_SpeedDecreaseAmount = 0.1f;
 
     public float m_InteractMaxDist = 4.0f;
-    public float m_DodgeTimeInAir = 1.5f;
 
     public float m_PlayerXBounds = 7.0f;
 
@@ -42,6 +41,7 @@ public class ClientPlayer : Player
         controls.Enable();
         controls.Player.Interact.performed += InteractButtonPressed;
         controls.Player.Attack.performed += AttackButtonPressed;
+        controls.Player.Jump.performed += DodgeButtonPressed;
     }
 
     private void OnDisable()
@@ -57,14 +57,16 @@ public class ClientPlayer : Player
     public override void Update()
     {
         float deltaTime = Time.deltaTime;
+
         if (!GameManager.Instance.HasGameStarted)
             return;
 
-        HandleInput(deltaTime);
-        if (playerInfo.stamina < m_MaxStamina && !m_IsDodging && !m_IsSpinning)
+        if (m_PlayerInfo.stamina < m_MaxStamina && !m_IsDodging && !m_IsSpinning)
         {
-            playerInfo.stamina = Mathf.Clamp(playerInfo.stamina + m_StaminaRefillPerSecond * deltaTime, 0, m_MaxStamina);
+            m_PlayerInfo.stamina = Mathf.Clamp(m_PlayerInfo.stamina + m_StaminaRefillPerSecond * deltaTime, 0, m_MaxStamina);
         }
+
+        HandleInput(deltaTime);
         FindClosestObstacle();
         PlayerCollision();
         base.Update();
@@ -78,20 +80,16 @@ public class ClientPlayer : Player
         }
 
         //attackTimer += deltaTime;
-        if (controls.Player.Jump.ReadValue<float>() > 0.5f && !m_IsSpinning && !m_IsDodging && m_DodgeStaminaCost <= playerInfo.stamina)
-        {
-            playerInfo.stamina -= m_DodgeStaminaCost;
-            StartCoroutine(Dodge(m_DodgeTimeInAir));
-        }
+        
         float turnValue = controls.Player.Turn.ReadValue<float>();
         if (Mathf.Abs(turnValue) > 0.05f)
         {
-            playerInfo.zRot -= zRotAmount * deltaTime * turnValue;
-            playerInfo.currentSpeed -= m_SpeedDecreaseAmount * deltaTime * turnValue;
+            m_PlayerInfo.zRot -= zRotAmount * deltaTime * turnValue;
+            m_PlayerInfo.currentSpeed -= m_SpeedDecreaseAmount * deltaTime * turnValue;
         }
         else
         {
-            playerInfo.zRot = Mathf.LerpAngle(playerInfo.zRot, 0, 0.1f);
+            m_PlayerInfo.zRot = Mathf.LerpAngle(m_PlayerInfo.zRot, 0, 0.1f);
         }
     }
 
@@ -100,10 +98,10 @@ public class ClientPlayer : Player
         if (m_ClosestObstacle != null 
             && !m_IsSpinning 
             && !m_IsDodging 
-            && m_InteractStaminaCost <= playerInfo.stamina)
+            && m_InteractStaminaCost <= m_PlayerInfo.stamina)
         {
             //Interact with the obstacle
-            playerInfo.stamina -= m_InteractStaminaCost;
+            m_PlayerInfo.stamina -= m_InteractStaminaCost;
             m_ClosestObstacle.GetComponent<SpriteRenderer>().color = Color.white;
             m_ClosestObstacle.HandleInteraction(this);
 
@@ -117,7 +115,15 @@ public class ClientPlayer : Player
                 VOnlinePlayer.Instance.SendMessage(msg, Valve.Sockets.SendType.Reliable);
             }
         }
-        m_LatestDevice = context.control.device;
+    }
+
+    public void DodgeButtonPressed(InputAction.CallbackContext context)
+    {
+        if (!m_IsSpinning && !m_IsDodging && m_DodgeStaminaCost <= m_PlayerInfo.stamina)
+        {
+            m_PlayerInfo.stamina -= m_DodgeStaminaCost;
+            StartCoroutine(Dodge(m_DodgeTimeInAir));
+        }
     }
 
     public void AttackButtonPressed(InputAction.CallbackContext context)
@@ -125,7 +131,7 @@ public class ClientPlayer : Player
         Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_AttackRange) && GameManager.Instance.m_Players[i] != this)
+            if ((Vector2.Distance(m_PlayerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_AttackRange) && GameManager.Instance.m_Players[i] != this)
             {
                 closestPlayer = GameManager.Instance.m_Players[i];
             }
@@ -133,13 +139,13 @@ public class ClientPlayer : Player
         Debug.Log(closestPlayer);
         if (closestPlayer != null)
         {
-            if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
+            if (closestPlayer.m_PlayerInfo.collidable && m_PlayerInfo.collidable)
             {
                 StartCoroutine(Attack(m_AttackDuration));
                 Debug.Log("attack happen)");
-                if (m_AttackStaminaCost <= playerInfo.stamina)
+                if (m_AttackStaminaCost <= m_PlayerInfo.stamina)
                 {
-                    playerInfo.stamina -= m_AttackStaminaCost;
+                    m_PlayerInfo.stamina -= m_AttackStaminaCost;
                     PlayerAttackedPlayerMessage msg = new PlayerAttackedPlayerMessage(GetUsername(), closestPlayer.GetUsername());
                     if (VOnlinePlayer.Instance == null)
                     {
@@ -158,45 +164,45 @@ public class ClientPlayer : Player
         Player closestPlayer = null;
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
-            if ((Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) 
+            if ((Vector2.Distance(m_PlayerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= m_CollisionMinimum) 
                 /*&& closestPlayer == null || (Vector2.Distance(playerInfo.position, GameManager.Instance.m_Players[i].transform.position) <= Vector2.Distance(playerInfo.position, closestPlayer.transform.position))*/
                 && GameManager.Instance.m_Players[i] != this)
             {
                 closestPlayer = GameManager.Instance.m_Players[i];
             }
         }
-        if(closestPlayer != null || playerInfo.position.x <= -m_PlayerXBounds || playerInfo.position.x >= m_PlayerXBounds)
+        if(closestPlayer != null || m_PlayerInfo.position.x <= -m_PlayerXBounds || m_PlayerInfo.position.x >= m_PlayerXBounds)
         {
-            if(playerInfo.position.x <= -m_PlayerXBounds)
+            if(m_PlayerInfo.position.x <= -m_PlayerXBounds)
             {
-                playerInfo.zRot = -playerInfo.zRot;
-                playerInfo.position.x = -m_PlayerXBounds + 0.1f;
-                playerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
+                m_PlayerInfo.zRot = -m_PlayerInfo.zRot;
+                m_PlayerInfo.position.x = -m_PlayerXBounds + 0.1f;
+                m_PlayerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
 
             }
-            else if(playerInfo.position.x >= m_PlayerXBounds)
+            else if(m_PlayerInfo.position.x >= m_PlayerXBounds)
             {
-                playerInfo.zRot = -playerInfo.zRot;
-                playerInfo.position.x = m_PlayerXBounds - 0.1f;
-                playerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
+                m_PlayerInfo.zRot = -m_PlayerInfo.zRot;
+                m_PlayerInfo.position.x = m_PlayerXBounds - 0.1f;
+                m_PlayerInfo.currentSpeed *= m_WallCollisionSpeedReduce;
 
             }
             else if(closestPlayer != null)
             {
-                if (closestPlayer.playerInfo.collidable && playerInfo.collidable)
+                if (closestPlayer.m_PlayerInfo.collidable && m_PlayerInfo.collidable)
                 {
-                    if(playerInfo.position.x <= closestPlayer.playerInfo.position.x)
+                    if(m_PlayerInfo.position.x <= closestPlayer.m_PlayerInfo.position.x)
                     {
-                        playerInfo.zRot = -playerInfo.zRot;
-                        playerInfo.position.x = closestPlayer.playerInfo.position.x - 0.4f;
-                        playerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
+                        m_PlayerInfo.zRot = -m_PlayerInfo.zRot;
+                        m_PlayerInfo.position.x = closestPlayer.m_PlayerInfo.position.x - 0.4f;
+                        m_PlayerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
 
                     }
-                    else if(playerInfo.position.x >= closestPlayer.playerInfo.position.x)
+                    else if(m_PlayerInfo.position.x >= closestPlayer.m_PlayerInfo.position.x)
                     {
-                        playerInfo.zRot = -playerInfo.zRot;
-                        playerInfo.position.x = closestPlayer.playerInfo.position.x + 0.4f;
-                        playerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
+                        m_PlayerInfo.zRot = -m_PlayerInfo.zRot;
+                        m_PlayerInfo.position.x = closestPlayer.m_PlayerInfo.position.x + 0.4f;
+                        m_PlayerInfo.currentSpeed *= m_PlayerCollisionSpeedReduce;
 
                     }
                 }
@@ -213,7 +219,7 @@ public class ClientPlayer : Player
             if(GameManager.Instance.m_AllObstacles[i] != null && GameManager.Instance.m_AllObstacles[i] is IObstacle 
                 && (GameManager.Instance.m_AllObstacles[i] as IObstacle).m_CanBeInteractedWith)
             {
-                float oDist = Vector2.Distance(playerInfo.position, GameManager.Instance.m_AllObstacles[i].transform.position);
+                float oDist = Vector2.Distance(m_PlayerInfo.position, GameManager.Instance.m_AllObstacles[i].transform.position);
                 if (oDist < m_CurrentClosestDistance)
                 {
                     m_ClosestObstacle = GameManager.Instance.m_AllObstacles[i] as IObstacle;
@@ -235,16 +241,16 @@ public class ClientPlayer : Player
         while (time <= duration)
         {
             time += Time.deltaTime;
-            playerInfo.collidable = false;
+            m_PlayerInfo.collidable = false;
             yield return 0;
         }
-        playerInfo.collidable = true;
+        m_PlayerInfo.collidable = true;
         m_IsDodging = false;
     }
 
     public IEnumerator Attack(float duration)
     {
-        playerInfo.attacking = true;
+        m_PlayerInfo.attacking = true;
         m_IsAttacking = true;
         float time = 0.0f;
         while (time <= duration)
@@ -252,7 +258,7 @@ public class ClientPlayer : Player
             time += Time.deltaTime;
             yield return 0;
         }
-        playerInfo.attacking = false;
+        m_PlayerInfo.attacking = false;
         m_IsAttacking = false;
     }
 
@@ -274,14 +280,14 @@ public class ClientPlayer : Player
         speedStyle.alignment = TextAnchor.MiddleRight;
         speedStyle.fontSize = 20;
         GUI.Label(maxSpeedRect, "Max-Speed: " + MaxSpeed.ToString("F1"), speedStyle);
-        GUI.Label(forwardSpeedRect, "F-Speed: " + (playerInfo.currentSpeed * transform.up.y).ToString("F1"), speedStyle);
-        GUI.Label(speedRect, "C-Speed: " + playerInfo.currentSpeed.ToString("F1"), speedStyle);
+        GUI.Label(forwardSpeedRect, "F-Speed: " + (m_PlayerInfo.currentSpeed * transform.up.y).ToString("F1"), speedStyle);
+        GUI.Label(speedRect, "C-Speed: " + m_PlayerInfo.currentSpeed.ToString("F1"), speedStyle);
 
         GUIStyle scoreStyle = GUI.skin.label;
         scoreStyle.fontSize = 22;
         scoreStyle.alignment = TextAnchor.MiddleLeft;
         Rect scoreRect = new Rect(10, 0, (Screen.width / 5), 60);
-        GUI.Label(scoreRect, "Score: " + playerInfo.currentScore.ToString(), scoreStyle);
+        GUI.Label(scoreRect, "Score: " + m_PlayerInfo.currentScore.ToString(), scoreStyle);
 
         //Start of stam bar code
         Vector2 dodgeBarSize = new Vector2(Screen.width * 0.3f, 20);
@@ -297,7 +303,7 @@ public class ClientPlayer : Player
         GUIStyle stamStyle = GUI.skin.label;
         stamStyle.fontSize = 14;
         stamStyle.alignment = TextAnchor.MiddleCenter;
-        GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(playerInfo.stamina, 0, m_MaxStamina) / m_MaxStamina), dodgeBarSize.y), fullTex);
+        GUI.DrawTexture(new Rect(0, 0, dodgeBarSize.x * (Mathf.Clamp(m_PlayerInfo.stamina, 0, m_MaxStamina) / m_MaxStamina), dodgeBarSize.y), fullTex);
         GUI.color = Color.black;
         GUI.Box(new Rect(boxSegment.width, boxSegment.height * 0.25f, boxSegment.width / 20, boxSegment.height * 0.5f), emptyTex);
         GUI.Box(new Rect(boxSegment.width * 2, boxSegment.height * 0.25f, boxSegment.width / 20, boxSegment.height * 0.5f), emptyTex);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
@@ -8,7 +7,7 @@ using UnityEngine.Rendering.PostProcessing;
  * Contains All The Shared Data and functions between ClientPlayer and NetworkedPlayer
  * Specific functions can be added to ClientPlayer and NetworkedPlayer classes as well.
  */
-public struct PlayerInfo //sent from server to 
+public struct PlayerInfo //the struct that is synced between networked players
 {
     [SerializeField]
     public Vector2 position;
@@ -51,11 +50,14 @@ public abstract class Player : MonoBehaviour
     [SerializeField]
     protected float m_StaminaRefillPerSecond = 1.0f;
 
+    public float m_DodgeTimeInAir = 1.5f;
+
     [SerializeField]
-    public PlayerInfo playerInfo;
+    public PlayerInfo m_PlayerInfo;
 
     protected Rigidbody2D m_Rigidbody;
     protected SpriteRenderer m_SpriteRenderer;
+    protected AudioSource m_AudioSource;
 
     public Vector2 m_DraftBounds = new Vector2(2.5f, 10.0f);
     public float m_BackDraftMultiplier = 1.1f;
@@ -67,7 +69,8 @@ public abstract class Player : MonoBehaviour
     public float m_SpinDuration = 1.0f;
     public float m_AttackDuration = 1.0f;
 
-    public AudioClip ollieClip;
+    public AudioClip ollieStartClip;
+    public AudioClip ollieEndClip;
     public AudioClip rollingClip;
 
 
@@ -75,18 +78,21 @@ public abstract class Player : MonoBehaviour
     {
         get
         {
-            return (playerInfo.currentScore * speedMod) + startSpeed;
+            return (m_PlayerInfo.currentScore * speedMod) + startSpeed;
         }
     }
 
     // Start is called before the first frame update
     public virtual void Start()
     {
-        playerInfo.collidable = true;
         m_Rigidbody = GetComponent<Rigidbody2D>();
         m_SpriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        playerInfo.currentSpeed = MaxSpeed;
-        playerInfo.position = transform.position;
+        m_AudioSource = GetComponent<AudioSource>();
+
+        m_PlayerInfo.collidable = true;
+        m_PlayerInfo.currentSpeed = MaxSpeed;
+        m_PlayerInfo.position = transform.position;
+
         DontDestroyOnLoad(this);
     }
 
@@ -111,7 +117,7 @@ public abstract class Player : MonoBehaviour
     {
         GameObject spriteChild = transform.GetChild(0).gameObject;
         SpriteRenderer sr = spriteChild.GetComponent<SpriteRenderer>();
-        if (playerInfo.collidable)
+        if (m_PlayerInfo.collidable)
         {
             sr.transform.localScale = Vector3.Lerp(sr.transform.localScale, new Vector3(1.0f, 1.0f, 1.0f), 0.2f);
         }
@@ -123,43 +129,59 @@ public abstract class Player : MonoBehaviour
 
     public void CheckPlayerSound()
     {
-        AudioSource aux = GetComponent<AudioSource>();
-        if (aux != null)
+        if (m_AudioSource != null)
         {
-            if (!playerInfo.collidable)
+            if (!m_PlayerInfo.collidable)
             {
-                TryPlayOllieSound();
+                TryPlayOllieStartSound();
             }
             else
             {
                 TryPlayRollingSound();
             }
+
+            m_AudioSource.volume = 0.8f / GameManager.Instance.m_Players.Count;
         }
     }
 
-    public void TryPlayOllieSound()
+    public void TryPlayOllieStartSound()
     {
-        AudioSource aux = GetComponent<AudioSource>();
-        if (aux.clip != ollieClip)
+        if (m_AudioSource.clip != ollieStartClip)
         {
-            aux.Stop();
-            aux.clip = ollieClip;
-            aux.loop = false;
-            aux.time = 0;
-            aux.Play();
+            m_AudioSource.Stop();
+            m_AudioSource.clip = ollieStartClip;
+            m_AudioSource.loop = false;
+            m_AudioSource.time = 0;
+            m_AudioSource.Play();
+            Invoke("TryPlayOllieEndSound", m_DodgeTimeInAir * 0.95f);
+        }
+    }
+
+    public void TryPlayOllieEndSound()
+    {
+        if (m_AudioSource.clip != ollieEndClip)
+        {
+            m_AudioSource.Stop();
+            m_AudioSource.clip = ollieEndClip;
+            m_AudioSource.loop = false;
+            m_AudioSource.time = 0;
+            m_AudioSource.Play();
         }
     }
 
     public void TryPlayRollingSound()
     {
-        AudioSource aux = GetComponent<AudioSource>();
-        if (aux.clip != rollingClip)
+        if (m_AudioSource.clip != rollingClip)
         {
-            aux.Stop();
-            aux.clip = rollingClip;
-            aux.time = 0.0f;
-            aux.loop = true;
-            aux.Play();
+            m_AudioSource.Stop();
+            m_AudioSource.clip = rollingClip;
+            m_AudioSource.time = 0.0f;
+            m_AudioSource.loop = true;
+            m_AudioSource.Play();
+        }
+        else
+        {
+            m_AudioSource.pitch = (m_PlayerInfo.currentSpeed / MaxSpeed) * Mathf.Clamp(1.5f/ Mathf.Clamp(Mathf.Abs(m_PlayerInfo.zRot / 30), 0, 3), 0.5f, 1.5f);
         }
     }
 
@@ -168,7 +190,7 @@ public abstract class Player : MonoBehaviour
         GameObject spriteChild = transform.GetChild(0).gameObject;
         SpriteRenderer sr = spriteChild.GetComponent<SpriteRenderer>();
 
-        if (playerInfo.attacking)
+        if (m_PlayerInfo.attacking)
         {
             sr.sprite = Resources.Load<Sprite>("Sprites/sk8rboiBigPunch2");
             sr.flipX = true;
@@ -181,17 +203,17 @@ public abstract class Player : MonoBehaviour
     public void SetPosition(Vector2 pos)
     {
         transform.position = new Vector3(pos.x, pos.y, 0);
-        playerInfo.position = pos;
+        m_PlayerInfo.position = pos;
     }
 
     public void MovePlayer(float deltaTime)
     {
-        transform.position = playerInfo.position;
-        playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed, (deltaTime / m_TimeToMaxSpeed));
-        playerInfo.position += new Vector2(transform.up.x, transform.up.y) * playerInfo.currentSpeed * deltaTime;
-        transform.rotation = Quaternion.Euler(0.0f,0.0f, playerInfo.zRot);
-        transform.position = Vector3.Lerp(transform.position, playerInfo.position, 0.6f); //in case the update is off from current position
-        playerInfo.position = transform.position;
+        transform.position = m_PlayerInfo.position;
+        m_PlayerInfo.currentSpeed = Mathf.Lerp(m_PlayerInfo.currentSpeed, MaxSpeed, (deltaTime / m_TimeToMaxSpeed));
+        m_PlayerInfo.position += new Vector2(transform.up.x, transform.up.y) * m_PlayerInfo.currentSpeed * deltaTime;
+        transform.rotation = Quaternion.Euler(0.0f,0.0f, m_PlayerInfo.zRot);
+        transform.position = Vector3.Lerp(transform.position, m_PlayerInfo.position, 0.6f); //in case the update is off from current position
+        m_PlayerInfo.position = transform.position;
     }
 
 
@@ -220,7 +242,7 @@ public abstract class Player : MonoBehaviour
 
     public void updatePlayerInfo(PlayerInfo info)
     {
-        playerInfo = info;
+        m_PlayerInfo = info;
     }
 
     public void CheckBackDraft(float deltaTime)
@@ -231,10 +253,10 @@ public abstract class Player : MonoBehaviour
             Player oPlayer = GameManager.Instance.m_Players[i];
             if(oPlayer != this)
             {
-                Bounds draftBounds = new Bounds(oPlayer.playerInfo.position - new Vector2(0.0f, m_DraftBounds.y * 0.5f), m_DraftBounds);
-                if (draftBounds.Contains(playerInfo.position))
+                Bounds draftBounds = new Bounds(oPlayer.m_PlayerInfo.position - new Vector2(0.0f, m_DraftBounds.y * 0.5f), m_DraftBounds);
+                if (draftBounds.Contains(m_PlayerInfo.position))
                 {
-                    playerInfo.currentSpeed = Mathf.Lerp(playerInfo.currentSpeed, MaxSpeed * m_BackDraftMultiplier, deltaTime);
+                    m_PlayerInfo.currentSpeed = Mathf.Lerp(m_PlayerInfo.currentSpeed, MaxSpeed * m_BackDraftMultiplier, deltaTime);
                     drafting = true;
                 }
             }

@@ -45,7 +45,7 @@ public class TileManager : MonoBehaviour
         {
             m_Instance = this;
         }
-        dynamicSpawnPoint.y = GameManager.Instance.ClientPlayer.playerInfo.position.y;
+        dynamicSpawnPoint.y = GameManager.Instance.ClientPlayer.m_PlayerInfo.position.y;
         previousSpawnPoint = dynamicSpawnPoint;
         m_RoadPrefab.transform.localScale = Vector2.one;
         m_GrassPrefab.transform.localScale = Vector2.one;
@@ -119,7 +119,7 @@ public class TileManager : MonoBehaviour
     public void PopulateRoadsTwo()
     {
         //will be used to generate dynamic roads
-        leadPlayerPos = GameManager.Instance.leadPlayer.playerInfo.position;
+        leadPlayerPos = GameManager.Instance.leadPlayer.m_PlayerInfo.position;
         dynamicSpawnPoint.y = leadPlayerPos.y;
         if(dynamicSpawnPoint.y + (desiredRoadTileSize.y * 5) > previousSpawnPoint.y)
         {

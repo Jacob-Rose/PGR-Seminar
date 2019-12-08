@@ -24,6 +24,6 @@ public class PlayerInfoCanvasController : MonoBehaviour
         {
             nameText.text = GameManager.Instance.m_PlayerUsername;
         }
-        scoreText.text = p.playerInfo.currentScore.ToString();
+        scoreText.text = p.m_PlayerInfo.currentScore.ToString();
     }
 }

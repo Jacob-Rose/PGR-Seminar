@@ -89,7 +89,7 @@ public class VHostBehavior : Networked
                 ClientPlayer cPlayer = GameManager.Instance.ClientPlayer;
                 if (cPlayer != null)
                 {
-                    PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().playerInfo, GameManager.Instance.m_PlayerUsername);
+                    PlayerUpdateMessage cPlayerUpdateMsg = new PlayerUpdateMessage(FindObjectOfType<ClientPlayer>().m_PlayerInfo, GameManager.Instance.m_PlayerUsername);
                     SendMessageToAllPlayers(cPlayerUpdateMsg);
                 }
             }
@@ -196,7 +196,7 @@ public class VHostBehavior : Networked
             {
                 currentPos = -currentPos;
             }
-            SendMessageToAllPlayers(new PlayerUpdateMessage(players[i].playerInfo, playerID), SendType.Reliable);
+            SendMessageToAllPlayers(new PlayerUpdateMessage(players[i].m_PlayerInfo, playerID), SendType.Reliable);
         }
     }
 

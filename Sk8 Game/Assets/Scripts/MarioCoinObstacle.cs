@@ -22,7 +22,7 @@ public class MarioCoinObstacle : IObstacle
 
     public override void InteractedWith(Player p)
     {
-        p.playerInfo.currentScore += scoreIncreaseOnInteract;
+        p.m_PlayerInfo.currentScore += scoreIncreaseOnInteract;
         Destroy(gameObject);
     }
     // Start is called before the first frame update

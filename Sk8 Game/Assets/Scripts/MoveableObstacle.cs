@@ -26,6 +26,6 @@ public class MoveableObstacle : IObstacle
         m_SpriteRenderer.sprite = interactedSprite;
         m_CanBeInteractedWith = false;
         GetComponent<Collider2D>().enabled = false;
-        p.playerInfo.currentScore += scoreIncreaseOnInteract;
+        p.m_PlayerInfo.currentScore += scoreIncreaseOnInteract;
     }
 }

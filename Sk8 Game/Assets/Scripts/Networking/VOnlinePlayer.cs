@@ -76,7 +76,7 @@ public class VOnlinePlayer : Networked
                 ClientPlayer player = GameManager.Instance.ClientPlayer;
                 if(player != null)
                 {
-                    m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.playerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
+                    m_Server.SendMessageToConnection(m_Connection, new PlayerUpdateMessage(player.m_PlayerInfo, GameManager.Instance.m_PlayerUsername).toBuffer(), SendType.NoDelay);
                 }
             }
         }

@@ -30,9 +30,9 @@ public class Obstacle : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             Player p = collision.gameObject.GetComponent<Player>();
-            if (p.playerInfo.collidable == true && !p.m_IsSpinning)
+            if (p.m_PlayerInfo.collidable == true && !p.m_IsSpinning)
             {
-                p.playerInfo.currentSpeed *= speedMultiplier;
+                p.m_PlayerInfo.currentSpeed *= speedMultiplier;
                 if(m_ShouldSpinPlayer)
                 {
                     p.StartSpin();
@@ -40,7 +40,7 @@ public class Obstacle : MonoBehaviour
             }
             else
             {
-                collision.gameObject.GetComponent<Player>().playerInfo.collidable = true;
+                collision.gameObject.GetComponent<Player>().m_PlayerInfo.collidable = true;
             }
         }
     }
