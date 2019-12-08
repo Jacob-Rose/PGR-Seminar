@@ -97,7 +97,7 @@ class GameManager : MonoBehaviour
             textStyle.fontSize = 40;
             GUI.Label(new Rect(0, 0, Screen.width, Screen.height /2), SecondsTillStart.ToString("F1"), textStyle);
         }
-        if(m_ClientPlayer == null)
+        if(m_ClientPlayer == null && !GameManager.Instance.HasGameEnded)
         {
             GUIStyle textStyle = GUI.skin.label;
             textStyle.alignment = TextAnchor.MiddleCenter;

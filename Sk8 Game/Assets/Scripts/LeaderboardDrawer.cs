@@ -20,7 +20,9 @@ public class LeaderboardDrawer : MonoBehaviour
         mainMenuButton.onClick.AddListener(GameManager.Instance.ResetGame);
         emptyTex = Texture2D.blackTexture;
         GetPlayersInOrder();
-        splashText.text = minecraftSpashTextOptions[UnityEngine.Random.Range(0, minecraftSpashTextOptions.Length)];
+        splashText.text = minecraftSpashTextOptions[UnityEngine.Random.Range(0, minecraftSpashTextOptions.Length)].ToUpper();
+
+        
     }
 
     // Update is called once per frame
@@ -35,7 +37,6 @@ public class LeaderboardDrawer : MonoBehaviour
         int playerCount = GameManager.Instance.m_DeletedPlayers.Count + GameManager.Instance.m_Players.Count;
         float width = Screen.width * 0.6f;
         float height = Screen.height * 0.5f;
-        GUI.BeginGroup(new Rect(Screen.width * 0.2f, Screen.height * 0.2f, width, height));
         while (enumerator.MoveNext())
         {
             bool added = false;
@@ -57,6 +58,10 @@ public class LeaderboardDrawer : MonoBehaviour
         for (int i = 0; i < GameManager.Instance.m_Players.Count; i++)
         {
             playersInOrder.Insert(0, GameManager.Instance.m_Players[i].GetUsername());
+        }
+        foreach (Player p in GameManager.Instance.m_Players)
+        {
+            Destroy(p.gameObject);
         }
     }
 
