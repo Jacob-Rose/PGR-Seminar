@@ -294,7 +294,7 @@ public class ClientPlayer : Player
         Texture2D emptyTex = Texture2D.blackTexture;//Resources.Load<Texture2D>("Sprites/yellow");
         Texture2D fullTex = Resources.Load<Texture2D>("Sprites/blue");
 
-        Rect boxSegment = new Rect(Screen.width * 0.2f, Screen.height * 0.9f, dodgeBarSize.x/4, dodgeBarSize.y);
+        Rect boxSegment = new Rect(Screen.width * 0.2f, Screen.height * 0.9f, dodgeBarSize.x/5, dodgeBarSize.y);
 
         Rect dodgeBarRect = new Rect(Screen.width * 0.35f, Screen.height * 0.9f, dodgeBarSize.x, dodgeBarSize.y);
         GUI.BeginGroup(dodgeBarRect);

@@ -1,8 +1,6 @@
-﻿
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-[InitializeOnLoad]
 public class ScreenResolutionFixer
 {
     static ScreenResolutionFixer()

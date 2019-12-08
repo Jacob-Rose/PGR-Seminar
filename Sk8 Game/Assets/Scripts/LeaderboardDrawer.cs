@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -21,6 +20,7 @@ public class LeaderboardDrawer : MonoBehaviour
         mainMenuButton.onClick.AddListener(GameManager.Instance.ResetGame);
         emptyTex = Texture2D.blackTexture;
         GetPlayersInOrder();
+        splashText.text = minecraftSpashTextOptions[UnityEngine.Random.Range(0, minecraftSpashTextOptions.Length)];
     }
 
     // Update is called once per frame
