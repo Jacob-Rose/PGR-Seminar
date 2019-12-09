@@ -46,6 +46,7 @@ class GameManager : MonoBehaviour
 
     public void Start()
     {
+        Screen.SetResolution(1920, 1080, FullScreenMode.ExclusiveFullScreen);
         lastPlace = null;
         leadPlayer = null;
         DontDestroyOnLoad(this);

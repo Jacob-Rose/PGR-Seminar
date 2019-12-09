@@ -52,6 +52,7 @@ public class ClientPlayer : Player
     public override void Start()
     {
         base.Start();
+        m_PlayerInfo.stamina = m_MaxStamina * 0.5f;
     }
 
     public override void Update()

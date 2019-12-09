@@ -24,7 +24,7 @@ public class CameraFollower : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         m_Targets = GameManager.Instance.GetPlayers();
         if (m_Targets.Count == 0)
